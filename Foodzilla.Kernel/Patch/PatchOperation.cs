@@ -18,7 +18,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     private bool _failed = false;
     private ExpandoObject _patchEntity;
     private PropertyInfo[] _entityProperties;
-    private readonly List<ExpandoObject> _patchEntities;
+    private List<ExpandoObject> _patchEntities;
     private readonly IEnumerable<string> _ignoreFields = new List<string>();
     private Dictionary<Entity, Dictionary<object, object>> _navigationProperties;
     private Dictionary<Entity, Dictionary<PropertyInfo, object>> _originalValuesCollection;
@@ -28,9 +28,9 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
     private Dictionary<Entity, ExpandoObject> _patchEntityDictionary = new();
 
-    private Dictionary<Entity, PropertyInfo[]> _entityPropertiesDictionary = new();
+    private readonly Dictionary<Entity, PropertyInfo[]> _entityPropertiesDictionary = new();
 
-    private Dictionary<Entity, List<ExpandoObject>> _patchEntitiesDictionary = new();
+    private readonly Dictionary<Entity, List<ExpandoObject>> _patchEntitiesDictionary = new();
 
     private Dictionary<Entity, Dictionary<PropertyInfo, object>> _originalValuesCollectionDictionary;
 
@@ -56,8 +56,8 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     private PatchOperation(List<ExpandoObject> patchEntities, string webPathRoot)
     {
         total++;
-        Guid = new Guid();
 
+        _patchEntities = patchEntities ?? throw new NullReferenceException();
         _entityProperties = typeof(TEntity).GetProperties();
         _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
         _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
@@ -153,9 +153,9 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                 try
                 {
-                    StoreShallowOriginalValues(dbEntity, commonProperty);
-
                     if (NavigationPatchOperation(dbEntity, commonProperty, value)) continue;
+
+                    StoreShallowOriginalValues(dbEntity, commonProperty);
 
                     object castedValue = CastCorrectValue(commonProperty, value);
 
@@ -442,15 +442,33 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     {
         Entity = dbEntity;
 
-        var idProperty = _entityProperties.First(p => p.Name.EqualsIgnoreCase(Id));
+        if (!_entityPropertiesDictionary.TryGetValue(dbEntity, out var entityProperties))
+        {
+            entityProperties = typeof(TEntity).GetProperties();
+        }
+
+        var idProperty = entityProperties.First(p => p.Name.EqualsIgnoreCase(Id));
 
         var idValueString = idProperty.GetValue(dbEntity).ToString();
 
-        _patchEntity = _patchEntities.Find(p =>
+        if (_patchEntitiesDictionary.TryGetValue(dbEntity, out var patchEntities))
         {
-            var value = p.FirstOrDefault(q => q.Key.EqualsIgnoreCase(Id)).Value;
-            return value != null && value.ToString().Equals(idValueString);
-        }) ?? new ExpandoObject();
+            _patchEntity = patchEntities.Find(p =>
+            {
+                var value = p.FirstOrDefault(q => q.Key.EqualsIgnoreCase(Id)).Value;
+                return value != null && value.ToString().Equals(idValueString);
+            }) ?? new ExpandoObject();
+        }
+        else
+        {
+            _patchEntity = _patchEntities.Find(p =>
+            {
+                var value = p.FirstOrDefault(q => q.Key.EqualsIgnoreCase(Id)).Value;
+                return value != null && value.ToString().Equals(idValueString);
+            }) ?? new ExpandoObject();
+        }
+
+        _entityProperties = entityProperties;
 
         return idValueString;
     }
@@ -522,20 +540,12 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
             {
                 if (outEntity is Entity entity)
                 {
-                    if (value != null)
-                    {
-                        CreatePatchDocument(entity, value, nameof(ApplyOneToOneParentDominance));
-                    }
+                    CreatePatchDocument(entity, value, nameof(ApplyOneToOneParentDominance));
                 }
 
-                if (outEntity is IEnumerable<Entity> entities)
+                if (outEntity is IEnumerable<Entity> outEntities)
                 {
-                    var entitiesList = entities.ToList();
-
-                    if (value != null && entitiesList.Count != 0)
-                    {
-                        CreatePatchDocument(entitiesList, value, nameof(ApplyOneToOneParentDominance));
-                    }
+                    CreatePatchDocument(outEntities.ToList(), value, nameof(ApplyOneToOneParentDominance));
                 }
             }
         }
@@ -563,7 +573,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         methodInfo!.Invoke(patchDocument, new object[] { outEntity });
     }
 
-    private static void CreatePatchDocument(IList<Entity> outEntities, object value, string applyMethodName)
+    private static void CreatePatchDocument(List<Entity> outEntities, object value, string applyMethodName)
     {
         if (value == null || outEntities.Count == 0)
         {
@@ -944,17 +954,41 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     {
         if (commonProperty.InquireOneToOneNavigability(dbEntity, out var outEntity))
         {
-            ApplyInternal(outEntity);
+            if (value != null)
+            {
+                StoreShallowOriginalValues(dbEntity, commonProperty);
+
+                _entityPropertiesDictionary.Add(outEntity, outEntity.GetRealType().GetProperties());
+
+                _patchEntitiesDictionary.Add(outEntity, new List<ExpandoObject> { (ExpandoObject)value });
+
+                ApplyInternal(outEntity);
+            }
+
+            _entityProperties = dbEntity.GetRealType().GetProperties();
 
             return true;
         }
 
         if (commonProperty.InquireOneToManyNavigability(dbEntity, out var outEntities))
         {
-            foreach (var unitEntity in outEntities)
+            if (value != null && outEntities.Count != 0)
             {
-                ApplyInternal(unitEntity);
+                foreach (var unitEntity in outEntities)
+                {
+                    StoreShallowOriginalValues(dbEntity, commonProperty);
+
+                    _patchEntitiesDictionary.Add(unitEntity, (List<ExpandoObject>)value);
+
+                    _entityPropertiesDictionary.Add(unitEntity, unitEntity.GetRealType().GetProperties());
+
+                    ApplyInternal(unitEntity);
+
+                    _entityProperties = dbEntity.GetRealType().GetProperties();
+                }
             }
+
+            _entityProperties = dbEntity.GetRealType().GetProperties();
 
             return true;
         }
@@ -964,22 +998,72 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
     private void ApplyInternal(Entity dbEntity)
     {
+        var idValueString = SetPatchEntity(dbEntity);
 
+        foreach ((string property, object value) in _patchEntity)
+        {
+            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
+
+            if (commonProperty != null)
+            {
+                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
+                {
+                    AddErrorResult(idValueString, property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+                    continue;
+                }
+
+                try
+                {
+                    StoreShallowOriginalValues(dbEntity, commonProperty);
+
+                    if (NavigationPatchOperation(dbEntity, commonProperty, value)) continue;
+
+                    object castedValue = CastCorrectValue(commonProperty, value);
+
+                    commonProperty.SetValue(dbEntity, castedValue);
+
+                }
+                catch (Exception exception)
+                {
+                    AddErrorResult(idValueString, commonProperty.Name, value?.ToString(), exception.Message);
+
+                    Failed();
+                }
+            }
+            else
+            {
+                AddErrorResult(idValueString, property, value?.ToString(), PatchError.PropertyMatchingFailed);
+
+                Failed();
+            }
+        }
+
+        if (dbEntity is IPatchValidator patchValidator)
+        {
+            if (OperationFailed() || !patchValidator.OnPatchCompleted())
+            {
+                RestoreOriginalValues(dbEntity);
+            }
+        }
+        else
+        {
+            RestoreOriginalValues(dbEntity);
+        }
+
+        OperationReStart();
     }
 
-    private void StoreOriginalValues(TEntity dbEntity, PropertyInfo commonProperty, IDictionary<TEntity, Dictionary<PropertyInfo, object>> originalValuesCollection)
+    private void StoreOriginalValues(Entity dbEntity, PropertyInfo commonProperty, object originalValue)
     {
-        object originalValue = commonProperty.GetValue(dbEntity);
-
-        if (originalValuesCollection.ContainsKey(dbEntity))
+        if (_originalValuesCollection.ContainsKey(dbEntity))
         {
-            originalValuesCollection[dbEntity].Add(commonProperty, originalValue);
+            _originalValuesCollection[dbEntity].Add(commonProperty, originalValue);
         }
         else
         {
             Dictionary<PropertyInfo, object> originalValues = new() { { commonProperty, originalValue } };
 
-            originalValuesCollection.Add(dbEntity, originalValues);
+            _originalValuesCollection.Add(dbEntity, originalValues);
         }
     }
 
@@ -1012,33 +1096,5 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         var originalValuesCollection = new Dictionary<TEntity, Dictionary<PropertyInfo, object>>();
 
         _failed = false;
-    }
-
-    internal static bool InquireOneToOneNavigability(PropertyInfo commonProperty, TEntity sourceEntity, out Entity outEntity)
-    {
-        if (commonProperty.GetValue(sourceEntity) is Entity dbEntity)
-        {
-            outEntity = dbEntity;
-            return true;
-        }
-        else
-        {
-            outEntity = null;
-            return false;
-        }
-    }
-
-    internal static bool InquireOneToManyNavigability(PropertyInfo commonProperty, TEntity sourceEntity, out List<Entity> outEntities)
-    {
-        if (commonProperty.GetValue(sourceEntity) is IEnumerable<Entity> dbEntities)
-        {
-            outEntities = dbEntities.ToList();
-            return true;
-        }
-        else
-        {
-            outEntities = null;
-            return false;
-        }
     }
 }

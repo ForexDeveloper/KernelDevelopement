@@ -560,20 +560,12 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
             {
                 if (outEntity is Entity entity)
                 {
-                    if (value != null)
-                    {
-                        CreatePatchDocument(entity, value, nameof(ApplyOneToOneParentDominance));
-                    }
+                    CreatePatchDocument(entity, value, nameof(ApplyOneToOneParentDominance));
                 }
 
-                if (outEntity is IEnumerable<Entity> entities)
+                if (outEntity is IEnumerable<Entity> outEntities)
                 {
-                    var entitiesList = entities.ToList();
-
-                    if (value != null && entitiesList.Count != 0)
-                    {
-                        CreatePatchDocument(entitiesList, value, nameof(ApplyOneToOneParentDominance));
-                    }
+                    CreatePatchDocument(outEntities.ToList(), value, nameof(ApplyOneToOneParentDominance));
                 }
             }
         }
@@ -601,7 +593,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         methodInfo!.Invoke(patchDocument, new object[] { outEntity });
     }
 
-    private static void CreatePatchDocument(IList<Entity> outEntities, object value, string applyMethodName)
+    private static void CreatePatchDocument(List<Entity> outEntities, object value, string applyMethodName)
     {
         if (value == null || outEntities.Count == 0)
         {
@@ -1023,33 +1015,5 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         var originalValuesCollection = new Dictionary<TEntity, Dictionary<PropertyInfo, object>>();
 
         _failed = false;
-    }
-
-    internal static bool InquireOneToOneNavigability(PropertyInfo commonProperty, TEntity sourceEntity, out Entity outEntity)
-    {
-        if (commonProperty.GetValue(sourceEntity) is Entity dbEntity)
-        {
-            outEntity = dbEntity;
-            return true;
-        }
-        else
-        {
-            outEntity = null;
-            return false;
-        }
-    }
-
-    internal static bool InquireOneToManyNavigability(PropertyInfo commonProperty, TEntity sourceEntity, out List<Entity> outEntities)
-    {
-        if (commonProperty.GetValue(sourceEntity) is IEnumerable<Entity> dbEntities)
-        {
-            outEntities = dbEntities.ToList();
-            return true;
-        }
-        else
-        {
-            outEntities = null;
-            return false;
-        }
     }
 }

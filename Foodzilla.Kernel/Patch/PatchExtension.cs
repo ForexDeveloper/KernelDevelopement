@@ -63,7 +63,7 @@ internal static class PatchExtension
         }
     }
 
-    internal static bool InquireOneToManyNavigability<TEntity>(this PropertyInfo commonProperty, TEntity sourceEntity, out IList<Entity> outEntities)
+    internal static bool InquireOneToManyNavigability<TEntity>(this PropertyInfo commonProperty, TEntity sourceEntity, out List<Entity> outEntities)
     {
         if (commonProperty.GetValue(sourceEntity) is IEnumerable<Entity> dbEntities)
         {

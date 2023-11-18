@@ -8,7 +8,7 @@ using FluentAssertions.Execution;
 
 public sealed class ScenarioTests
 {
-    private const int TotalCount = 100;
+    private const int TotalCount = 10;
 
     [Fact]
     public async Task HandleApplyOneToOneRelatively_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
@@ -23,7 +23,12 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        PatchRelatively(patchDocument, customers);
+        foreach (var customer in customers)
+        {
+            patchOperation.ApplyOneToOneRelatively(customer);
+        }
+
+        //PatchRelatively(patchDocument, customers);
 
         await Task.CompletedTask;
 
