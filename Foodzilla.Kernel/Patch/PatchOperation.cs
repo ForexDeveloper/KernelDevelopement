@@ -24,15 +24,9 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     private Dictionary<Entity, Dictionary<PropertyInfo, object>> _originalValuesCollection;
 
 
-    private Dictionary<Entity, Entity> _entityDictionary = new();
-
-    private Dictionary<Entity, ExpandoObject> _patchEntityDictionary = new();
-
     private readonly Dictionary<Entity, PropertyInfo[]> _entityPropertiesDictionary = new();
 
     private readonly Dictionary<Entity, List<ExpandoObject>> _patchEntitiesDictionary = new();
-
-    private Dictionary<Entity, Dictionary<PropertyInfo, object>> _originalValuesCollectionDictionary;
 
 
     public List<string> EntityIds { get; private set; }
@@ -192,6 +186,63 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         OperationReStart();
 
         return true;
+    }
+
+    private void ApplyInternal(Entity dbEntity)
+    {
+        var idValueString = SetPatchEntity(dbEntity);
+
+        foreach ((string property, object value) in _patchEntity)
+        {
+            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
+
+            if (commonProperty != null)
+            {
+                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
+                {
+                    AddErrorResult(idValueString, property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+                    continue;
+                }
+
+                try
+                {
+                    if (NavigationPatchOperation(dbEntity, commonProperty, value)) continue;
+
+                    StoreShallowOriginalValues(dbEntity, commonProperty);
+
+                    object castedValue = CastCorrectValue(commonProperty, value);
+
+                    commonProperty.SetValue(dbEntity, castedValue);
+
+                }
+                catch (Exception exception)
+                {
+                    AddErrorResult(idValueString, commonProperty.Name, value?.ToString(), exception.Message);
+
+                    Failed();
+                }
+            }
+            else
+            {
+                AddErrorResult(idValueString, property, value?.ToString(), PatchError.PropertyMatchingFailed);
+
+                Failed();
+            }
+        }
+
+        if (dbEntity is IPatchValidator patchValidator)
+        {
+            if (OperationFailed() || !patchValidator.OnPatchCompleted())
+            {
+                RestoreOriginalValues(dbEntity);
+            }
+        }
+        else
+        {
+            RestoreOriginalValues(dbEntity);
+        }
+
+        OperationReStart();
     }
 
     /// <summary>
@@ -974,17 +1025,15 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         {
             if (value != null && outEntities.Count != 0)
             {
+                StoreShallowOriginalValues(dbEntity, commonProperty);
+
                 foreach (var unitEntity in outEntities)
                 {
-                    StoreShallowOriginalValues(dbEntity, commonProperty);
-
                     _patchEntitiesDictionary.Add(unitEntity, (List<ExpandoObject>)value);
 
                     _entityPropertiesDictionary.Add(unitEntity, unitEntity.GetRealType().GetProperties());
 
                     ApplyInternal(unitEntity);
-
-                    _entityProperties = dbEntity.GetRealType().GetProperties();
                 }
             }
 
@@ -994,63 +1043,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         }
 
         return false;
-    }
-
-    private void ApplyInternal(Entity dbEntity)
-    {
-        var idValueString = SetPatchEntity(dbEntity);
-
-        foreach ((string property, object value) in _patchEntity)
-        {
-            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
-
-            if (commonProperty != null)
-            {
-                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
-                {
-                    AddErrorResult(idValueString, property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
-                    continue;
-                }
-
-                try
-                {
-                    StoreShallowOriginalValues(dbEntity, commonProperty);
-
-                    if (NavigationPatchOperation(dbEntity, commonProperty, value)) continue;
-
-                    object castedValue = CastCorrectValue(commonProperty, value);
-
-                    commonProperty.SetValue(dbEntity, castedValue);
-
-                }
-                catch (Exception exception)
-                {
-                    AddErrorResult(idValueString, commonProperty.Name, value?.ToString(), exception.Message);
-
-                    Failed();
-                }
-            }
-            else
-            {
-                AddErrorResult(idValueString, property, value?.ToString(), PatchError.PropertyMatchingFailed);
-
-                Failed();
-            }
-        }
-
-        if (dbEntity is IPatchValidator patchValidator)
-        {
-            if (OperationFailed() || !patchValidator.OnPatchCompleted())
-            {
-                RestoreOriginalValues(dbEntity);
-            }
-        }
-        else
-        {
-            RestoreOriginalValues(dbEntity);
-        }
-
-        OperationReStart();
     }
 
     private void StoreOriginalValues(Entity dbEntity, PropertyInfo commonProperty, object originalValue)

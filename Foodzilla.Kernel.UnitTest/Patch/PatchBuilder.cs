@@ -163,7 +163,7 @@ public sealed class PatchBuilder
 
         return patchEntities;
     }
-
+    
     public static List<ExpandoObject> CreatePatchEntities(List<Customer> customers)
     {
         var now = DateTimeOffset.Now;
@@ -333,10 +333,10 @@ public sealed class PatchBuilder
         var faker = new Faker();
         var now = DateTimeOffset.Now;
         var @string = faker.Random.ToString();
-        var name = faker.Name.Random.ToString();
-        var family = faker.Name.Random.ToString();
-        var nullableString = faker.Random.ToString();
-        var nationalCode = faker.Phone.Random.AlphaNumeric(10);
+        var name = "Customer";
+        var family = "Customer";
+        var nullableString = "Customer";
+        var nationalCode = "2373850214";
 
         return Customer.Create(id,
             name!,
@@ -367,10 +367,10 @@ public sealed class PatchBuilder
         var faker = new Faker();
         var now = DateTimeOffset.Now;
         var @string = faker.Random.ToString();
-        var name = faker.Name.Random.ToString();
-        var family = faker.Name.Random.ToString();
-        var nullableString = faker.Random.ToString();
-        var nationalCode = faker.Phone.Random.AlphaNumeric(10);
+        var name = "Order";
+        var family = "Order";
+        var nullableString = "Order";
+        var nationalCode = "2373850214";
 
         return Order.Create(id,
             name!,

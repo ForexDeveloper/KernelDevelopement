@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using Foodzilla.Kernel.Domain;
+﻿using System.Dynamic;
+using Newtonsoft.Json;
 using System.Reflection;
-using System.Text.Json;
+using Foodzilla.Kernel.Domain;
 
 namespace Foodzilla.Kernel.Patch;
 
@@ -30,9 +30,9 @@ internal static class PatchExtension
         return propertyType == typeof(bool);
     }
 
-    internal static JsonElement JsonElement(this object @object)
+    internal static ExpandoObject Clone(this ExpandoObject expando)
     {
-        return JsonSerializer.SerializeToElement(@object);
+        return JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(expando));
     }
 
     internal static bool InquireNullability(this PropertyInfo commonProperty, out Type propertyType)

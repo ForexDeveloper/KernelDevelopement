@@ -5,6 +5,7 @@ using System.Dynamic;
 using FluentAssertions;
 using Foodzilla.Kernel.Patch;
 using FluentAssertions.Execution;
+using Newtonsoft.Json;
 
 public sealed class ScenarioTests
 {
@@ -63,7 +64,14 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchRelatively(patchDocument, customers);
+        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
+
+        foreach (var customer in customers)
+        {
+            patchOperation.ApplyOneToOneRelatively(customer);
+        }
+
+        //PatchRelatively(patchDocument, customers);
 
         await Task.CompletedTask;
 
@@ -334,60 +342,7 @@ public sealed class ScenarioTests
 
     private static List<ExpandoObject> CreateCompletePatchEntities(List<Customer> customers)
     {
-        var patchEntities = new List<ExpandoObject>();
-
-        foreach (dynamic customer in customers)
-        {
-            dynamic navigationListOrder = new List<ExpandoObject>();
-            dynamic navigationListCustomer = new List<ExpandoObject>();
-
-            dynamic navigationListOrder1 = new List<ExpandoObject>();
-            dynamic navigationListCustomer1 = new List<ExpandoObject>();
-
-            var patchEntity = CreatePatchEntity(customer.Id);
-            var navigationOrder = CreatePatchEntity(customer.Id);
-            var navigationCustomer = CreatePatchEntity(customer.Id);
-
-            patchEntity.NavigationOrder = navigationOrder;
-            patchEntity.NavigationCustomer = navigationCustomer;
-
-            foreach (var navigateItem in customer.NavigationListCustomer)
-            {
-                var navigationOrderItem = CreatePatchEntity(navigateItem.Id);
-                var navigationCustomerItem = CreatePatchEntity(navigateItem.Id);
-
-                navigationListOrder.Add(navigationOrderItem);
-                navigationListCustomer.Add(navigationCustomerItem);
-
-                patchEntity.NavigationListOrder = navigationListOrder;
-                patchEntity.NavigationListCustomer = navigationListCustomer;
-
-                var navigationOrder1 = CreatePatchEntity(navigateItem.Id);
-                var navigationCustomer1 = CreatePatchEntity(navigateItem.Id);
-
-                patchEntity.NavigationCustomer.NavigationOrder = navigationOrder1;
-                patchEntity.NavigationCustomer.NavigationCustomer = navigationCustomer1;
-
-                navigationListOrder1.Add(navigationOrderItem);
-                navigationListCustomer1.Add(navigationCustomerItem);
-
-                patchEntity.NavigationCustomer.NavigationListOrder = navigationListOrder1;
-                patchEntity.NavigationCustomer.NavigationListCustomer = navigationListCustomer1;
-
-                patchEntity.NavigationOrder.NavigationListOrder = navigationListOrder1;
-
-                dynamic navigationListOrder2 = new List<ExpandoObject>();
-
-                foreach (var navigationOrderItem1 in customer.NavigationListCustomer[0].NavigationListOrder)
-                {
-                    var navigationOrderItem2 = CreatePatchEntity(navigationOrderItem1.Id);
-                    navigationCustomerItem.NavigationListOrder = navigationListOrder2;
-                    navigationListOrder2.Add(navigationOrderItem2);
-                }
-            }
-
-            patchEntities.Add(patchEntity);
-        }
+        var patchEntities = CreateValidPatchEntities(customers);
 
         return patchEntities;
     }
@@ -404,6 +359,8 @@ public sealed class ScenarioTests
             dynamic navigationListOrder1 = new List<ExpandoObject>();
             dynamic navigationListCustomer1 = new List<ExpandoObject>();
 
+            dynamic navigationListOrder2 = new List<ExpandoObject>();
+
             var patchEntity = CreatePatchEntity(customer.Id);
             var navigationOrder = CreatePatchEntity(customer.Id);
             var navigationCustomer = CreatePatchEntity(customer.Id);
@@ -428,21 +385,26 @@ public sealed class ScenarioTests
                 patchEntity.NavigationCustomer.NavigationOrder = navigationOrder1;
                 patchEntity.NavigationCustomer.NavigationCustomer = navigationCustomer1;
 
-                navigationListOrder1.Add(navigationOrderItem);
-                navigationListCustomer1.Add(navigationCustomerItem);
+                var navigationOrderItem1 = CreatePatchEntity(navigateItem.Id);
+                var navigationCustomerItem1 = CreatePatchEntity(navigateItem.Id);
+
+                navigationListOrder1.Add(navigationOrderItem1);
+                navigationListCustomer1.Add(navigationCustomerItem1);
 
                 patchEntity.NavigationCustomer.NavigationListOrder = navigationListOrder1;
                 patchEntity.NavigationCustomer.NavigationListCustomer = navigationListCustomer1;
 
-                patchEntity.NavigationOrder.NavigationListOrder = navigationListOrder1;
+                var navigationOrderItem2 = CreatePatchEntity(navigateItem.Id);
+                navigationListOrder2.Add(navigationOrderItem2);
+                patchEntity.NavigationOrder.NavigationListOrder = navigationListOrder2;
 
-                dynamic navigationListOrder2 = new List<ExpandoObject>();
+                dynamic navigationListOrder3 = new List<ExpandoObject>();
 
-                foreach (var navigationOrderItem1 in customer.NavigationListCustomer[0].NavigationListOrder)
+                foreach (var item in customer.NavigationListCustomer[0].NavigationListOrder)
                 {
-                    var navigationOrderItem2 = CreatePatchEntity(navigationOrderItem1.Id);
-                    navigationCustomerItem.NavigationListOrder = navigationListOrder2;
-                    navigationListOrder2.Add(navigationOrderItem2);
+                    var navigationOrderItem3 = CreatePatchEntity(item.Id);
+                    navigationCustomerItem.NavigationListOrder = navigationListOrder3;
+                    navigationListOrder3.Add(navigationOrderItem3);
                 }
             }
 
@@ -533,6 +495,73 @@ public sealed class ScenarioTests
         return patchEntities;
     }
 
+    private static List<ExpandoObject> CreateValidPatchEntities(List<Customer> customers)
+    {
+        var patchEntities = new List<ExpandoObject>();
+
+        foreach (dynamic customer in customers)
+        {
+            dynamic navigationListOrder = new List<ExpandoObject>();
+            dynamic navigationListCustomer = new List<ExpandoObject>();
+
+            dynamic navigationListOrder1 = new List<ExpandoObject>();
+            dynamic navigationListCustomer1 = new List<ExpandoObject>();
+
+            dynamic navigationListOrder2 = new List<ExpandoObject>();
+
+            var patchEntity = CreatePatchEntity(customer.Id);
+            var navigationOrder = CreatePatchEntity(customer.Id);
+            var navigationCustomer = CreatePatchEntity(customer.Id);
+
+            patchEntity.NavigationOrder = navigationOrder;
+            patchEntity.NavigationCustomer = navigationCustomer;
+
+            foreach (var navigateItem in customer.NavigationListCustomer)
+            {
+                var navigationOrderItem = CreatePatchEntity(navigateItem.Id);
+                var navigationCustomerItem = CreatePatchEntity(navigateItem.Id);
+
+                navigationListOrder.Add(navigationOrderItem);
+                navigationListCustomer.Add(navigationCustomerItem);
+
+                patchEntity.NavigationListOrder = navigationListOrder;
+                patchEntity.NavigationListCustomer = navigationListCustomer;
+
+                var navigationOrder1 = CreatePatchEntity(navigateItem.Id);
+                var navigationCustomer1 = CreatePatchEntity(navigateItem.Id);
+
+                patchEntity.NavigationCustomer.NavigationOrder = navigationOrder1;
+                patchEntity.NavigationCustomer.NavigationCustomer = navigationCustomer1;
+
+                var navigationOrderItem1 = CreatePatchEntity(navigateItem.Id);
+                var navigationCustomerItem1 = CreatePatchEntity(navigateItem.Id);
+
+                navigationListOrder1.Add(navigationOrderItem1);
+                navigationListCustomer1.Add(navigationCustomerItem1);
+
+                patchEntity.NavigationCustomer.NavigationListOrder = navigationListOrder1;
+                patchEntity.NavigationCustomer.NavigationListCustomer = navigationListCustomer1;
+
+                var navigationOrderItem2 = CreatePatchEntity(navigateItem.Id);
+                navigationListOrder2.Add(navigationOrderItem2);
+                patchEntity.NavigationOrder.NavigationListOrder = navigationListOrder2;
+
+                dynamic navigationListOrder3 = new List<ExpandoObject>();
+
+                foreach (var item in customer.NavigationListCustomer[0].NavigationListOrder)
+                {
+                    var navigationOrderItem3 = CreatePatchEntity(item.Id);
+                    navigationCustomerItem.NavigationListOrder = navigationListOrder3;
+                    navigationListOrder3.Add(navigationOrderItem3);
+                }
+            }
+
+            patchEntities.Add(patchEntity);
+        }
+
+        return patchEntities;
+    }
+
     private static ExpandoObject CreatePatchEntity(int id)
     {
         var now = DateTimeOffset.Now;
@@ -584,4 +613,75 @@ public sealed class ScenarioTests
             patchDocument.ApplyOneToOneParentDominance(customer);
         }
     }
+
+    private static ExpandoObject Clone(dynamic @object)
+    {
+        return JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(@object));
+    }
+
+
+    #region OldVersion
+
+    private static List<ExpandoObject> OldVersionCreatePatchEntities(List<Customer> customers)
+    {
+        var patchEntities = new List<ExpandoObject>();
+
+        foreach (dynamic customer in customers)
+        {
+            dynamic navigationListOrder = new List<ExpandoObject>();
+            dynamic navigationListCustomer = new List<ExpandoObject>();
+
+            dynamic navigationListOrder1 = new List<ExpandoObject>();
+            dynamic navigationListCustomer1 = new List<ExpandoObject>();
+
+            var patchEntity = CreatePatchEntity(customer.Id);
+            var navigationOrder = CreatePatchEntity(customer.Id);
+            var navigationCustomer = CreatePatchEntity(customer.Id);
+
+            patchEntity.NavigationOrder = navigationOrder;
+            patchEntity.NavigationCustomer = navigationCustomer;
+
+            foreach (var navigateItem in customer.NavigationListCustomer)
+            {
+                var navigationOrderItem = CreatePatchEntity(navigateItem.Id);
+                var navigationCustomerItem = CreatePatchEntity(navigateItem.Id);
+
+                navigationListOrder.Add(navigationOrderItem);
+                navigationListCustomer.Add(navigationCustomerItem);
+
+                patchEntity.NavigationListOrder = navigationListOrder;
+                patchEntity.NavigationListCustomer = navigationListCustomer;
+
+                var navigationOrder1 = CreatePatchEntity(navigateItem.Id);
+                var navigationCustomer1 = CreatePatchEntity(navigateItem.Id);
+
+                patchEntity.NavigationCustomer.NavigationOrder = navigationOrder1;
+                patchEntity.NavigationCustomer.NavigationCustomer = navigationCustomer1;
+
+                navigationListOrder1.Add(navigationOrderItem);
+                navigationListCustomer1.Add(navigationCustomerItem);
+
+                patchEntity.NavigationCustomer.NavigationListOrder = navigationListOrder1;
+                patchEntity.NavigationCustomer.NavigationListCustomer = navigationListCustomer1;
+
+                patchEntity.NavigationOrder.NavigationListOrder = navigationListOrder1;
+
+                dynamic navigationListOrder2 = new List<ExpandoObject>();
+
+                foreach (var navigationOrderItem1 in customer.NavigationListCustomer[0].NavigationListOrder)
+                {
+                    var navigationOrderItem2 = CreatePatchEntity(navigationOrderItem1.Id);
+                    navigationCustomerItem.NavigationListOrder = navigationListOrder2;
+                    navigationListOrder2.Add(navigationOrderItem2);
+                }
+            }
+
+            patchEntities.Add(patchEntity);
+        }
+
+        return patchEntities;
+    }
+
+
+    #endregion
 }
