@@ -2,14 +2,14 @@
 
 using Xunit;
 using System.Dynamic;
+using Newtonsoft.Json;
 using FluentAssertions;
 using Foodzilla.Kernel.Patch;
 using FluentAssertions.Execution;
-using Newtonsoft.Json;
 
 public sealed class ScenarioTests
 {
-    private const int TotalCount = 10;
+    private const int TotalCount = 10000;
 
     [Fact]
     public async Task HandleApplyOneToOneRelatively_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
@@ -22,14 +22,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
-
-        foreach (var customer in customers)
-        {
-            patchOperation.ApplyOneToOneRelatively(customer);
-        }
-
-        //PatchRelatively(patchDocument, customers);
+        PatchRelatively(patchDocument, customers);
 
         await Task.CompletedTask;
 
@@ -64,14 +57,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
-
-        foreach (var customer in customers)
-        {
-            patchOperation.ApplyOneToOneRelatively(customer);
-        }
-
-        //PatchRelatively(patchDocument, customers);
+        PatchRelatively(patchDocument, customers);
 
         await Task.CompletedTask;
 
@@ -340,6 +326,348 @@ public sealed class ScenarioTests
         }
     }
 
+    [Fact]
+    public async Task HandleApplyFastOneToOneRelatively_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
+    {
+        const int totalCount = 10;
+
+        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
+
+        var patchEntities = CreateCompletePatchEntities(customers);
+
+        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
+
+        foreach (var customer in customers)
+        {
+            patchOperation.ApplyOneToOneRelatively(customer);
+        }
+
+        await Task.CompletedTask;
+
+        using (new AssertionScope())
+        {
+            customers.All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+        }
+    }
+
+    [Fact]
+    public async Task HandleApplyFastOneToOneRelatively_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAllEntities()
+    {
+        const int totalCount = 10;
+
+        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
+
+        var patchEntities = CreateRootInvalidPatchEntities(customers);
+
+        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
+
+        foreach (var customer in customers)
+        {
+            patchOperation.ApplyOneToOneRelatively(customer);
+        }
+
+        await Task.CompletedTask;
+
+        using (new AssertionScope())
+        {
+            customers.All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+        }
+    }
+
+    [Fact]
+    public async Task HandleApplyFastOneToOneRelatively_WhenMiddleLayerOfPatchEntitiesAreInvalid_ShouldNotPatchAllEntities()
+    {
+        const int totalCount = 10;
+
+        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
+
+        var patchEntities = CreateMiddleInvalidPatchEntities(customers);
+
+        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
+
+        foreach (var customer in customers)
+        {
+            patchOperation.ApplyOneToOneRelatively(customer);
+        }
+
+        await Task.CompletedTask;
+
+        using (new AssertionScope())
+        {
+            customers.All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+        }
+    }
+
+    [Fact]
+    public async Task HandleApplyFastOneToOneParentDominance_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
+    {
+        const int totalCount = 10;
+
+        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
+
+        var patchEntities = CreateCompletePatchEntities(customers);
+
+        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
+
+        foreach (var customer in customers)
+        {
+            patchOperation.ApplyOneToOneParentDominance(customer);
+        }
+
+        await Task.CompletedTask;
+
+        using (new AssertionScope())
+        {
+            customers.All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+        }
+    }
+
+    [Fact]
+    public async Task HandleApplyFastOneToOneParentDominance_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAny()
+    {
+        const int totalCount = 10;
+
+        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
+
+        var patchEntities = CreateRootInvalidPatchEntities(customers);
+
+        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
+
+        foreach (var customer in customers)
+        {
+            patchOperation.ApplyOneToOneParentDominance(customer);
+        }
+
+        await Task.CompletedTask;
+
+        using (new AssertionScope())
+        {
+            customers.All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeFalse();
+        }
+    }
+
+    [Fact]
+    public async Task HandleApplyFastOneToOneParentDominance_WhenMiddleOfPatchEntitiesAreInvalid_ShouldNotPatchAll()
+    {
+        const int totalCount = 10;
+
+        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
+
+        var patchEntities = CreateMiddleInvalidPatchEntities(customers);
+
+        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
+
+        foreach (var customer in customers)
+        {
+            patchOperation.ApplyOneToOneParentDominance(customer);
+        }
+
+        await Task.CompletedTask;
+
+        using (new AssertionScope())
+        {
+            customers.All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+        }
+    }
+
+    [Fact]
+    public async Task HandleApplyFastOneToOneAbsolutely_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
+    {
+        const int totalCount = 10;
+
+        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
+
+        var patchEntities = CreateCompletePatchEntities(customers);
+
+        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
+
+        foreach (var customer in customers)
+        {
+            patchOperation.ApplyOneToOneAbsolutely(customer);
+        }
+
+        await Task.CompletedTask;
+
+        using (new AssertionScope())
+        {
+            customers.All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+        }
+    }
+
+    [Fact]
+    public async Task HandleApplyFastOneToOneAbsolutely_WhenRootOfPatchEntitiesAreInvalid_ShouldOnlyIgnorePatchForRoot()
+    {
+        const int totalCount = 10;
+
+        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
+
+        var patchEntities = CreateRootInvalidPatchEntities(customers);
+
+        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
+
+        foreach (var customer in customers)
+        {
+            patchOperation.ApplyOneToOneAbsolutely(customer);
+        }
+
+        await Task.CompletedTask;
+
+        using (new AssertionScope())
+        {
+            customers.All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+        }
+    }
+
+    [Fact]
+    public async Task HandleApplyFastOneToOneAbsolutely_WhenMiddleLayerOfPatchEntitiesAreInvalid_ShouldOnlyIgnorePatchForMiddle()
+    {
+        const int totalCount = 10;
+
+        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
+
+        var patchEntities = CreateMiddleInvalidPatchEntities(customers);
+
+        var patchOperation = PatchOperation<Customer>.Create(patchEntities);
+
+        foreach (var customer in customers)
+        {
+            patchOperation.ApplyOneToOneAbsolutely(customer);
+        }
+
+        await Task.CompletedTask;
+
+        using (new AssertionScope())
+        {
+            customers.All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+
+            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+
+            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+        }
+    }
+
     private static List<ExpandoObject> CreateCompletePatchEntities(List<Customer> customers)
     {
         var patchEntities = CreateValidPatchEntities(customers);
@@ -433,6 +761,8 @@ public sealed class ScenarioTests
             dynamic navigationListOrder1 = new List<ExpandoObject>();
             dynamic navigationListCustomer1 = new List<ExpandoObject>();
 
+            dynamic navigationListOrder2 = new List<ExpandoObject>();
+
             var patchEntity = CreatePatchEntity(customer.Id);
             var navigationOrder = CreatePatchEntity(customer.Id);
             var navigationCustomer = CreatePatchEntity(customer.Id);
@@ -457,21 +787,26 @@ public sealed class ScenarioTests
                 patchEntity.NavigationCustomer.NavigationOrder = navigationOrder1;
                 patchEntity.NavigationCustomer.NavigationCustomer = navigationCustomer1;
 
-                navigationListOrder1.Add(navigationOrderItem);
-                navigationListCustomer1.Add(navigationCustomerItem);
+                var navigationOrderItem1 = CreatePatchEntity(navigateItem.Id);
+                var navigationCustomerItem1 = CreatePatchEntity(navigateItem.Id);
+
+                navigationListOrder1.Add(navigationOrderItem1);
+                navigationListCustomer1.Add(navigationCustomerItem1);
 
                 patchEntity.NavigationCustomer.NavigationListOrder = navigationListOrder1;
                 patchEntity.NavigationCustomer.NavigationListCustomer = navigationListCustomer1;
 
-                patchEntity.NavigationOrder.NavigationListOrder = navigationListOrder1;
+                var navigationOrderItem2 = CreatePatchEntity(navigateItem.Id);
+                navigationListOrder2.Add(navigationOrderItem2);
+                patchEntity.NavigationOrder.NavigationListOrder = navigationListOrder2;
 
-                dynamic navigationListOrder2 = new List<ExpandoObject>();
+                dynamic navigationListOrder3 = new List<ExpandoObject>();
 
-                foreach (var navigationOrderItem1 in customer.NavigationListCustomer[0].NavigationListOrder)
+                foreach (var item in customer.NavigationListCustomer[0].NavigationListOrder)
                 {
-                    var navigationOrderItem2 = CreatePatchEntity(navigationOrderItem1.Id);
-                    navigationCustomerItem.NavigationListOrder = navigationListOrder2;
-                    navigationListOrder2.Add(navigationOrderItem2);
+                    var navigationOrderItem3 = CreatePatchEntity(item.Id);
+                    navigationCustomerItem.NavigationListOrder = navigationListOrder3;
+                    navigationListOrder3.Add(navigationOrderItem3);
                 }
             }
 
