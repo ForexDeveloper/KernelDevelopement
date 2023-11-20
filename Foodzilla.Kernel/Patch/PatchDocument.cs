@@ -20,9 +20,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     private PropertyInfo[] _entityProperties;
     private readonly IEnumerable<string> _ignoreFields;
     private readonly List<ExpandoObject> _patchEntities;
-    private readonly Dictionary<Entity, bool> _entitiesStatusCollection;
-    private readonly Dictionary<Entity, PropertyInfo[]> _entityPropertiesDictionary;
-    private readonly Dictionary<Entity, List<ExpandoObject>> _patchEntitiesDictionary;
     private readonly Dictionary<Entity, Dictionary<object, object>> _navigationProperties;
     private readonly Dictionary<Entity, Dictionary<PropertyInfo, object>> _originalValuesCollection;
 
@@ -44,9 +41,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         _ignoreFields = new List<string>();
         _entityProperties = typeof(TEntity).GetProperties();
         _patchEntities = new List<ExpandoObject> { patchEntity };
-        _entitiesStatusCollection = new Dictionary<Entity, bool>();
-        _entityPropertiesDictionary = new Dictionary<Entity, PropertyInfo[]>();
-        _patchEntitiesDictionary = new Dictionary<Entity, List<ExpandoObject>>();
         _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
         _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
 
@@ -61,9 +55,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
         _ignoreFields = new List<string>();
         _entityProperties = typeof(TEntity).GetProperties();
-        _entitiesStatusCollection = new Dictionary<Entity, bool>();
-        _entityPropertiesDictionary = new Dictionary<Entity, PropertyInfo[]>();
-        _patchEntitiesDictionary = new Dictionary<Entity, List<ExpandoObject>>();
         _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
         _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
     }
