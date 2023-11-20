@@ -13,8 +13,8 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     private static int total = 0;
     private const string Id = "Id";
 
-    internal Entity Entity;
     internal Guid Guid;
+    internal Entity Entity;
     private bool _failed = false;
     private ExpandoObject _patchEntity;
     private PropertyInfo[] _entityProperties;

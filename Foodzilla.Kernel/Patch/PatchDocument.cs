@@ -13,15 +13,18 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     private static int total = 0;
     private const string Id = "Id";
 
-    internal TEntity Entity;
     internal Guid Guid;
+    internal Entity Entity;
     private bool _failed = false;
     private ExpandoObject _patchEntity;
     private PropertyInfo[] _entityProperties;
+    private readonly IEnumerable<string> _ignoreFields;
     private readonly List<ExpandoObject> _patchEntities;
-    private readonly IEnumerable<string> _ignoreFields = new List<string>();
-    private Dictionary<TEntity, Dictionary<object, object>> _navigationProperties;
-    private Dictionary<TEntity, Dictionary<PropertyInfo, object>> _originalValuesCollection;
+    private readonly Dictionary<Entity, bool> _entitiesStatusCollection;
+    private readonly Dictionary<Entity, PropertyInfo[]> _entityPropertiesDictionary;
+    private readonly Dictionary<Entity, List<ExpandoObject>> _patchEntitiesDictionary;
+    private readonly Dictionary<Entity, Dictionary<object, object>> _navigationProperties;
+    private readonly Dictionary<Entity, Dictionary<PropertyInfo, object>> _originalValuesCollection;
 
     public List<string> EntityIds { get; private set; }
 
@@ -37,16 +40,32 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     {
         total++;
         Guid = new Guid();
+
+        _ignoreFields = new List<string>();
+        _entityProperties = typeof(TEntity).GetProperties();
         _patchEntities = new List<ExpandoObject> { patchEntity };
+        _entitiesStatusCollection = new Dictionary<Entity, bool>();
+        _entityPropertiesDictionary = new Dictionary<Entity, PropertyInfo[]>();
+        _patchEntitiesDictionary = new Dictionary<Entity, List<ExpandoObject>>();
+        _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
+        _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
+
         InitializeIds(webPathRoot);
     }
 
     private PatchDocument(List<ExpandoObject> patchEntities, string webPathRoot)
     {
         total++;
-        Guid = new Guid();
-        _patchEntities = patchEntities;
-        InitializeIds(webPathRoot);
+
+        _patchEntities = patchEntities ?? throw new NullReferenceException();
+
+        _ignoreFields = new List<string>();
+        _entityProperties = typeof(TEntity).GetProperties();
+        _entitiesStatusCollection = new Dictionary<Entity, bool>();
+        _entityPropertiesDictionary = new Dictionary<Entity, PropertyInfo[]>();
+        _patchEntitiesDictionary = new Dictionary<Entity, List<ExpandoObject>>();
+        _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
+        _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
     }
 
     public static PatchDocument<TEntity> Create(ExpandoObject patchEntity, string webPathRoot = null)
@@ -460,7 +479,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         }
 
         _entityProperties = typeof(TEntity).GetProperties();
-        _originalValuesCollection = new Dictionary<TEntity, Dictionary<PropertyInfo, object>>();
     }
 
     private void InitializeIds(string contentRootPath)
@@ -470,9 +488,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
             throw new NullReferenceException();
         }
 
-        _entityProperties = typeof(TEntity).GetProperties();
-        _navigationProperties = new Dictionary<TEntity, Dictionary<object, object>>();
-        _originalValuesCollection = new Dictionary<TEntity, Dictionary<PropertyInfo, object>>();
         EntityIds = _patchEntities.Select(p => p.FirstOrDefault(q => q.Key.EqualsIgnoreCase(Id)).Value?.ToString()).ToList();
     }
 
