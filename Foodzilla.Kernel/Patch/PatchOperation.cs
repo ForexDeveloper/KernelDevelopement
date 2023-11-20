@@ -20,14 +20,10 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     private PropertyInfo[] _entityProperties;
     private readonly List<ExpandoObject> _patchEntities;
     private readonly IEnumerable<string> _ignoreFields = new List<string>();
+    private readonly Dictionary<Entity, bool> _entitiesStatusCollection = new();
     private Dictionary<Entity, Dictionary<object, object>> _navigationProperties;
     private Dictionary<Entity, Dictionary<PropertyInfo, object>> _originalValuesCollection;
-
-
-    private readonly Dictionary<Entity, bool> _entitiesPatchStatus = new();
-
     private readonly Dictionary<Entity, PropertyInfo[]> _entityPropertiesDictionary = new();
-
     private readonly Dictionary<Entity, List<ExpandoObject>> _patchEntitiesDictionary = new();
 
 
@@ -1209,16 +1205,16 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
     private void Failed(Entity dbEntity)
     {
-        _entitiesPatchStatus.TryAdd(dbEntity, true);
+        _entitiesStatusCollection.TryAdd(dbEntity, true);
     }
 
     private bool OperationFailed(Entity dbEntity)
     {
-        return _entitiesPatchStatus.GetValueOrDefault(dbEntity);
+        return _entitiesStatusCollection.GetValueOrDefault(dbEntity);
     }
 
     private void OperationReStart(Entity dbEntity)
     {
-        _entitiesPatchStatus[dbEntity] = false;
+        _entitiesStatusCollection[dbEntity] = false;
     }
 }
