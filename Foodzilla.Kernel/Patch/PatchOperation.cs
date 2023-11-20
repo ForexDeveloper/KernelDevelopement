@@ -18,14 +18,13 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     private bool _failed = false;
     private ExpandoObject _patchEntity;
     private PropertyInfo[] _entityProperties;
+    private readonly IEnumerable<string> _ignoreFields;
     private readonly List<ExpandoObject> _patchEntities;
-    private readonly IEnumerable<string> _ignoreFields = new List<string>();
-    private readonly Dictionary<Entity, bool> _entitiesStatusCollection = new();
-    private Dictionary<Entity, Dictionary<object, object>> _navigationProperties;
-    private Dictionary<Entity, Dictionary<PropertyInfo, object>> _originalValuesCollection;
-    private readonly Dictionary<Entity, PropertyInfo[]> _entityPropertiesDictionary = new();
-    private readonly Dictionary<Entity, List<ExpandoObject>> _patchEntitiesDictionary = new();
-
+    private readonly Dictionary<Entity, bool> _entitiesStatusCollection;
+    private readonly Dictionary<Entity, PropertyInfo[]> _entityPropertiesDictionary;
+    private readonly Dictionary<Entity, List<ExpandoObject>> _patchEntitiesDictionary;
+    private readonly Dictionary<Entity, Dictionary<object, object>> _navigationProperties;
+    private readonly Dictionary<Entity, Dictionary<PropertyInfo, object>> _originalValuesCollection;
 
     public List<string> EntityIds { get; private set; }
 
@@ -41,7 +40,16 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     {
         total++;
         Guid = new Guid();
+
+        _ignoreFields = new List<string>();
+        _entityProperties = typeof(TEntity).GetProperties();
         _patchEntities = new List<ExpandoObject> { patchEntity };
+        _entitiesStatusCollection = new Dictionary<Entity, bool>();
+        _entityPropertiesDictionary = new Dictionary<Entity, PropertyInfo[]>();
+        _patchEntitiesDictionary = new Dictionary<Entity, List<ExpandoObject>>();
+        _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
+        _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
+
         InitializeIds(webPathRoot);
     }
 
@@ -50,10 +58,14 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         total++;
 
         _patchEntities = patchEntities ?? throw new NullReferenceException();
+
+        _ignoreFields = new List<string>();
         _entityProperties = typeof(TEntity).GetProperties();
+        _entitiesStatusCollection = new Dictionary<Entity, bool>();
+        _entityPropertiesDictionary = new Dictionary<Entity, PropertyInfo[]>();
+        _patchEntitiesDictionary = new Dictionary<Entity, List<ExpandoObject>>();
         _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
         _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
-        EntityIds = _patchEntities.Select(p => p.FirstOrDefault(q => q.Key.EqualsIgnoreCase(Id)).Value?.ToString()).ToList();
     }
 
     public static PatchOperation<TEntity> Create(ExpandoObject patchEntity, string webPathRoot = null)
@@ -523,7 +535,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         }
 
         _entityProperties = typeof(TEntity).GetProperties();
-        _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
+        //_originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
     }
 
     private void InitializeIds(string contentRootPath)
@@ -533,9 +545,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
             throw new NullReferenceException();
         }
 
-        _entityProperties = typeof(TEntity).GetProperties();
-        _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
-        _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
         EntityIds = _patchEntities.Select(p => p.FirstOrDefault(q => q.Key.EqualsIgnoreCase(Id)).Value?.ToString()).ToList();
     }
 
