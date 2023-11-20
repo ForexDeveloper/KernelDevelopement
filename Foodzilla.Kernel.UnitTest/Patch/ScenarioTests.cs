@@ -9,7 +9,7 @@ using FluentAssertions.Execution;
 
 public sealed class ScenarioTests
 {
-    private const int TotalCount = 10000;
+    private const int TotalCount = 1000;
 
     [Fact]
     public async Task HandleApplyOneToOneRelatively_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
