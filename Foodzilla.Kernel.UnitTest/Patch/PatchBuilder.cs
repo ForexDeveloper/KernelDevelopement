@@ -629,6 +629,41 @@ public sealed class Order : Entity, IPatchValidator
     }
 }
 
+public sealed class OrderItem
+{
+
+}
+
+public sealed class OrderItemHistory
+{
+
+}
+
+public sealed class CustomerIdentity
+{
+
+}
+
+public sealed class ShoppingCart
+{
+
+}
+
+public sealed class ShoppingCartItem
+{
+
+}
+
+public sealed class ShoppingCartItemHistory
+{
+
+}
+
+public sealed class ShoppingCartItemHistoryOption
+{
+
+}
+
 public enum RankingEnum
 {
     Normal = 0,
