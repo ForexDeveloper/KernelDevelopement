@@ -663,21 +663,6 @@ public sealed class ShoppingCartItemHistory
 
 }
 
-public sealed class ChiefTechnicalOfficer
-{
-
-}
-
-public sealed class TechnicalTeamLead
-{
-
-}
-
-public sealed class SeniorDeveloper
-{
-
-}
-
 public sealed class MidLevelDeveloper
 {
 
@@ -689,36 +674,6 @@ public sealed class JuniorDeveloper
 }
 
 public sealed class FresherDeveloper
-{
-
-}
-
-public sealed class ChiefProductOfficer
-{
-
-}
-
-public sealed class ProductTeamLead
-{
-
-}
-
-public sealed class SeniorProductManager
-{
-
-}
-
-public sealed class ChiefMarketingOfficer
-{
-
-}
-
-public sealed class MarketingTeamLead
-{
-
-}
-
-public sealed class SeniorMarketing
 {
 
 }
