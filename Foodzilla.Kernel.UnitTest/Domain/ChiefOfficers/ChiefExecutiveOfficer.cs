@@ -26,6 +26,21 @@ public sealed class ChiefExecutiveOfficer : ChiefUnitIdentity, IPatchValidator
         return new ChiefExecutiveOfficer(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, assignedOrganization);
     }
 
+    public void AddChiefTechnicalOfficer(ChiefTechnicalOfficer chiefTechnicalOfficer)
+    {
+        ChiefTechnicalOfficer = chiefTechnicalOfficer;
+    }
+
+    public void AddChiefChiefProductOfficer(ChiefProductOfficer chiefProductOfficer)
+    {
+        ChiefProductOfficer = chiefProductOfficer;
+    }
+
+    public void AddChiefMarketingOfficer(ChiefMarketingOfficer chiefMarketingOfficer)
+    {
+        ChiefMarketingOfficer = chiefMarketingOfficer;
+    }
+
     public bool OnPatchCompleted()
     {
         return true;

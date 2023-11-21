@@ -1,20 +1,31 @@
 ﻿using Foodzilla.Kernel.Patch;
 using Foodzilla.Kernel.UnitTest.Domain.Juniors;
+using Foodzilla.Kernel.UnitTest.Domain.Seniors;
 
 namespace Foodzilla.Kernel.UnitTest.Domain.MidLevels;
 
 public sealed class MidlevelProductManager : Identity<long>, IPatchValidator
 {
-    public IReadOnlyCollection<JuniorProductManager>? Juniors { get; private set; }
+    public long SeniorProductManagerId { get; private set; }
 
-    private MidlevelProductManager(string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart)
+    public SeniorProductManager SeniorProductManager { get; private set; }
+
+    public IList<JuniorProductManager> Juniors => new List<JuniorProductManager>();
+
+    private MidlevelProductManager(string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, long seniorProductManagerId)
         : base(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart)
     {
+        SeniorProductManagerId = seniorProductManagerId;
     }
 
-    public static MidlevelProductManager Create(string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart)
+    public static MidlevelProductManager Create(string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, long seniorProductManagerId)
     {
-        return new MidlevelProductManager(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart);
+        return new MidlevelProductManager(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, seniorProductManagerId);
+    }
+
+    public void AddJuniorProductManager(JuniorProductManager junior)
+    {
+        Juniors.Add(junior);
     }
 
     public bool OnPatchCompleted()

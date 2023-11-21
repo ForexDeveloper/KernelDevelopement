@@ -663,17 +663,6 @@ public sealed class ShoppingCartItemHistory
 
 }
 
-
-public sealed class JuniorDeveloper
-{
-
-}
-
-public sealed class FresherDeveloper
-{
-
-}
-
 public enum RankingEnum
 {
     Normal = 0,
