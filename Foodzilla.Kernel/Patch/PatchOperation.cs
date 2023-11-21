@@ -97,7 +97,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
                     AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
                     continue;
                 }
-
+                 
                 try
                 {
                     StoreDeepOriginalValues(dbEntity, commonProperty);
