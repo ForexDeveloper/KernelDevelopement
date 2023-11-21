@@ -663,10 +663,6 @@ public sealed class ShoppingCartItemHistory
 
 }
 
-public sealed class ChiefTechnicalOfficer
-{
-
-}
 
 public sealed class TechnicalTeamLead
 {
