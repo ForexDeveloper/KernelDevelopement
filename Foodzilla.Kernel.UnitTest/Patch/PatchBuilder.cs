@@ -663,10 +663,6 @@ public sealed class ShoppingCartItemHistory
 
 }
 
-public sealed class MidLevelDeveloper
-{
-
-}
 
 public sealed class JuniorDeveloper
 {
