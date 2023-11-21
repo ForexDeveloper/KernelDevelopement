@@ -4,15 +4,7 @@ namespace Foodzilla.Kernel.UnitTest.Domain.ChiefOfficers;
 
 public sealed class ChiefMarketingOfficer : ChiefUnitIdentity, IPatchValidator
 {
-    public int ChiefProductOfficerId { get; private set; }
-
-    public ChiefProductOfficer? ChiefProductOfficer { get; private set; }
-
-    public int ChiefTechnicalOfficerId { get; private set; }
-
-    public ChiefTechnicalOfficer? ChiefTechnicalOfficer { get; private set; }
-
-    public int ChiefMarketingOfficerId { get; private set; }
+    public int ChiefExecutiveOfficerId { get; private set; }
 
     public ChiefExecutiveOfficer? ChiefExecutiveOfficer { get; private set; }
 
