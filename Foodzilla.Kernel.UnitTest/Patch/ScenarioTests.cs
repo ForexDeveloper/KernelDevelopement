@@ -20,7 +20,7 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleApplyOneToOneRelatively_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
-        const int totalCount = 3;
+        const int totalCount = 10;
 
         var chiefExecutiveOfficers = Engine.CreateChiefExecutiveOfficers(totalCount);
 

@@ -123,7 +123,7 @@ public static class Engine
             for (int teamLeadId = 1; teamLeadId <= count; teamLeadId++)
             {
                 var technicalTeamLead = TechnicalTeamLead.Create(teamLeadId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
-                    graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, chiefTechnicalOfficer.Id, chiefTechnicalOfficer);
+                    graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, chiefTechnicalOfficer.Id);
 
                 var qATestingTeamLead = QaTestingTeamLead.Create(teamLeadId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
                     graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, chiefTechnicalOfficer.Id);
