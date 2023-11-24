@@ -11,15 +11,11 @@ using FluentAssertions.Execution;
 public sealed class ScenarioTests
 {
     private const int TotalCount = 5;
-    private readonly List<Customer> Customers;
-    private readonly List<ExpandoObject> PatchExecutiveOfficers;
-    private readonly List<ChiefExecutiveOfficer> ChiefExecutiveOfficers;
+    public readonly List<Customer> Customers;
 
     public ScenarioTests()
     {
         Customers = PatchBuilder.CreateComplexEntities(TotalCount);
-        ChiefExecutiveOfficers = PatchEngine.CreateChiefExecutiveOfficers(5);
-        PatchExecutiveOfficers = PatchEngine.CreatePatchExecutiveOfficers(ChiefExecutiveOfficers);
     }
 
     [Fact]
@@ -29,76 +25,29 @@ public sealed class ScenarioTests
 
         var patchEntities = CreateCompletePatchEntities();
 
-        var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchExecutiveOfficers);
+        var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        foreach (var chiefExecutiveOfficer in ChiefExecutiveOfficers)
-        {
-            patchDocument.ApplyOneToOneRelatively(chiefExecutiveOfficer);
-        }
-
-        //PatchRelatively(patchDocument);
+        PatchRelatively(patchDocument);
 
         await Task.CompletedTask;
 
         using (new AssertionScope())
         {
-            ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
 
-            var t = ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Where(q => !q.IsPatched()).Select(q => q)).ToList();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefTechnicalOfficer!.TechnicalTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefTechnicalOfficer!.QaTestingTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefMarketingOfficer!.MarketingTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.SelectMany(q => q.Seniors)).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.SelectMany(q => q.Seniors)).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefTechnicalOfficer!.TechnicalTeamLeads.SelectMany(q => q.Seniors)).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefTechnicalOfficer!.QaTestingTeamLeads.SelectMany(q => q.Seniors)).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefMarketingOfficer!.MarketingTeamLeads.SelectMany(q => q.Seniors)).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.SelectMany(q => q.Seniors.SelectMany(r => r.Midlevels))).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefTechnicalOfficer!.TechnicalTeamLeads.SelectMany(q => q.Seniors.SelectMany(r => r.Midlevels))).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefMarketingOfficer!.MarketingTeamLeads.SelectMany(q => q.Seniors.SelectMany(r => r.Midlevels))).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.SelectMany(q => q.Seniors.SelectMany(r => r.Midlevels.SelectMany(s => s.Juniors)))).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefTechnicalOfficer!.TechnicalTeamLeads.SelectMany(q => q.Seniors.SelectMany(r => r.Midlevels.SelectMany(s => s.Juniors)))).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefMarketingOfficer!.MarketingTeamLeads.SelectMany(q => q.Seniors.SelectMany(r => r.Midlevels.SelectMany(s => s.Juniors)))).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.SelectMany(q => q.Seniors.SelectMany(r => r.Midlevels.SelectMany(s => s.Juniors.SelectMany(t => t.Freshers))))).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefTechnicalOfficer!.TechnicalTeamLeads.SelectMany(q => q.Seniors.SelectMany(r => r.Midlevels.SelectMany(s => s.Juniors.SelectMany(t => t.Freshers))))).All(p => p.IsPatched()).Should().BeTrue();
-
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefMarketingOfficer!.MarketingTeamLeads.SelectMany(q => q.Seniors.SelectMany(r => r.Midlevels.SelectMany(s => s.Juniors.SelectMany(t => t.Freshers))))).All(p => p.IsPatched()).Should().BeTrue();
-
-            //Customers.All(p => p.IsPatched()).Should().BeTrue();
-
-            //Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            //Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            //Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            //Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-
-            //Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            //Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            //Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            //Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
-
-            //Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-
-            //Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 

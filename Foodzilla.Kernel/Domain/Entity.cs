@@ -12,7 +12,7 @@ public abstract class Entity : IEntity
 
 public abstract class Entity<TKey> : Entity where TKey : struct
 {
-    public TKey Id { get; set; }
+    public virtual TKey Id { get; protected set; }
 
     private List<INotification> _domainEvents;
 
@@ -32,11 +32,6 @@ public abstract class Entity<TKey> : Entity where TKey : struct
     protected Entity()
     {
 
-    }
-
-    protected Entity(TKey id)
-    {
-        Id = id;
     }
 
     protected void SetIdentity(TKey id)

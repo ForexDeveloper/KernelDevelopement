@@ -8,7 +8,7 @@ public sealed class JuniorProductManager : Identity<long>, IPatchValidator
 {
     public long MidlevelProductManagerId { get; private set; }
 
-    public MidlevelProductManager? MidlevelProductManager { get; ini; }
+    public MidlevelProductManager? MidlevelProductManager { get; init; }
 
     public IList<FresherProductManager> Freshers { get; } = new List<FresherProductManager>();
 
