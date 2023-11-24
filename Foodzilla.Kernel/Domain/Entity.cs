@@ -39,7 +39,7 @@ public abstract class Entity<TKey> : Entity where TKey : struct
         Id = id;
     }
 
-    protected void SetId(TKey id)
+    protected void SetIdentity(TKey id)
     {
         Id = id;
     }

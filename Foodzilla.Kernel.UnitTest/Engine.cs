@@ -1,5 +1,10 @@
 ﻿using Foodzilla.Kernel.UnitTest.Domain;
 using Foodzilla.Kernel.UnitTest.Domain.ChiefOfficers;
+using Foodzilla.Kernel.UnitTest.Domain.Freshers;
+using Foodzilla.Kernel.UnitTest.Domain.Juniors;
+using Foodzilla.Kernel.UnitTest.Domain.MidLevels;
+using Foodzilla.Kernel.UnitTest.Domain.Seniors;
+using Foodzilla.Kernel.UnitTest.Domain.TeamLeads;
 
 namespace Foodzilla.Kernel.UnitTest;
 
@@ -32,7 +37,11 @@ public static class Engine
 
     private static string[] OfficerNames => new[] { "Christopher", "David", "John", "Steve", "Leonardo", "Rafael" };
 
-    private static string[] OfficerLastNames => new[] { "Stones", "Green", "Rabin", "Silva", "Kane", "Smith" };
+    private static string[] OfficerLastNames => new[] { "Stones", "Hamilton", "Rabin", "Anderson", "Kane", "Smith" };
+
+    private static string[] OtherLevelNames => new[] { "Micheal", "Tom", "Victor", "Williams", "Sam", "Harry" };
+
+    private static string[] OtherLevelLastNames => new[] { "Jordan", "Kennedy", "Graham", "Jenkins", "Garret", "Bradley" };
 
     private static string[] NationalCodes => new[] { "4120583732", "9182736455", "1324354657", "0897867564", "1425364758", "0896857463" };
 
@@ -64,13 +73,14 @@ public static class Engine
 
     private static Guid[] UniqueIdentifiers => new[] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
 
-    public static async Task CreateChiefExecutiveOfficers(int count)
+    public static List<ChiefExecutiveOfficer> CreateChiefExecutiveOfficers(int count)
     {
         var random = new Random();
+        var chiefExecutiveOfficers = new List<ChiefExecutiveOfficer>();
 
         for (var officerId = 1; officerId <= count; officerId++)
         {
-            int index = random.Next(0, 7);
+            int index = random.Next(0, 6);
 
             var age = Ages[index];
             var height = Heights[index];
@@ -86,10 +96,12 @@ public static class Engine
             var nationalCode = NationalCodes[index];
             var personalCodes = PersonalCodes[index];
             var daysOfVacation = DaysOfVacation[index];
+            var otherLevelName = OtherLevelNames[index];
             var officerLastName = OfficerLastNames[index];
             var contractDateEnd = ContractDatesEnd[index];
             var uniqueIdentifier = UniqueIdentifiers[index];
             var contractDateStart = ContractDatesStart[index];
+            var otherLevelLastName = OtherLevelLastNames[index];
 
             var chiefExecutiveOfficer = ChiefExecutiveOfficer.Create(officerId, officerName, officerLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
                 graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, organization);
@@ -103,14 +115,106 @@ public static class Engine
             var chiefMarketingOfficer = ChiefMarketingOfficer.Create(officerId, officerName, officerLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
                 graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, organization);
 
+            chiefExecutiveOfficers.Add(chiefExecutiveOfficer);
             chiefExecutiveOfficer.AddChiefProductOfficer(chiefProductOfficer);
             chiefExecutiveOfficer.AddChiefMarketingOfficer(chiefMarketingOfficer);
             chiefExecutiveOfficer.AddChiefTechnicalOfficer(chiefTechnicalOfficer);
 
-            for (int teamLeadId = 0; teamLeadId < count; teamLeadId++)
+            for (int teamLeadId = 1; teamLeadId <= count; teamLeadId++)
             {
+                var technicalTeamLead = TechnicalTeamLead.Create(teamLeadId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                    graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, chiefTechnicalOfficer.Id);
 
+                var qATestingTeamLead = QaTestingTeamLead.Create(teamLeadId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                    graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, chiefTechnicalOfficer.Id);
+
+                chiefTechnicalOfficer.AddTechnicalLead(technicalTeamLead);
+                chiefTechnicalOfficer.AddLeadQaTesting(qATestingTeamLead);
+
+                var productTeamLead = ProductTeamLead.Create(teamLeadId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                    graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, chiefProductOfficer.Id);
+
+                var scrumMasterTeamLead = ScrumMasterTeamLead.Create(teamLeadId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                    graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, chiefProductOfficer.Id);
+
+                chiefProductOfficer.AddLeadProductManager(productTeamLead);
+                chiefProductOfficer.AddLeadScrumMaster(scrumMasterTeamLead);
+
+                var marketingTeamLead = MarketingTeamLead.Create(teamLeadId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                    graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, chiefMarketingOfficer.Id);
+
+                chiefMarketingOfficer.AddLeadMarketing(marketingTeamLead);
+
+                for (int seniorId = 1; seniorId <= count; seniorId++)
+                {
+                    var seniorDeveloper = SeniorDeveloper.Create(seniorId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                        graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, technicalTeamLead.Id);
+                    technicalTeamLead.AddSeniorTechnical(seniorDeveloper);
+
+                    var seniorQaTesting = SeniorQaTesting.Create(seniorId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                        graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, qATestingTeamLead.Id);
+                    qATestingTeamLead.AddSeniorQaTesting(seniorQaTesting);
+
+                    var seniorProductManager = SeniorProductManager.Create(seniorId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                        graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, productTeamLead.Id);
+                    productTeamLead.AddSeniorProductManger(seniorProductManager);
+
+                    var seniorScrumMaster = SeniorScrumMaster.Create(seniorId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                        graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, scrumMasterTeamLead.Id);
+                    scrumMasterTeamLead.AddSeniorScrumMaster(seniorScrumMaster);
+
+                    var seniorMarketing = SeniorMarketing.Create(seniorId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                        graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, marketingTeamLead.Id);
+                    marketingTeamLead.AddSeniorMarketing(seniorMarketing);
+
+                    for (int midlevelId = 1; midlevelId <= count; midlevelId++)
+                    {
+                        var midlevelDeveloper = MidlevelDeveloper.Create(midlevelId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                            graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, seniorDeveloper.Id);
+                        seniorDeveloper.AddMidlevelTechnical(midlevelDeveloper);
+
+                        var midlevelProductManager = MidlevelProductManager.Create(midlevelId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                            graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, seniorProductManager.Id);
+                        seniorProductManager.AddMidlevelProductManager(midlevelProductManager);
+
+                        var midlevelMarketing = MidlevelMarketing.Create(midlevelId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                            graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, seniorMarketing.Id);
+                        seniorMarketing.AddMidlevelMarketing(midlevelMarketing);
+
+                        for (int juniorId = 1; juniorId <= count; juniorId++)
+                        {
+                            var juniorDeveloper = JuniorDeveloper.Create(juniorId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                                graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, midlevelDeveloper.Id);
+                            midlevelDeveloper.AddJuniorTechnical(juniorDeveloper);
+
+                            var juniorProductManager = JuniorProductManager.Create(juniorId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                                graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, midlevelProductManager.Id);
+                            midlevelProductManager.AddJuniorProductManager(juniorProductManager);
+
+                            var juniorMarketing = JuniorMarketing.Create(juniorId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                                graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, midlevelMarketing.Id);
+                            midlevelMarketing.AddJuniorMarketing(juniorMarketing);
+
+                            for (int fresherId = 1; fresherId <= count; fresherId++)
+                            {
+                                var fresherDeveloper = FresherDeveloper.Create(juniorId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                                    graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, juniorDeveloper.Id);
+                                juniorDeveloper.AddFresherTechnical(fresherDeveloper);
+
+                                var fresherProductManager = FresherProductManager.Create(juniorId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                                    graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, juniorProductManager.Id);
+                                juniorProductManager.AddFresherProductManager(fresherProductManager);
+
+                                var fresherMarketing = FresherMarketing.Create(juniorId, otherLevelName, otherLevelLastName, nationalCode, personalCodes, address, age, daysOfVacation, height, weight, false, uniqueIdentifier, eyeColor,
+                                    graduation, experience, modifiedDate, birthDate, contractDateEnd, contractDateStart, juniorMarketing.Id);
+                                juniorMarketing.AddFresherMarketing(fresherMarketing);
+                            }
+                        }
+                    }
+                }
             }
         }
+
+        return chiefExecutiveOfficers;
     }
 }

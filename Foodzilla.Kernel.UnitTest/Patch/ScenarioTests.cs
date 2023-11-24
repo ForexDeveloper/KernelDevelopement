@@ -10,39 +10,45 @@ using FluentAssertions.Execution;
 public sealed class ScenarioTests
 {
     private const int TotalCount = 100;
+    private readonly List<Customer> Customers;
+
+    public ScenarioTests()
+    {
+        Customers = PatchBuilder.CreateComplexEntities(TotalCount);
+    }
 
     [Fact]
     public async Task HandleApplyOneToOneRelatively_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
+        var chiefExecutiveOfficers = Engine.CreateChiefExecutiveOfficers(totalCount);
 
-        var patchEntities = CreateCompletePatchEntities(customers);
+        var patchEntities = CreateCompletePatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchRelatively(patchDocument, customers);
+        PatchRelatively(patchDocument);
 
         await Task.CompletedTask;
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -51,33 +57,31 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateRootInvalidPatchEntities(customers);
+        var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchRelatively(patchDocument, customers);
+        PatchRelatively(patchDocument);
 
         await Task.CompletedTask;
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeFalse();
+            Customers.All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -86,32 +90,30 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateMiddleInvalidPatchEntities(customers);
+        var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchRelatively(patchDocument, customers);
+        PatchRelatively(patchDocument);
 
         await Task.CompletedTask;
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -120,33 +122,31 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateCompletePatchEntities(customers);
+        var patchEntities = CreateCompletePatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDominantly(patchDocument, customers);
+        PatchDominantly(patchDocument);
 
         await Task.CompletedTask;
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -155,35 +155,33 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateRootInvalidPatchEntities(customers);
+        var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDominantly(patchDocument, customers);
+        PatchDominantly(patchDocument);
 
         await Task.CompletedTask;
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeFalse();
+            Customers.All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeFalse();
         }
     }
 
@@ -192,32 +190,30 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateMiddleInvalidPatchEntities(customers);
+        var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDominantly(patchDocument, customers);
+        PatchDominantly(patchDocument);
 
         await Task.CompletedTask;
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -226,33 +222,31 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateCompletePatchEntities(customers);
+        var patchEntities = CreateCompletePatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchAbsolutely(patchDocument, customers);
+        PatchAbsolutely(patchDocument);
 
         await Task.CompletedTask;
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -261,33 +255,31 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateRootInvalidPatchEntities(customers);
+        var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchAbsolutely(patchDocument, customers);
+        PatchAbsolutely(patchDocument);
 
         await Task.CompletedTask;
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeFalse();
+            Customers.All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -296,33 +288,31 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateMiddleInvalidPatchEntities(customers);
+        var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchAbsolutely(patchDocument, customers);
+        PatchAbsolutely(patchDocument);
 
         await Task.CompletedTask;
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -331,13 +321,11 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateCompletePatchEntities(customers);
+        var patchEntities = CreateCompletePatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchOperation.ApplyOneToOneRelatively(customer);
         }
@@ -346,21 +334,21 @@ public sealed class ScenarioTests
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -369,13 +357,11 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateRootInvalidPatchEntities(customers);
+        var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchOperation.ApplyOneToOneRelatively(customer);
         }
@@ -384,21 +370,21 @@ public sealed class ScenarioTests
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeFalse();
+            Customers.All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -407,13 +393,11 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateMiddleInvalidPatchEntities(customers);
+        var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchOperation.ApplyOneToOneRelatively(customer);
         }
@@ -422,20 +406,20 @@ public sealed class ScenarioTests
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -444,13 +428,11 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateCompletePatchEntities(customers);
+        var patchEntities = CreateCompletePatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchOperation.ApplyOneToOneParentDominance(customer);
         }
@@ -459,21 +441,21 @@ public sealed class ScenarioTests
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -482,13 +464,11 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateRootInvalidPatchEntities(customers);
+        var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchOperation.ApplyOneToOneParentDominance(customer);
         }
@@ -497,23 +477,23 @@ public sealed class ScenarioTests
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeFalse();
+            Customers.All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeFalse();
         }
     }
 
@@ -522,13 +502,11 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateMiddleInvalidPatchEntities(customers);
+        var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchOperation.ApplyOneToOneParentDominance(customer);
         }
@@ -537,20 +515,20 @@ public sealed class ScenarioTests
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -559,13 +537,11 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateCompletePatchEntities(customers);
+        var patchEntities = CreateCompletePatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchOperation.ApplyOneToOneAbsolutely(customer);
         }
@@ -574,21 +550,21 @@ public sealed class ScenarioTests
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -597,13 +573,11 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateRootInvalidPatchEntities(customers);
+        var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchOperation.ApplyOneToOneAbsolutely(customer);
         }
@@ -612,21 +586,21 @@ public sealed class ScenarioTests
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeFalse();
+            Customers.All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
@@ -635,13 +609,11 @@ public sealed class ScenarioTests
     {
         const int totalCount = 10;
 
-        var customers = PatchBuilder.CreateComplexEntities(TotalCount);
-
-        var patchEntities = CreateMiddleInvalidPatchEntities(customers);
+        var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchOperation.ApplyOneToOneAbsolutely(customer);
         }
@@ -650,36 +622,36 @@ public sealed class ScenarioTests
 
         using (new AssertionScope())
         {
-            customers.All(p => p.IsPatched()).Should().BeTrue();
+            Customers.All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
-            customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationOrder).All(p => p.IsPatched()).Should().BeFalse();
+            Customers.Select(p => p.NavigationCustomer).All(p => p.IsPatched()).Should().BeFalse();
 
-            customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.Select(p => p.NavigationCustomer.NavigationCustomer).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationCustomer.NavigationListCustomer).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationOrder.NavigationListOrder).All(p => p.IsPatched()).Should().BeTrue();
 
-            customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
-            customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListOrder.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
+            Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
 
-    private static List<ExpandoObject> CreateCompletePatchEntities(List<Customer> customers)
+    private List<ExpandoObject> CreateCompletePatchEntities()
     {
-        var patchEntities = CreateValidPatchEntities(customers);
+        var patchEntities = CreateValidPatchEntities();
 
         return patchEntities;
     }
 
-    private static List<ExpandoObject> CreateRootInvalidPatchEntities(List<Customer> customers)
+    private List<ExpandoObject> CreateRootInvalidPatchEntities()
     {
         var patchEntities = new List<ExpandoObject>();
 
-        foreach (dynamic customer in customers)
+        foreach (dynamic customer in Customers)
         {
             dynamic navigationListOrder = new List<ExpandoObject>();
             dynamic navigationListCustomer = new List<ExpandoObject>();
@@ -749,11 +721,11 @@ public sealed class ScenarioTests
         return patchEntities;
     }
 
-    private static List<ExpandoObject> CreateMiddleInvalidPatchEntities(List<Customer> customers)
+    private List<ExpandoObject> CreateMiddleInvalidPatchEntities()
     {
         var patchEntities = new List<ExpandoObject>();
 
-        foreach (dynamic customer in customers)
+        foreach (dynamic customer in Customers)
         {
             dynamic navigationListOrder = new List<ExpandoObject>();
             dynamic navigationListCustomer = new List<ExpandoObject>();
@@ -830,11 +802,11 @@ public sealed class ScenarioTests
         return patchEntities;
     }
 
-    private static List<ExpandoObject> CreateValidPatchEntities(List<Customer> customers)
+    private List<ExpandoObject> CreateValidPatchEntities()
     {
         var patchEntities = new List<ExpandoObject>();
 
-        foreach (dynamic customer in customers)
+        foreach (dynamic customer in Customers)
         {
             dynamic navigationListOrder = new List<ExpandoObject>();
             dynamic navigationListCustomer = new List<ExpandoObject>();
@@ -925,25 +897,25 @@ public sealed class ScenarioTests
         return patchEntity;
     }
 
-    private static void PatchRelatively(PatchDocument<Customer> patchDocument, List<Customer> customers)
+    private void PatchRelatively(PatchDocument<Customer> patchDocument)
     {
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchDocument.ApplyOneToOneRelatively(customer);
         }
     }
 
-    private static void PatchAbsolutely(PatchDocument<Customer> patchDocument, List<Customer> customers)
+    private void PatchAbsolutely(PatchDocument<Customer> patchDocument)
     {
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchDocument.ApplyOneToOneAbsolutely(customer);
         }
     }
 
-    private static void PatchDominantly(PatchDocument<Customer> patchDocument, List<Customer> customers)
+    private void PatchDominantly(PatchDocument<Customer> patchDocument)
     {
-        foreach (var customer in customers)
+        foreach (var customer in Customers)
         {
             patchDocument.ApplyOneToOneParentDominance(customer);
         }
@@ -957,11 +929,11 @@ public sealed class ScenarioTests
 
     #region OldVersion
 
-    private static List<ExpandoObject> OldVersionCreatePatchEntities(List<Customer> customers)
+    private List<ExpandoObject> OldVersionCreatePatchEntities()
     {
         var patchEntities = new List<ExpandoObject>();
 
-        foreach (dynamic customer in customers)
+        foreach (dynamic customer in Customers)
         {
             dynamic navigationListOrder = new List<ExpandoObject>();
             dynamic navigationListCustomer = new List<ExpandoObject>();
@@ -1016,7 +988,6 @@ public sealed class ScenarioTests
 
         return patchEntities;
     }
-
 
     #endregion
 }
