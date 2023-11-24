@@ -8,9 +8,9 @@ public sealed class TechnicalTeamLead : Identity<int>, IPatchValidator
 {
     public int ChiefTechnicalOfficerId { get; private set; }
 
-    public ChiefTechnicalOfficer ChiefTechnicalOfficer { get; private set; }
+    public ChiefTechnicalOfficer? ChiefTechnicalOfficer { get; init; }
 
-    public IList<SeniorDeveloper> Seniors => new List<SeniorDeveloper>();
+    public IList<SeniorDeveloper> Seniors { get; } = new List<SeniorDeveloper>();
 
     private TechnicalTeamLead(int id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, int chiefTechnicalOfficerId)
         : base(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart)

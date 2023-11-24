@@ -7,7 +7,7 @@ public sealed class FresherDeveloper : Identity<long>, IPatchValidator
 {
     public long JuniorDeveloperId { get; private set; }
 
-    public JuniorDeveloper JuniorDeveloper { get; private set; }
+    public JuniorDeveloper? JuniorDeveloper { get; init; }
 
     private FresherDeveloper(long id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, long juniorDeveloperId)
         : base(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart)

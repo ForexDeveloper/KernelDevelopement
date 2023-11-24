@@ -8,9 +8,9 @@ public sealed class MidlevelMarketing : Identity<long>, IPatchValidator
 {
     public long SeniorMarketingId { get; private set; }
 
-    public SeniorMarketing SeniorMarketing { get; private set; }
+    public SeniorMarketing? SeniorMarketing { get; init; }
 
-    public IList<JuniorMarketing> Juniors => new List<JuniorMarketing>();
+    public IList<JuniorMarketing> Juniors { get; } = new List<JuniorMarketing>();
 
     private MidlevelMarketing(long id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, long seniorMarketingId)
         : base(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart)
