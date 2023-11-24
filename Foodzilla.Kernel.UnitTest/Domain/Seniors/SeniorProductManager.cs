@@ -6,7 +6,7 @@ namespace Foodzilla.Kernel.UnitTest.Domain.Seniors;
 
 public sealed class SeniorProductManager : Identity<long>, IPatchValidator
 {
-    public int ProductTeamLeadId { get; private set; }
+    public int ProductTeamLeadId { get; private set;}
 
     public ProductTeamLead? ProductTeamLead { get; init; }
 

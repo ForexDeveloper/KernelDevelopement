@@ -6,7 +6,7 @@ namespace Foodzilla.Kernel.UnitTest.Domain.TeamLeads;
 
 public sealed class ProductTeamLead : Identity<int>, IPatchValidator
 {
-    public int ChiefProductOfficerId { get; private set; }
+    public int ChiefProductOfficerId { get; private set;}
 
     public ChiefProductOfficer? ChiefProductOfficer { get; init; }
 

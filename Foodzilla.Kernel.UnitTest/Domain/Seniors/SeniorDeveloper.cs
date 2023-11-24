@@ -8,7 +8,7 @@ public sealed class SeniorDeveloper : Identity<long>, IPatchValidator
 {
     public int TechnicalTeamLeadId { get; private set; }
 
-    public TechnicalTeamLead? TechnicalTeamLead { get; init; }
+    public TechnicalTeamLead TechnicalTeamLead { get; init; }
 
     public IList<MidlevelDeveloper> Midlevels { get; } = new List<MidlevelDeveloper>();
 

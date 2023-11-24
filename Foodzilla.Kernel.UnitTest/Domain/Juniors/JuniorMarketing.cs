@@ -8,7 +8,7 @@ public sealed class JuniorMarketing : Identity<long>, IPatchValidator
 {
     public long MidlevelMarketingId { get; private set; }
 
-    public MidlevelMarketing? MidlevelMarketing { get; init; }
+    public MidlevelMarketing MidlevelMarketing { get; ini; }
 
     public IList<FresherMarketing> Freshers { get; } = new List<FresherMarketing>();
 

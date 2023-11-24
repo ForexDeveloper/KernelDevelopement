@@ -1,48 +1,51 @@
 ﻿using Foodzilla.Kernel.Domain;
+using Foodzilla.Kernel.UnitTest.Patch;
+using Moq;
+using System.Runtime.InteropServices;
 
 namespace Foodzilla.Kernel.UnitTest.Domain;
 
 public abstract class Identity<TKey> : Entity<TKey> where TKey : struct
 {
-    public string Name { get; private set; }
+    public string Name { get; init; }
 
-    public string LastName { get; private set; }
+    public string LastName { get; init; }
 
-    public string NationalCode { get; private set; }
+    public string NationalCode { get; init; }
 
-    public string PersonalCode { get; private set; }
+    public string PersonalCode { get;  init; }
 
-    public string Address { get; private set; }
+    public string Address { get; init; }
 
-    public int Age { get; private set; }
+    public int Age { get; init; }
 
-    public int? DaysOfVacation { get; private set; }
+    public int? DaysOfVacation { get; init; }
 
-    public decimal? Height { get; private set; }
+    public decimal? Height { get; init; }
 
-    public decimal? Weight { get; private set; }
+    public decimal? Weight { get; init; }
 
-    public bool IsFired { get; private set; }
+    public bool IsFired { get; init; }
 
-    public Guid UniqueIdentifier { get; private set; }
+    public Guid UniqueIdentifier { get; init; }
 
-    public EyeColor? EyeColor { get; private set; }
+    public EyeColor? EyeColor { get; init; }
 
-    public Graduation Graduation { get; private set; }
+    public Graduation Graduation { get; init; }
 
-    public Experience Experience { get; private set; }
+    public Experience Experience { get; init; }
 
-    public DateTimeOffset? ModifiedDate { get; private set; }
+    public DateTimeOffset? ModifiedDate { get; init; }
 
-    public DateTimeOffset BirthDate { get; private set; }
+    public DateTimeOffset BirthDate { get; init; }
 
-    public DateTimeOffset ContraDateEnd { get; private set; }
+    public DateTimeOffset ContractDateEnd { get; init; }
 
-    public DateTimeOffset ContraDateStart { get; private set; }
+    public DateTimeOffset ContractDateStart { get; init; }
 
     public virtual string[] RestrictedProperties { get; } = { nameof(NationalCode), nameof(PersonalCode) };
 
-    protected Identity(string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart)
+    protected Identity(string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contractDateEnd, DateTimeOffset contractDateStart)
     {
         Age = age;
         Name = name;
@@ -58,10 +61,24 @@ public abstract class Identity<TKey> : Entity<TKey> where TKey : struct
         NationalCode = nationalCode;
         PersonalCode = personalCode;
         ModifiedDate = modifiedDate;
-        ContraDateEnd = contraDateEnd;
         DaysOfVacation = daysOfVacation;
-        ContraDateStart = contraDateStart;
+        ContractDateEnd = contractDateEnd;
         UniqueIdentifier = uniqueIdentifier;
+        ContractDateStart = contractDateStart;
+        CreatedAt = DateTimeOffset.Now.AddYears(-1);
+    }
+
+    public virtual bool IsPatched()
+    {
+        return Name == "Patched !" &&
+               LastName == "Patched !" &&
+               NationalCode == "99999999" &&
+               PersonalCode == "Patched !" &&
+               Address == "Patched !" &&
+               Height == 188 &&
+               Weight == 85 &&
+               Experience == Experience.Elementary &&
+               Graduation == Graduation.Diploma;
     }
 }
 

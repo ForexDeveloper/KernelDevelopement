@@ -8,9 +8,9 @@ public sealed class ScrumMasterTeamLead : Identity<int>, IPatchValidator
 {
     public int ChiefProductOfficerId { get; private set; }
 
-    public ChiefProductOfficer ChiefProductOfficer { get; private set; }
+    public ChiefProductOfficer ChiefProductOfficer { get; init; }
 
-    public IList<SeniorScrumMaster> Seniors => new List<SeniorScrumMaster>();
+    public IList<SeniorScrumMaster> Seniors { get; } = new List<SeniorScrumMaster>();
 
     private ScrumMasterTeamLead(int id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, int chiefProductOfficerId)
         : base(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart)
