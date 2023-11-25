@@ -9,9 +9,9 @@ public sealed class ChiefTechnicalOfficer : ChiefUnitIdentity, IPatchValidator
 
     public ChiefExecutiveOfficer? ChiefExecutiveOfficer { get; init; }
 
-    public IList<TechnicalTeamLead> TechnicalTeamLeads { get; set; } = new List<TechnicalTeamLead>();
+    public List<TechnicalTeamLead> TechnicalTeamLeads { get; init; } = new List<TechnicalTeamLead>();
 
-    public IList<QaTestingTeamLead> QaTestingTeamLeads { get; set; } = new List<QaTestingTeamLead>();
+    public List<QaTestingTeamLead> QaTestingTeamLeads { get; init; } = new List<QaTestingTeamLead>();
 
     private ChiefTechnicalOfficer(int id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, string assignedOrganization)
         : base(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, assignedOrganization)
