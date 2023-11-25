@@ -173,11 +173,11 @@ public sealed class AdvanceTheories
             ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeFalse();
             ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeFalse();
 
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefTechnicalOfficer.TechnicalTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefTechnicalOfficer.QaTestingTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
-            ChiefExecutiveOfficers.SelectMany(p => p.ChiefMarketingOfficer.MarketingTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            ChiefExecutiveOfficers.SelectMany(p => p.ChiefTechnicalOfficer!.TechnicalTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            ChiefExecutiveOfficers.SelectMany(p => p.ChiefTechnicalOfficer!.QaTestingTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
+            ChiefExecutiveOfficers.SelectMany(p => p.ChiefMarketingOfficer!.MarketingTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeFalse();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.SelectMany(q => q.Seniors)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.SelectMany(q => q.Seniors)).All(p => p.IsPatched()).Should().BeTrue();
