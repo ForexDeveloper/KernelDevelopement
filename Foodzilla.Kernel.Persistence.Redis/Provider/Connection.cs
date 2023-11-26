@@ -13,7 +13,6 @@ internal static class Connection
         else
         {
             return $"{credential.ServerAddress}:6379,password={credential.Password}";
-
         }
     }
 }
