@@ -21,7 +21,11 @@ public static class ServiceCollectionExtension
         services.AddStackExchangeRedisCache(option =>
         {
             option.Configuration = configuration;
-            option.ConfigurationOptions.AbortOnConnectFail = false;
+            option.ConfigurationOptions!.KeepAlive = credential.KeepAlive;
+            option.ConfigurationOptions.AllowAdmin = credential.AllowAdmin;
+            option.ConfigurationOptions.ConnectRetry = credential.ConnectRetry;
+            option.ConfigurationOptions.ConnectTimeout = credential.ConnectTimeOut;
+            option.ConfigurationOptions.AbortOnConnectFail = credential.AbortOnConnectFail;
         });
     }
 
@@ -41,7 +45,11 @@ public static class ServiceCollectionExtension
         services.AddStackExchangeRedisCache(option =>
         {
             option.Configuration = connectionConfiguration;
-            option.ConfigurationOptions.AbortOnConnectFail = false;
+            option.ConfigurationOptions!.KeepAlive = credential.KeepAlive;
+            option.ConfigurationOptions.AllowAdmin = credential.AllowAdmin;
+            option.ConfigurationOptions.ConnectRetry = credential.ConnectRetry;
+            option.ConfigurationOptions.ConnectTimeout = credential.ConnectTimeOut;
+            option.ConfigurationOptions.AbortOnConnectFail = credential.AbortOnConnectFail;
         });
     }
 }

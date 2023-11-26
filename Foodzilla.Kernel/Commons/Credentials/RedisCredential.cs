@@ -18,7 +18,7 @@ public sealed class RedisCredential
 
     public bool AbortOnConnectFail { get; set; }
 
-    public int TimeoutInMilliseconds { get; set; }
+    public int ConnectTimeOut { get; set; }
 
     public int ConnectRetry { get; set; }
 
