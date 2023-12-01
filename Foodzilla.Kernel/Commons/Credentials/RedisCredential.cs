@@ -12,6 +12,16 @@ public sealed class RedisCredential
 
     public string ServerAddress { get; set; }
 
+    public bool AllowAdmin { get; set; }
+
+    public int KeepAlive { get; set; }
+
+    public bool AbortOnConnectFail { get; set; }
+
+    public int ConnectTimeOut { get; set; }
+
+    public int ConnectRetry { get; set; }
+
     public RedisCredential()
     {
 
