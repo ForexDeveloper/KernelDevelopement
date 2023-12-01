@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Reflection;
 using System.Collections;
 using System.ComponentModel;
+using System.Reflection.Metadata;
 using Foodzilla.Kernel.Domain;
 using Foodzilla.Kernel.Extension;
 
@@ -130,7 +131,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     /// Id is sent inside of each patchEntity. peer to peer patching
     /// Only one instant is apply to a single database entity
     /// </summary>
-    public bool ApplyOneToOneRelatively(TEntity dbEntity)
+    public bool ApplyOneToOneRelatively(TEntity dbEntity, bool? parentAllegiance = null)
     {
         var idValueString = SetPatchEntity(dbEntity);
 
@@ -148,14 +149,27 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
                 try
                 {
-                    if (NavigationPatchOperation(dbEntity, commonProperty, value, nameof(ApplyOneToOneRelatively))) continue;
+                    switch (parentAllegiance)
+                    {
+                        case null:
+                            {
+                                StoreDeepOriginalValues(dbEntity, commonProperty);
+                                if (StoreNavigationProperties(dbEntity, commonProperty, value)) continue;
+                                object castedValue = CastCorrectValue(commonProperty, value);
+                                commonProperty.SetValue(dbEntity, castedValue);
+                                break;
+                            }
+                        case true:
+                            {
+                                StoreDeepOriginalValues(dbEntity, commonProperty);
+                                if (StoreNavigationProperties(dbEntity, commonProperty, value)) continue;
+                                object castedValue = CastCorrectValue(commonProperty, value);
+                                commonProperty.SetValue(dbEntity, castedValue);
+                                break;
+                            }
+                    }
 
-                    StoreShallowOriginalValues(dbEntity, commonProperty);
-
-                    object castedValue = CastCorrectValue(commonProperty, value);
-
-                    commonProperty.SetValue(dbEntity, castedValue);
-
+                    StoreNavigationProperties(dbEntity, commonProperty, value);
                 }
                 catch (Exception exception)
                 {
@@ -176,8 +190,12 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         {
             RestoreOriginalValues(dbEntity);
 
+            PatchNavigationProperties(dbEntity, false, nameof(ApplyOneToOneRelatively));
+
             return false;
         }
+
+        PatchNavigationProperties(dbEntity, true, nameof(ApplyOneToOneRelatively));
 
         OperationReStart();
 
@@ -295,7 +313,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         }
         else
         {
-            PatchNavigationProperties(dbEntity);
+            PatchNavigationProperties(dbEntity, null, nameof(ApplyOneToOneParentDominance));
         }
 
         OperationReStart();
@@ -499,58 +517,18 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         return idValueString;
     }
 
-    //private bool InnerPatchOperation(PropertyInfo commonProperty, object value)
-    //{
-    //    if (commonProperty.InquireOneToOneNavigability(Entity, out var dbEntity))
-    //    {
-    //        if (value == null)
-    //        {
-    //            return true;
-    //        }
-
-    //        var patchEntity = (ExpandoObject)value;
-
-    //        var patchDocument = Create(patchEntity);
-
-    //        patchDocument.ApplyOneToOneRelatively((TEntity)dbEntity);
-
-    //        return true;
-    //    }
-
-    //    if (commonProperty.InquireOneToManyNavigability(Entity, out var dbEntities))
-    //    {
-    //        if (value == null)
-    //        {
-    //            return true;
-    //        }
-
-    //        var patchEntities = (List<ExpandoObject>)value;
-
-    //        var patchDocument = Create(patchEntities);
-
-    //        foreach (var dbEntity1 in dbEntities)
-    //        {
-    //            patchDocument.ApplyOneToOneRelatively((TEntity)dbEntity1);
-    //        }
-
-    //        return true;
-    //    }
-
-    //    return false;
-    //}
-
     private static bool NavigationPatchOperation(TEntity dbEntity, PropertyInfo commonProperty, object value, string applyMethodName)
     {
         if (commonProperty.InquireOneToOneNavigability(dbEntity, out var outEntity))
         {
-            CreatePatchDocument(outEntity, value, applyMethodName);
+            CreatePatchDocument(outEntity, value, true, applyMethodName);
 
             return true;
         }
 
         if (commonProperty.InquireOneToManyNavigability(dbEntity, out var outEntities))
         {
-            CreatePatchDocument(outEntities, value, applyMethodName);
+            CreatePatchDocument(outEntities, value, true, applyMethodName);
 
             return true;
         }
@@ -566,18 +544,37 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
             {
                 if (outEntity is Entity entity)
                 {
-                    CreatePatchDocument(entity, value, nameof(ApplyOneToOneParentDominance));
+                    CreatePatchDocument(entity, value, null, nameof(ApplyOneToOneParentDominance));
                 }
 
                 if (outEntity is IEnumerable<Entity> outEntities)
                 {
-                    CreatePatchDocument(outEntities.ToList(), value, nameof(ApplyOneToOneParentDominance));
+                    CreatePatchDocument(outEntities.ToList(), value, null, nameof(ApplyOneToOneParentDominance));
                 }
             }
         }
     }
 
-    private static void CreatePatchDocument(Entity outEntity, object value, string applyMethodName)
+    private void PatchNavigationProperties(TEntity dbEntity, bool? parentAllegiance, string applyMethodName)
+    {
+        if (_navigationProperties.TryGetValue(dbEntity, out var navigationPropertyValues))
+        {
+            foreach (var (outEntity, value) in navigationPropertyValues)
+            {
+                if (outEntity is Entity entity)
+                {
+                    CreatePatchDocument(entity, value, parentAllegiance, applyMethodName);
+                }
+
+                if (outEntity is IEnumerable<Entity> outEntities)
+                {
+                    CreatePatchDocument(outEntities.ToList(), value, parentAllegiance, applyMethodName);
+                }
+            }
+        }
+    }
+
+    private static void CreatePatchDocument(Entity outEntity, object value, bool? parentAllegiance, string applyMethodName)
     {
         if (value == null)
         {
@@ -593,13 +590,25 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         var patchDocument = Activator.CreateInstance(type, BindingFlags.Instance | BindingFlags.NonPublic, null,
             new object[] { patchEntity, null }, null);
 
-        MethodInfo methodInfo = type.GetMethod(applyMethodName,
-            BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType }, null);
+        MethodInfo methodInfo;
 
-        methodInfo!.Invoke(patchDocument, new object[] { outEntity });
+        if (parentAllegiance.HasValue)
+        {
+            methodInfo = type.GetMethod(applyMethodName,
+                BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType, typeof(bool?) }, null);
+
+            methodInfo!.Invoke(patchDocument, new object[] { outEntity, parentAllegiance });
+        }
+        else
+        {
+            methodInfo = type.GetMethod(applyMethodName,
+                BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType }, null);
+
+            methodInfo!.Invoke(patchDocument, new object[] { outEntity });
+        }
     }
 
-    private static void CreatePatchDocument(List<Entity> outEntities, object value, string applyMethodName)
+    private static void CreatePatchDocument(List<Entity> outEntities, object value, bool? parentAllegiance, string applyMethodName)
     {
         if (value == null || outEntities.Count == 0)
         {
@@ -616,11 +625,27 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
             new object[] { patchEntities, null }, null);
 
         MethodInfo methodInfo = type.GetMethod(applyMethodName,
-            BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType }, null);
+            BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType, typeof(bool?) }, null);
 
-        foreach (var unitEntity in outEntities)
+        if (parentAllegiance.HasValue)
         {
-            methodInfo!.Invoke(patchDocument, new object[] { unitEntity });
+            methodInfo = type.GetMethod(applyMethodName,
+                BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType, typeof(bool?) }, null);
+
+            foreach (var unitEntity in outEntities)
+            {
+                methodInfo!.Invoke(patchDocument, new object[] { unitEntity, parentAllegiance });
+            }
+        }
+        else
+        {
+            methodInfo = type.GetMethod(applyMethodName,
+                BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType }, null);
+
+            foreach (var unitEntity in outEntities)
+            {
+                methodInfo!.Invoke(patchDocument, new object[] { unitEntity });
+            }
         }
     }
 

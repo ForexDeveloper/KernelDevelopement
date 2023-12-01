@@ -1385,7 +1385,6 @@ public static class PatchEngine
                 }
             }
 
-
             #endregion
 
             executiveOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
@@ -1396,6 +1395,621 @@ public static class PatchEngine
             executiveOfficer[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
             executiveOfficer[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
             executiveOfficer[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
+
+            //technicalOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
+            //technicalOfficer[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
+            //technicalOfficer[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
+            //technicalOfficer[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
+            //technicalOfficer[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
+            //technicalOfficer[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
+            //technicalOfficer[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
+            //technicalOfficer[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
+
+            //productOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
+            //productOfficer[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
+            //productOfficer[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
+            //productOfficer[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
+            //productOfficer[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
+            //productOfficer[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
+            //productOfficer[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
+            //productOfficer[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
+
+            //marketingOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
+            //marketingOfficer[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
+            //marketingOfficer[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
+            //marketingOfficer[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
+            //marketingOfficer[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
+            //marketingOfficer[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
+            //marketingOfficer[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
+            //marketingOfficer[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
+
+
+            executiveOfficers.Add((dynamic)executiveOfficer);
+        }
+
+        return executiveOfficers;
+    }
+
+    public static List<ExpandoObject> CreateCLevelInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    {
+        var random = new Random();
+
+        var executiveOfficers = new List<ExpandoObject>();
+
+        foreach (var chiefExecutiveOfficer in chiefExecutiveOfficers)
+        {
+            ChiefProductOfficer? chiefProductOfficer = chiefExecutiveOfficer.ChiefProductOfficer;
+            ChiefTechnicalOfficer? chiefTechnicalOfficer = chiefExecutiveOfficer.ChiefTechnicalOfficer;
+            ChiefMarketingOfficer? chiefMarketingOfficer = chiefExecutiveOfficer.ChiefMarketingOfficer;
+
+            int index = random.Next(0, 6);
+
+            var propertyValues = new Dictionary<string, object?>();
+
+            var age = Ages[index];
+            var height = Heights[index];
+            var weight = Weights[index];
+            var address = Addresses[index];
+            var eyeColor = EyeColors[index];
+            var birthDate = BirthDates[index];
+            var isFired = FireStatuses[index];
+            var graduation = Graduations[index];
+            var experience = Experiences[index];
+            var officerName = OfficerNames[index];
+            var modifiedDate = ModifiedDates[index];
+            var organization = Organizations[index];
+            var nationalCode = NationalCodes[index];
+            var personalCode = PersonalCodes[index];
+            var daysOfVacation = DaysOfVacation[index];
+            var officerLastName = OfficerLastNames[index];
+            var contractDateEnd = ContractDatesEnd[index];
+            var uniqueIdentifier = UniqueIdentifiers[index];
+            var contractDateStart = ContractDatesStart[index];
+
+            propertyValues.Add(nameof(ChiefUnitIdentity.Age), 25.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Height), 188.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Weight), 85.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.IsFired), true.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Address), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Name), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.EyeColor), eyeColor?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.BirthDate), birthDate.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Experience), Experience.Elementary.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Graduation), Graduation.Diploma.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.LastName), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.NationalCode), "99999999".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.PersonalCode), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ModifiedDate), modifiedDate?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.DaysOfVacation), daysOfVacation?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ContractDateEnd), contractDateEnd.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.UniqueIdentifier), uniqueIdentifier.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.AssignedOrganization), "SnappTrip".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ContractDateStart), contractDateStart.JsonElement());
+
+            var executiveOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var technicalOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var marketingOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var productOfficer = new ExpandoObject() as IDictionary<string, object>;
+
+
+            #region ChiefExecutiveOfficer
+
+            executiveOfficer.Add("Id", chiefExecutiveOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefExecutiveOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    executiveOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefTechnicalOfficer))
+                {
+                    executiveOfficer.Add(property.Name, technicalOfficer);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefProductOfficer))
+                {
+                    executiveOfficer.Add(property.Name, productOfficer);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefMarketingOfficer))
+                {
+                    executiveOfficer.Add(property.Name, marketingOfficer);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefTechnicalOfficer
+
+            var technicalTeamLeads = new List<ExpandoObject>();
+            var qATestingTeamLeads = new List<ExpandoObject>();
+
+            technicalOfficer.Add("Id", chiefTechnicalOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefTechnicalOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    technicalOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefTechnicalOfficer.TechnicalTeamLeads))
+                {
+                    technicalOfficer.Add(property.Name, technicalTeamLeads);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefTechnicalOfficer.QaTestingTeamLeads))
+                {
+                    technicalOfficer.Add(property.Name, qATestingTeamLeads);
+                }
+            }
+
+            foreach (var technicalTeamLead in chiefTechnicalOfficer!.TechnicalTeamLeads)
+            {
+                var technicalSeniors = new List<ExpandoObject>();
+
+                var technicalLead = new ExpandoObject() as IDictionary<string, object>;
+
+                technicalLead.Add("Id", technicalTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(TechnicalTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        technicalLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(TechnicalTeamLead.Seniors))
+                    {
+                        technicalLead.Add(property.Name, technicalSeniors);
+                    }
+                }
+
+                technicalTeamLeads.Add((dynamic)technicalLead);
+
+                foreach (var senior in technicalTeamLead.Seniors)
+                {
+                    var technicalMidlevels = new List<ExpandoObject>();
+
+                    var technicalSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    technicalSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorDeveloper).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            technicalSenior.Add(property.Name, value);
+                            continue;
+                        }
+
+                        if (property.Name is nameof(SeniorDeveloper.Midlevels))
+                        {
+                            technicalSenior.Add(property.Name, technicalMidlevels);
+                        }
+                    }
+
+                    technicalSeniors.Add((dynamic)technicalSenior);
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var technicalJuniors = new List<ExpandoObject>();
+
+                        var technicalMidlevel = new ExpandoObject() as IDictionary<string, object>;
+
+                        technicalMidlevel.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelDeveloper).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                technicalMidlevel.Add(property.Name, value);
+                                continue;
+                            }
+
+                            if (property.Name is nameof(MidlevelDeveloper.Juniors))
+                            {
+                                technicalMidlevel.Add(property.Name, technicalJuniors);
+                            }
+                        }
+
+                        technicalMidlevels.Add((dynamic)technicalMidlevel);
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var technicalFreshers = new List<ExpandoObject>();
+
+                            var technicalJunior = new ExpandoObject() as IDictionary<string, object>;
+
+                            technicalJunior.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorDeveloper).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    technicalJunior.Add(property.Name, value);
+                                    continue;
+                                }
+
+                                if (property.Name is nameof(JuniorDeveloper.Freshers))
+                                {
+                                    technicalJunior.Add(property.Name, technicalFreshers);
+                                }
+                            }
+
+                            technicalJuniors.Add((dynamic)technicalJunior);
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var technicalFresher = new ExpandoObject() as IDictionary<string, object>;
+
+                                technicalFresher.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherDeveloper).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        technicalFresher.Add(property.Name, value);
+                                    }
+                                }
+
+                                technicalFreshers.Add((dynamic)technicalFresher);
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (var qaTestingTeamLead in chiefTechnicalOfficer.QaTestingTeamLeads)
+            {
+                var qATestingSeniors = new List<ExpandoObject>();
+
+                var qATestingLead = new ExpandoObject() as IDictionary<string, object>;
+
+                qATestingLead.Add("Id", qaTestingTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(QaTestingTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        qATestingLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(QaTestingTeamLead.Seniors))
+                    {
+                        qATestingLead.Add(property.Name, qATestingSeniors);
+                    }
+                }
+
+                qATestingTeamLeads.Add((dynamic)qATestingLead);
+
+                foreach (var senior in qaTestingTeamLead.Seniors)
+                {
+                    var qaTestingSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    qaTestingSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorDeveloper).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            qaTestingSenior.Add(property.Name, value);
+                            continue;
+                        }
+                    }
+
+                    qATestingSeniors.Add((dynamic)qaTestingSenior);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefProductOfficer
+
+            productOfficer.Add("Id", chiefProductOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefProductOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    productOfficer.Add(property.Name, value);
+                }
+            }
+
+            var productTeamLeads = new List<ExpandoObject>();
+            ((dynamic)productOfficer).ProductTeamLeads = productTeamLeads;
+
+            var scrumMasterTeamLeads = new List<ExpandoObject>();
+            ((dynamic)productOfficer).ScrumMasterTeamLeads = scrumMasterTeamLeads;
+
+            foreach (var productTeamLead in chiefProductOfficer!.ProductTeamLeads)
+            {
+                var productMangerLead = new ExpandoObject() as IDictionary<string, object>;
+
+                productMangerLead.Add("Id", productTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(ProductTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        productMangerLead.Add(property.Name, value);
+                    }
+                }
+
+                productTeamLeads.Add((dynamic)productMangerLead);
+
+                var seniorProducts = new List<ExpandoObject>();
+                ((dynamic)productMangerLead).Seniors = seniorProducts;
+
+                foreach (var senior in productTeamLead.Seniors)
+                {
+                    var seniorProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                    seniorProduct.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorProductManager).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            seniorProduct.Add(property.Name, value);
+                        }
+                    }
+
+                    seniorProducts.Add((dynamic)seniorProduct);
+
+                    var midlevelProducts = new List<ExpandoObject>();
+                    ((dynamic)seniorProduct).Midlevels = midlevelProducts;
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var midlevelProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                        midlevelProduct.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelProductManager).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                midlevelProduct.Add(property.Name, value);
+                            }
+                        }
+
+                        midlevelProducts.Add((dynamic)midlevelProduct);
+
+                        var juniorProducts = new List<ExpandoObject>();
+                        ((dynamic)midlevelProduct).Juniors = juniorProducts;
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var juniorProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                            juniorProduct.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorProductManager).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    juniorProduct.Add(property.Name, value);
+                                }
+                            }
+
+                            juniorProducts.Add((dynamic)juniorProduct);
+
+                            var fresherProducts = new List<ExpandoObject>();
+                            ((dynamic)juniorProduct).Freshers = fresherProducts;
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var fresherProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                                fresherProduct.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherProductManager).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        fresherProduct.Add(property.Name, value);
+                                    }
+                                }
+
+                                fresherProducts.Add((dynamic)fresherProduct);
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (var scrumTeamLead in chiefProductOfficer.ScrumMasterTeamLeads)
+            {
+                var scrumMasterTeamLead = new ExpandoObject() as IDictionary<string, object>;
+
+                scrumMasterTeamLead.Add("Id", scrumTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(ScrumMasterTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        scrumMasterTeamLead.Add(property.Name, value);
+                    }
+                }
+
+                scrumMasterTeamLeads.Add((dynamic)scrumMasterTeamLead);
+
+                var seniorScrumMasters = new List<ExpandoObject>();
+                ((dynamic)scrumMasterTeamLead).Seniors = seniorScrumMasters;
+
+                foreach (var senior in scrumTeamLead.Seniors)
+                {
+                    var seniorScrum = new ExpandoObject() as IDictionary<string, object>;
+
+                    seniorScrum.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorScrumMaster).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            seniorScrum.Add(property.Name, value);
+                        }
+                    }
+
+                    seniorScrumMasters.Add((dynamic)seniorScrum);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefMarketingOfficer
+
+            var marketingTeamLeads = new List<ExpandoObject>();
+
+            marketingOfficer.Add("Id", chiefMarketingOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefMarketingOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    marketingOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefMarketingOfficer.MarketingTeamLeads))
+                {
+                    marketingOfficer.Add(property.Name, marketingTeamLeads);
+                }
+            }
+
+            foreach (var marketingTeamLead in chiefMarketingOfficer!.MarketingTeamLeads)
+            {
+                var marketingSeniors = new List<ExpandoObject>();
+
+                var marketingLead = new ExpandoObject() as IDictionary<string, object>;
+
+                marketingLead.Add("Id", marketingTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(MarketingTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        marketingLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(MarketingTeamLead.Seniors))
+                    {
+                        marketingLead.Add(property.Name, marketingSeniors);
+                    }
+                }
+
+                marketingTeamLeads.Add((dynamic)marketingLead);
+
+                foreach (var senior in marketingTeamLead.Seniors)
+                {
+                    var marketingMidlevels = new List<ExpandoObject>();
+
+                    var marketingSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    marketingSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorMarketing).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            marketingSenior.Add(property.Name, value);
+                            continue;
+                        }
+
+                        if (property.Name is nameof(SeniorMarketing.Midlevels))
+                        {
+                            marketingSenior.Add(property.Name, marketingMidlevels);
+                        }
+                    }
+
+                    marketingSeniors.Add((dynamic)marketingSenior);
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var marketingJuniors = new List<ExpandoObject>();
+
+                        var marketingMidlevel = new ExpandoObject() as IDictionary<string, object>;
+
+                        marketingMidlevel.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelMarketing).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                marketingMidlevel.Add(property.Name, value);
+                                continue;
+                            }
+
+                            if (property.Name is nameof(MidlevelMarketing.Juniors))
+                            {
+                                marketingMidlevel.Add(property.Name, marketingJuniors);
+                            }
+                        }
+
+                        marketingMidlevels.Add((dynamic)marketingMidlevel);
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var marketingFreshers = new List<ExpandoObject>();
+
+                            var marketingJunior = new ExpandoObject() as IDictionary<string, object>;
+
+                            marketingJunior.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorMarketing).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    marketingJunior.Add(property.Name, value);
+                                    continue;
+                                }
+
+                                if (property.Name is nameof(JuniorMarketing.Freshers))
+                                {
+                                    marketingJunior.Add(property.Name, marketingFreshers);
+                                }
+                            }
+
+                            marketingJuniors.Add((dynamic)marketingJunior);
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var marketingFresher = new ExpandoObject() as IDictionary<string, object>;
+
+                                marketingFresher.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherMarketing).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        marketingFresher.Add(property.Name, value);
+                                    }
+                                }
+
+                                marketingFreshers.Add((dynamic)marketingFresher);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            #endregion
+
 
             technicalOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
             technicalOfficer[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
@@ -1429,5 +2043,2393 @@ public static class PatchEngine
         }
 
         return executiveOfficers;
+    }
+
+    public static List<ExpandoObject> CreateLeadInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    {
+        var random = new Random();
+
+        var executiveOfficers = new List<ExpandoObject>();
+
+        foreach (var chiefExecutiveOfficer in chiefExecutiveOfficers)
+        {
+            ChiefProductOfficer? chiefProductOfficer = chiefExecutiveOfficer.ChiefProductOfficer;
+            ChiefTechnicalOfficer? chiefTechnicalOfficer = chiefExecutiveOfficer.ChiefTechnicalOfficer;
+            ChiefMarketingOfficer? chiefMarketingOfficer = chiefExecutiveOfficer.ChiefMarketingOfficer;
+
+            int index = random.Next(0, 6);
+
+            var propertyValues = new Dictionary<string, object?>();
+
+            var age = Ages[index];
+            var height = Heights[index];
+            var weight = Weights[index];
+            var address = Addresses[index];
+            var eyeColor = EyeColors[index];
+            var birthDate = BirthDates[index];
+            var isFired = FireStatuses[index];
+            var graduation = Graduations[index];
+            var experience = Experiences[index];
+            var officerName = OfficerNames[index];
+            var modifiedDate = ModifiedDates[index];
+            var organization = Organizations[index];
+            var nationalCode = NationalCodes[index];
+            var personalCode = PersonalCodes[index];
+            var daysOfVacation = DaysOfVacation[index];
+            var officerLastName = OfficerLastNames[index];
+            var contractDateEnd = ContractDatesEnd[index];
+            var uniqueIdentifier = UniqueIdentifiers[index];
+            var contractDateStart = ContractDatesStart[index];
+
+            propertyValues.Add(nameof(ChiefUnitIdentity.Age), 25.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Height), 188.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Weight), 85.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.IsFired), true.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Address), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Name), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.EyeColor), eyeColor?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.BirthDate), birthDate.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Experience), Experience.Elementary.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Graduation), Graduation.Diploma.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.LastName), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.NationalCode), "99999999".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.PersonalCode), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ModifiedDate), modifiedDate?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.DaysOfVacation), daysOfVacation?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ContractDateEnd), contractDateEnd.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.UniqueIdentifier), uniqueIdentifier.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.AssignedOrganization), "SnappTrip".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ContractDateStart), contractDateStart.JsonElement());
+
+            var executiveOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var technicalOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var marketingOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var productOfficer = new ExpandoObject() as IDictionary<string, object>;
+
+
+            #region ChiefExecutiveOfficer
+
+            executiveOfficer.Add("Id", chiefExecutiveOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefExecutiveOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    executiveOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefTechnicalOfficer))
+                {
+                    executiveOfficer.Add(property.Name, technicalOfficer);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefProductOfficer))
+                {
+                    executiveOfficer.Add(property.Name, productOfficer);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefMarketingOfficer))
+                {
+                    executiveOfficer.Add(property.Name, marketingOfficer);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefTechnicalOfficer
+
+            var technicalTeamLeads = new List<ExpandoObject>();
+            var qATestingTeamLeads = new List<ExpandoObject>();
+
+            technicalOfficer.Add("Id", chiefTechnicalOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefTechnicalOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    technicalOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefTechnicalOfficer.TechnicalTeamLeads))
+                {
+                    technicalOfficer.Add(property.Name, technicalTeamLeads);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefTechnicalOfficer.QaTestingTeamLeads))
+                {
+                    technicalOfficer.Add(property.Name, qATestingTeamLeads);
+                }
+            }
+
+            foreach (var technicalTeamLead in chiefTechnicalOfficer!.TechnicalTeamLeads)
+            {
+                var technicalSeniors = new List<ExpandoObject>();
+
+                var technicalLead = new ExpandoObject() as IDictionary<string, object>;
+
+                technicalLead.Add("Id", technicalTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(TechnicalTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        technicalLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(TechnicalTeamLead.Seniors))
+                    {
+                        technicalLead.Add(property.Name, technicalSeniors);
+                    }
+                }
+
+                technicalTeamLeads.Add((dynamic)technicalLead);
+
+                foreach (var senior in technicalTeamLead.Seniors)
+                {
+                    var technicalMidlevels = new List<ExpandoObject>();
+
+                    var technicalSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    technicalSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorDeveloper).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            technicalSenior.Add(property.Name, value);
+                            continue;
+                        }
+
+                        if (property.Name is nameof(SeniorDeveloper.Midlevels))
+                        {
+                            technicalSenior.Add(property.Name, technicalMidlevels);
+                        }
+                    }
+
+                    technicalSeniors.Add((dynamic)technicalSenior);
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var technicalJuniors = new List<ExpandoObject>();
+
+                        var technicalMidlevel = new ExpandoObject() as IDictionary<string, object>;
+
+                        technicalMidlevel.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelDeveloper).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                technicalMidlevel.Add(property.Name, value);
+                                continue;
+                            }
+
+                            if (property.Name is nameof(MidlevelDeveloper.Juniors))
+                            {
+                                technicalMidlevel.Add(property.Name, technicalJuniors);
+                            }
+                        }
+
+                        technicalMidlevels.Add((dynamic)technicalMidlevel);
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var technicalFreshers = new List<ExpandoObject>();
+
+                            var technicalJunior = new ExpandoObject() as IDictionary<string, object>;
+
+                            technicalJunior.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorDeveloper).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    technicalJunior.Add(property.Name, value);
+                                    continue;
+                                }
+
+                                if (property.Name is nameof(JuniorDeveloper.Freshers))
+                                {
+                                    technicalJunior.Add(property.Name, technicalFreshers);
+                                }
+                            }
+
+                            technicalJuniors.Add((dynamic)technicalJunior);
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var technicalFresher = new ExpandoObject() as IDictionary<string, object>;
+
+                                technicalFresher.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherDeveloper).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        technicalFresher.Add(property.Name, value);
+                                    }
+                                }
+
+                                technicalFreshers.Add((dynamic)technicalFresher);
+                            }
+                        }
+                    }
+                }
+
+                PrepareForInvalidScenario(technicalLead);
+            }
+
+            foreach (var qaTestingTeamLead in chiefTechnicalOfficer.QaTestingTeamLeads)
+            {
+                var qATestingSeniors = new List<ExpandoObject>();
+
+                var qATestingLead = new ExpandoObject() as IDictionary<string, object>;
+
+                qATestingLead.Add("Id", qaTestingTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(QaTestingTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        qATestingLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(QaTestingTeamLead.Seniors))
+                    {
+                        qATestingLead.Add(property.Name, qATestingSeniors);
+                    }
+                }
+
+                qATestingTeamLeads.Add((dynamic)qATestingLead);
+
+                foreach (var senior in qaTestingTeamLead.Seniors)
+                {
+                    var qaTestingSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    qaTestingSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorDeveloper).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            qaTestingSenior.Add(property.Name, value);
+                            continue;
+                        }
+                    }
+
+                    qATestingSeniors.Add((dynamic)qaTestingSenior);
+                }
+
+                PrepareForInvalidScenario(qATestingLead);
+            }
+
+            #endregion
+
+
+            #region ChiefProductOfficer
+
+            productOfficer.Add("Id", chiefProductOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefProductOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    productOfficer.Add(property.Name, value);
+                }
+            }
+
+            var productTeamLeads = new List<ExpandoObject>();
+            ((dynamic)productOfficer).ProductTeamLeads = productTeamLeads;
+
+            var scrumMasterTeamLeads = new List<ExpandoObject>();
+            ((dynamic)productOfficer).ScrumMasterTeamLeads = scrumMasterTeamLeads;
+
+            foreach (var productTeamLead in chiefProductOfficer!.ProductTeamLeads)
+            {
+                var productMangerLead = new ExpandoObject() as IDictionary<string, object>;
+
+                productMangerLead.Add("Id", productTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(ProductTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        productMangerLead.Add(property.Name, value);
+                    }
+                }
+
+                productTeamLeads.Add((dynamic)productMangerLead);
+
+                var seniorProducts = new List<ExpandoObject>();
+                ((dynamic)productMangerLead).Seniors = seniorProducts;
+
+                foreach (var senior in productTeamLead.Seniors)
+                {
+                    var seniorProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                    seniorProduct.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorProductManager).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            seniorProduct.Add(property.Name, value);
+                        }
+                    }
+
+                    seniorProducts.Add((dynamic)seniorProduct);
+
+                    var midlevelProducts = new List<ExpandoObject>();
+                    ((dynamic)seniorProduct).Midlevels = midlevelProducts;
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var midlevelProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                        midlevelProduct.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelProductManager).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                midlevelProduct.Add(property.Name, value);
+                            }
+                        }
+
+                        midlevelProducts.Add((dynamic)midlevelProduct);
+
+                        var juniorProducts = new List<ExpandoObject>();
+                        ((dynamic)midlevelProduct).Juniors = juniorProducts;
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var juniorProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                            juniorProduct.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorProductManager).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    juniorProduct.Add(property.Name, value);
+                                }
+                            }
+
+                            juniorProducts.Add((dynamic)juniorProduct);
+
+                            var fresherProducts = new List<ExpandoObject>();
+                            ((dynamic)juniorProduct).Freshers = fresherProducts;
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var fresherProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                                fresherProduct.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherProductManager).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        fresherProduct.Add(property.Name, value);
+                                    }
+                                }
+
+                                fresherProducts.Add((dynamic)fresherProduct);
+                            }
+                        }
+                    }
+                }
+
+                PrepareForInvalidScenario(productMangerLead);
+            }
+
+            foreach (var scrumTeamLead in chiefProductOfficer.ScrumMasterTeamLeads)
+            {
+                var scrumMasterTeamLead = new ExpandoObject() as IDictionary<string, object>;
+
+                scrumMasterTeamLead.Add("Id", scrumTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(ScrumMasterTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        scrumMasterTeamLead.Add(property.Name, value);
+                    }
+                }
+
+                scrumMasterTeamLeads.Add((dynamic)scrumMasterTeamLead);
+
+                var seniorScrumMasters = new List<ExpandoObject>();
+                ((dynamic)scrumMasterTeamLead).Seniors = seniorScrumMasters;
+
+                foreach (var senior in scrumTeamLead.Seniors)
+                {
+                    var seniorScrum = new ExpandoObject() as IDictionary<string, object>;
+
+                    seniorScrum.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorScrumMaster).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            seniorScrum.Add(property.Name, value);
+                        }
+                    }
+
+                    seniorScrumMasters.Add((dynamic)seniorScrum);
+                }
+
+                PrepareForInvalidScenario(scrumMasterTeamLead);
+            }
+
+            #endregion
+
+
+            #region ChiefMarketingOfficer
+
+            var marketingTeamLeads = new List<ExpandoObject>();
+
+            marketingOfficer.Add("Id", chiefMarketingOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefMarketingOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    marketingOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefMarketingOfficer.MarketingTeamLeads))
+                {
+                    marketingOfficer.Add(property.Name, marketingTeamLeads);
+                }
+            }
+
+            foreach (var marketingTeamLead in chiefMarketingOfficer!.MarketingTeamLeads)
+            {
+                var marketingSeniors = new List<ExpandoObject>();
+
+                var marketingLead = new ExpandoObject() as IDictionary<string, object>;
+
+                marketingLead.Add("Id", marketingTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(MarketingTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        marketingLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(MarketingTeamLead.Seniors))
+                    {
+                        marketingLead.Add(property.Name, marketingSeniors);
+                    }
+                }
+
+                marketingTeamLeads.Add((dynamic)marketingLead);
+
+                foreach (var senior in marketingTeamLead.Seniors)
+                {
+                    var marketingMidlevels = new List<ExpandoObject>();
+
+                    var marketingSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    marketingSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorMarketing).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            marketingSenior.Add(property.Name, value);
+                            continue;
+                        }
+
+                        if (property.Name is nameof(SeniorMarketing.Midlevels))
+                        {
+                            marketingSenior.Add(property.Name, marketingMidlevels);
+                        }
+                    }
+
+                    marketingSeniors.Add((dynamic)marketingSenior);
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var marketingJuniors = new List<ExpandoObject>();
+
+                        var marketingMidlevel = new ExpandoObject() as IDictionary<string, object>;
+
+                        marketingMidlevel.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelMarketing).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                marketingMidlevel.Add(property.Name, value);
+                                continue;
+                            }
+
+                            if (property.Name is nameof(MidlevelMarketing.Juniors))
+                            {
+                                marketingMidlevel.Add(property.Name, marketingJuniors);
+                            }
+                        }
+
+                        marketingMidlevels.Add((dynamic)marketingMidlevel);
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var marketingFreshers = new List<ExpandoObject>();
+
+                            var marketingJunior = new ExpandoObject() as IDictionary<string, object>;
+
+                            marketingJunior.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorMarketing).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    marketingJunior.Add(property.Name, value);
+                                    continue;
+                                }
+
+                                if (property.Name is nameof(JuniorMarketing.Freshers))
+                                {
+                                    marketingJunior.Add(property.Name, marketingFreshers);
+                                }
+                            }
+
+                            marketingJuniors.Add((dynamic)marketingJunior);
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var marketingFresher = new ExpandoObject() as IDictionary<string, object>;
+
+                                marketingFresher.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherMarketing).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        marketingFresher.Add(property.Name, value);
+                                    }
+                                }
+
+                                marketingFreshers.Add((dynamic)marketingFresher);
+                            }
+                        }
+                    }
+                }
+
+                PrepareForInvalidScenario(marketingLead);
+            }
+
+            #endregion
+
+
+            executiveOfficers.Add((dynamic)executiveOfficer);
+        }
+
+        return executiveOfficers;
+    }
+
+    public static List<ExpandoObject> CreateSeniorInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    {
+        var random = new Random();
+
+        var executiveOfficers = new List<ExpandoObject>();
+
+        foreach (var chiefExecutiveOfficer in chiefExecutiveOfficers)
+        {
+            ChiefProductOfficer? chiefProductOfficer = chiefExecutiveOfficer.ChiefProductOfficer;
+            ChiefTechnicalOfficer? chiefTechnicalOfficer = chiefExecutiveOfficer.ChiefTechnicalOfficer;
+            ChiefMarketingOfficer? chiefMarketingOfficer = chiefExecutiveOfficer.ChiefMarketingOfficer;
+
+            int index = random.Next(0, 6);
+
+            var propertyValues = new Dictionary<string, object?>();
+
+            var age = Ages[index];
+            var height = Heights[index];
+            var weight = Weights[index];
+            var address = Addresses[index];
+            var eyeColor = EyeColors[index];
+            var birthDate = BirthDates[index];
+            var isFired = FireStatuses[index];
+            var graduation = Graduations[index];
+            var experience = Experiences[index];
+            var officerName = OfficerNames[index];
+            var modifiedDate = ModifiedDates[index];
+            var organization = Organizations[index];
+            var nationalCode = NationalCodes[index];
+            var personalCode = PersonalCodes[index];
+            var daysOfVacation = DaysOfVacation[index];
+            var officerLastName = OfficerLastNames[index];
+            var contractDateEnd = ContractDatesEnd[index];
+            var uniqueIdentifier = UniqueIdentifiers[index];
+            var contractDateStart = ContractDatesStart[index];
+
+            propertyValues.Add(nameof(ChiefUnitIdentity.Age), 25.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Height), 188.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Weight), 85.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.IsFired), true.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Address), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Name), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.EyeColor), eyeColor?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.BirthDate), birthDate.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Experience), Experience.Elementary.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Graduation), Graduation.Diploma.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.LastName), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.NationalCode), "99999999".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.PersonalCode), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ModifiedDate), modifiedDate?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.DaysOfVacation), daysOfVacation?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ContractDateEnd), contractDateEnd.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.UniqueIdentifier), uniqueIdentifier.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.AssignedOrganization), "SnappTrip".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ContractDateStart), contractDateStart.JsonElement());
+
+            var executiveOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var technicalOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var marketingOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var productOfficer = new ExpandoObject() as IDictionary<string, object>;
+
+
+            #region ChiefExecutiveOfficer
+
+            executiveOfficer.Add("Id", chiefExecutiveOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefExecutiveOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    executiveOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefTechnicalOfficer))
+                {
+                    executiveOfficer.Add(property.Name, technicalOfficer);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefProductOfficer))
+                {
+                    executiveOfficer.Add(property.Name, productOfficer);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefMarketingOfficer))
+                {
+                    executiveOfficer.Add(property.Name, marketingOfficer);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefTechnicalOfficer
+
+            var technicalTeamLeads = new List<ExpandoObject>();
+            var qATestingTeamLeads = new List<ExpandoObject>();
+
+            technicalOfficer.Add("Id", chiefTechnicalOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefTechnicalOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    technicalOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefTechnicalOfficer.TechnicalTeamLeads))
+                {
+                    technicalOfficer.Add(property.Name, technicalTeamLeads);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefTechnicalOfficer.QaTestingTeamLeads))
+                {
+                    technicalOfficer.Add(property.Name, qATestingTeamLeads);
+                }
+            }
+
+            foreach (var technicalTeamLead in chiefTechnicalOfficer!.TechnicalTeamLeads)
+            {
+                var technicalSeniors = new List<ExpandoObject>();
+
+                var technicalLead = new ExpandoObject() as IDictionary<string, object>;
+
+                technicalLead.Add("Id", technicalTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(TechnicalTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        technicalLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(TechnicalTeamLead.Seniors))
+                    {
+                        technicalLead.Add(property.Name, technicalSeniors);
+                    }
+                }
+
+                technicalTeamLeads.Add((dynamic)technicalLead);
+
+                foreach (var senior in technicalTeamLead.Seniors)
+                {
+                    var technicalMidlevels = new List<ExpandoObject>();
+
+                    var technicalSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    technicalSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorDeveloper).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            technicalSenior.Add(property.Name, value);
+                            continue;
+                        }
+
+                        if (property.Name is nameof(SeniorDeveloper.Midlevels))
+                        {
+                            technicalSenior.Add(property.Name, technicalMidlevels);
+                        }
+                    }
+
+                    technicalSeniors.Add((dynamic)technicalSenior);
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var technicalJuniors = new List<ExpandoObject>();
+
+                        var technicalMidlevel = new ExpandoObject() as IDictionary<string, object>;
+
+                        technicalMidlevel.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelDeveloper).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                technicalMidlevel.Add(property.Name, value);
+                                continue;
+                            }
+
+                            if (property.Name is nameof(MidlevelDeveloper.Juniors))
+                            {
+                                technicalMidlevel.Add(property.Name, technicalJuniors);
+                            }
+                        }
+
+                        technicalMidlevels.Add((dynamic)technicalMidlevel);
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var technicalFreshers = new List<ExpandoObject>();
+
+                            var technicalJunior = new ExpandoObject() as IDictionary<string, object>;
+
+                            technicalJunior.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorDeveloper).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    technicalJunior.Add(property.Name, value);
+                                    continue;
+                                }
+
+                                if (property.Name is nameof(JuniorDeveloper.Freshers))
+                                {
+                                    technicalJunior.Add(property.Name, technicalFreshers);
+                                }
+                            }
+
+                            technicalJuniors.Add((dynamic)technicalJunior);
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var technicalFresher = new ExpandoObject() as IDictionary<string, object>;
+
+                                technicalFresher.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherDeveloper).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        technicalFresher.Add(property.Name, value);
+                                    }
+                                }
+
+                                technicalFreshers.Add((dynamic)technicalFresher);
+                            }
+                        }
+                    }
+
+                    PrepareForInvalidScenario(technicalSenior);
+                }
+            }
+
+            foreach (var qaTestingTeamLead in chiefTechnicalOfficer.QaTestingTeamLeads)
+            {
+                var qATestingSeniors = new List<ExpandoObject>();
+
+                var qATestingLead = new ExpandoObject() as IDictionary<string, object>;
+
+                qATestingLead.Add("Id", qaTestingTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(QaTestingTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        qATestingLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(QaTestingTeamLead.Seniors))
+                    {
+                        qATestingLead.Add(property.Name, qATestingSeniors);
+                    }
+                }
+
+                qATestingTeamLeads.Add((dynamic)qATestingLead);
+
+                foreach (var senior in qaTestingTeamLead.Seniors)
+                {
+                    var qaTestingSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    qaTestingSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorDeveloper).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            qaTestingSenior.Add(property.Name, value);
+                            continue;
+                        }
+                    }
+
+                    qATestingSeniors.Add((dynamic)qaTestingSenior);
+
+                    PrepareForInvalidScenario(qaTestingSenior);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefProductOfficer
+
+            productOfficer.Add("Id", chiefProductOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefProductOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    productOfficer.Add(property.Name, value);
+                }
+            }
+
+            var productTeamLeads = new List<ExpandoObject>();
+            ((dynamic)productOfficer).ProductTeamLeads = productTeamLeads;
+
+            var scrumMasterTeamLeads = new List<ExpandoObject>();
+            ((dynamic)productOfficer).ScrumMasterTeamLeads = scrumMasterTeamLeads;
+
+            foreach (var productTeamLead in chiefProductOfficer!.ProductTeamLeads)
+            {
+                var productMangerLead = new ExpandoObject() as IDictionary<string, object>;
+
+                productMangerLead.Add("Id", productTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(ProductTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        productMangerLead.Add(property.Name, value);
+                    }
+                }
+
+                productTeamLeads.Add((dynamic)productMangerLead);
+
+                var seniorProducts = new List<ExpandoObject>();
+                ((dynamic)productMangerLead).Seniors = seniorProducts;
+
+                foreach (var senior in productTeamLead.Seniors)
+                {
+                    var seniorProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                    seniorProduct.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorProductManager).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            seniorProduct.Add(property.Name, value);
+                        }
+                    }
+
+                    seniorProducts.Add((dynamic)seniorProduct);
+
+                    var midlevelProducts = new List<ExpandoObject>();
+                    ((dynamic)seniorProduct).Midlevels = midlevelProducts;
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var midlevelProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                        midlevelProduct.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelProductManager).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                midlevelProduct.Add(property.Name, value);
+                            }
+                        }
+
+                        midlevelProducts.Add((dynamic)midlevelProduct);
+
+                        var juniorProducts = new List<ExpandoObject>();
+                        ((dynamic)midlevelProduct).Juniors = juniorProducts;
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var juniorProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                            juniorProduct.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorProductManager).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    juniorProduct.Add(property.Name, value);
+                                }
+                            }
+
+                            juniorProducts.Add((dynamic)juniorProduct);
+
+                            var fresherProducts = new List<ExpandoObject>();
+                            ((dynamic)juniorProduct).Freshers = fresherProducts;
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var fresherProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                                fresherProduct.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherProductManager).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        fresherProduct.Add(property.Name, value);
+                                    }
+                                }
+
+                                fresherProducts.Add((dynamic)fresherProduct);
+                            }
+                        }
+                    }
+
+                    PrepareForInvalidScenario(seniorProduct);
+                }
+            }
+
+            foreach (var scrumTeamLead in chiefProductOfficer.ScrumMasterTeamLeads)
+            {
+                var scrumMasterTeamLead = new ExpandoObject() as IDictionary<string, object>;
+
+                scrumMasterTeamLead.Add("Id", scrumTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(ScrumMasterTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        scrumMasterTeamLead.Add(property.Name, value);
+                    }
+                }
+
+                scrumMasterTeamLeads.Add((dynamic)scrumMasterTeamLead);
+
+                var seniorScrumMasters = new List<ExpandoObject>();
+                ((dynamic)scrumMasterTeamLead).Seniors = seniorScrumMasters;
+
+                foreach (var senior in scrumTeamLead.Seniors)
+                {
+                    var seniorScrum = new ExpandoObject() as IDictionary<string, object>;
+
+                    seniorScrum.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorScrumMaster).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            seniorScrum.Add(property.Name, value);
+                        }
+                    }
+
+                    seniorScrumMasters.Add((dynamic)seniorScrum);
+
+                    PrepareForInvalidScenario(seniorScrum);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefMarketingOfficer
+
+            var marketingTeamLeads = new List<ExpandoObject>();
+
+            marketingOfficer.Add("Id", chiefMarketingOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefMarketingOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    marketingOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefMarketingOfficer.MarketingTeamLeads))
+                {
+                    marketingOfficer.Add(property.Name, marketingTeamLeads);
+                }
+            }
+
+            foreach (var marketingTeamLead in chiefMarketingOfficer!.MarketingTeamLeads)
+            {
+                var marketingSeniors = new List<ExpandoObject>();
+
+                var marketingLead = new ExpandoObject() as IDictionary<string, object>;
+
+                marketingLead.Add("Id", marketingTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(MarketingTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        marketingLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(MarketingTeamLead.Seniors))
+                    {
+                        marketingLead.Add(property.Name, marketingSeniors);
+                    }
+                }
+
+                marketingTeamLeads.Add((dynamic)marketingLead);
+
+                foreach (var senior in marketingTeamLead.Seniors)
+                {
+                    var marketingMidlevels = new List<ExpandoObject>();
+
+                    var marketingSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    marketingSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorMarketing).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            marketingSenior.Add(property.Name, value);
+                            continue;
+                        }
+
+                        if (property.Name is nameof(SeniorMarketing.Midlevels))
+                        {
+                            marketingSenior.Add(property.Name, marketingMidlevels);
+                        }
+                    }
+
+                    marketingSeniors.Add((dynamic)marketingSenior);
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var marketingJuniors = new List<ExpandoObject>();
+
+                        var marketingMidlevel = new ExpandoObject() as IDictionary<string, object>;
+
+                        marketingMidlevel.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelMarketing).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                marketingMidlevel.Add(property.Name, value);
+                                continue;
+                            }
+
+                            if (property.Name is nameof(MidlevelMarketing.Juniors))
+                            {
+                                marketingMidlevel.Add(property.Name, marketingJuniors);
+                            }
+                        }
+
+                        marketingMidlevels.Add((dynamic)marketingMidlevel);
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var marketingFreshers = new List<ExpandoObject>();
+
+                            var marketingJunior = new ExpandoObject() as IDictionary<string, object>;
+
+                            marketingJunior.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorMarketing).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    marketingJunior.Add(property.Name, value);
+                                    continue;
+                                }
+
+                                if (property.Name is nameof(JuniorMarketing.Freshers))
+                                {
+                                    marketingJunior.Add(property.Name, marketingFreshers);
+                                }
+                            }
+
+                            marketingJuniors.Add((dynamic)marketingJunior);
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var marketingFresher = new ExpandoObject() as IDictionary<string, object>;
+
+                                marketingFresher.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherMarketing).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        marketingFresher.Add(property.Name, value);
+                                    }
+                                }
+
+                                marketingFreshers.Add((dynamic)marketingFresher);
+                            }
+                        }
+                    }
+
+                    PrepareForInvalidScenario(marketingSenior);
+                }
+            }
+
+            #endregion
+
+
+            executiveOfficers.Add((dynamic)executiveOfficer);
+        }
+
+        return executiveOfficers;
+    }
+
+    public static List<ExpandoObject> CreateMidlevelInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    {
+        var random = new Random();
+
+        var executiveOfficers = new List<ExpandoObject>();
+
+        foreach (var chiefExecutiveOfficer in chiefExecutiveOfficers)
+        {
+            ChiefProductOfficer? chiefProductOfficer = chiefExecutiveOfficer.ChiefProductOfficer;
+            ChiefTechnicalOfficer? chiefTechnicalOfficer = chiefExecutiveOfficer.ChiefTechnicalOfficer;
+            ChiefMarketingOfficer? chiefMarketingOfficer = chiefExecutiveOfficer.ChiefMarketingOfficer;
+
+            int index = random.Next(0, 6);
+
+            var propertyValues = new Dictionary<string, object?>();
+
+            var age = Ages[index];
+            var height = Heights[index];
+            var weight = Weights[index];
+            var address = Addresses[index];
+            var eyeColor = EyeColors[index];
+            var birthDate = BirthDates[index];
+            var isFired = FireStatuses[index];
+            var graduation = Graduations[index];
+            var experience = Experiences[index];
+            var officerName = OfficerNames[index];
+            var modifiedDate = ModifiedDates[index];
+            var organization = Organizations[index];
+            var nationalCode = NationalCodes[index];
+            var personalCode = PersonalCodes[index];
+            var daysOfVacation = DaysOfVacation[index];
+            var officerLastName = OfficerLastNames[index];
+            var contractDateEnd = ContractDatesEnd[index];
+            var uniqueIdentifier = UniqueIdentifiers[index];
+            var contractDateStart = ContractDatesStart[index];
+
+            propertyValues.Add(nameof(ChiefUnitIdentity.Age), 25.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Height), 188.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Weight), 85.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.IsFired), true.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Address), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Name), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.EyeColor), eyeColor?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.BirthDate), birthDate.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Experience), Experience.Elementary.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Graduation), Graduation.Diploma.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.LastName), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.NationalCode), "99999999".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.PersonalCode), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ModifiedDate), modifiedDate?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.DaysOfVacation), daysOfVacation?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ContractDateEnd), contractDateEnd.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.UniqueIdentifier), uniqueIdentifier.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.AssignedOrganization), "SnappTrip".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ContractDateStart), contractDateStart.JsonElement());
+
+            var executiveOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var technicalOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var marketingOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var productOfficer = new ExpandoObject() as IDictionary<string, object>;
+
+
+            #region ChiefExecutiveOfficer
+
+            executiveOfficer.Add("Id", chiefExecutiveOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefExecutiveOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    executiveOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefTechnicalOfficer))
+                {
+                    executiveOfficer.Add(property.Name, technicalOfficer);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefProductOfficer))
+                {
+                    executiveOfficer.Add(property.Name, productOfficer);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefMarketingOfficer))
+                {
+                    executiveOfficer.Add(property.Name, marketingOfficer);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefTechnicalOfficer
+
+            var technicalTeamLeads = new List<ExpandoObject>();
+            var qATestingTeamLeads = new List<ExpandoObject>();
+
+            technicalOfficer.Add("Id", chiefTechnicalOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefTechnicalOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    technicalOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefTechnicalOfficer.TechnicalTeamLeads))
+                {
+                    technicalOfficer.Add(property.Name, technicalTeamLeads);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefTechnicalOfficer.QaTestingTeamLeads))
+                {
+                    technicalOfficer.Add(property.Name, qATestingTeamLeads);
+                }
+            }
+
+            foreach (var technicalTeamLead in chiefTechnicalOfficer!.TechnicalTeamLeads)
+            {
+                var technicalSeniors = new List<ExpandoObject>();
+
+                var technicalLead = new ExpandoObject() as IDictionary<string, object>;
+
+                technicalLead.Add("Id", technicalTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(TechnicalTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        technicalLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(TechnicalTeamLead.Seniors))
+                    {
+                        technicalLead.Add(property.Name, technicalSeniors);
+                    }
+                }
+
+                technicalTeamLeads.Add((dynamic)technicalLead);
+
+                foreach (var senior in technicalTeamLead.Seniors)
+                {
+                    var technicalMidlevels = new List<ExpandoObject>();
+
+                    var technicalSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    technicalSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorDeveloper).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            technicalSenior.Add(property.Name, value);
+                            continue;
+                        }
+
+                        if (property.Name is nameof(SeniorDeveloper.Midlevels))
+                        {
+                            technicalSenior.Add(property.Name, technicalMidlevels);
+                        }
+                    }
+
+                    technicalSeniors.Add((dynamic)technicalSenior);
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var technicalJuniors = new List<ExpandoObject>();
+
+                        var technicalMidlevel = new ExpandoObject() as IDictionary<string, object>;
+
+                        technicalMidlevel.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelDeveloper).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                technicalMidlevel.Add(property.Name, value);
+                                continue;
+                            }
+
+                            if (property.Name is nameof(MidlevelDeveloper.Juniors))
+                            {
+                                technicalMidlevel.Add(property.Name, technicalJuniors);
+                            }
+                        }
+
+                        technicalMidlevels.Add((dynamic)technicalMidlevel);
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var technicalFreshers = new List<ExpandoObject>();
+
+                            var technicalJunior = new ExpandoObject() as IDictionary<string, object>;
+
+                            technicalJunior.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorDeveloper).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    technicalJunior.Add(property.Name, value);
+                                    continue;
+                                }
+
+                                if (property.Name is nameof(JuniorDeveloper.Freshers))
+                                {
+                                    technicalJunior.Add(property.Name, technicalFreshers);
+                                }
+                            }
+
+                            technicalJuniors.Add((dynamic)technicalJunior);
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var technicalFresher = new ExpandoObject() as IDictionary<string, object>;
+
+                                technicalFresher.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherDeveloper).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        technicalFresher.Add(property.Name, value);
+                                    }
+                                }
+
+                                technicalFreshers.Add((dynamic)technicalFresher);
+                            }
+                        }
+
+                        PrepareForInvalidScenario(technicalMidlevel);
+                    }
+                }
+            }
+
+            foreach (var qaTestingTeamLead in chiefTechnicalOfficer.QaTestingTeamLeads)
+            {
+                var qATestingSeniors = new List<ExpandoObject>();
+
+                var qATestingLead = new ExpandoObject() as IDictionary<string, object>;
+
+                qATestingLead.Add("Id", qaTestingTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(QaTestingTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        qATestingLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(QaTestingTeamLead.Seniors))
+                    {
+                        qATestingLead.Add(property.Name, qATestingSeniors);
+                    }
+                }
+
+                qATestingTeamLeads.Add((dynamic)qATestingLead);
+
+                foreach (var senior in qaTestingTeamLead.Seniors)
+                {
+                    var qaTestingSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    qaTestingSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorDeveloper).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            qaTestingSenior.Add(property.Name, value);
+                            continue;
+                        }
+                    }
+
+                    qATestingSeniors.Add((dynamic)qaTestingSenior);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefProductOfficer
+
+            productOfficer.Add("Id", chiefProductOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefProductOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    productOfficer.Add(property.Name, value);
+                }
+            }
+
+            var productTeamLeads = new List<ExpandoObject>();
+            ((dynamic)productOfficer).ProductTeamLeads = productTeamLeads;
+
+            var scrumMasterTeamLeads = new List<ExpandoObject>();
+            ((dynamic)productOfficer).ScrumMasterTeamLeads = scrumMasterTeamLeads;
+
+            foreach (var productTeamLead in chiefProductOfficer!.ProductTeamLeads)
+            {
+                var productMangerLead = new ExpandoObject() as IDictionary<string, object>;
+
+                productMangerLead.Add("Id", productTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(ProductTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        productMangerLead.Add(property.Name, value);
+                    }
+                }
+
+                productTeamLeads.Add((dynamic)productMangerLead);
+
+                var seniorProducts = new List<ExpandoObject>();
+                ((dynamic)productMangerLead).Seniors = seniorProducts;
+
+                foreach (var senior in productTeamLead.Seniors)
+                {
+                    var seniorProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                    seniorProduct.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorProductManager).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            seniorProduct.Add(property.Name, value);
+                        }
+                    }
+
+                    seniorProducts.Add((dynamic)seniorProduct);
+
+                    var midlevelProducts = new List<ExpandoObject>();
+                    ((dynamic)seniorProduct).Midlevels = midlevelProducts;
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var midlevelProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                        midlevelProduct.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelProductManager).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                midlevelProduct.Add(property.Name, value);
+                            }
+                        }
+
+                        midlevelProducts.Add((dynamic)midlevelProduct);
+
+                        var juniorProducts = new List<ExpandoObject>();
+                        ((dynamic)midlevelProduct).Juniors = juniorProducts;
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var juniorProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                            juniorProduct.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorProductManager).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    juniorProduct.Add(property.Name, value);
+                                }
+                            }
+
+                            juniorProducts.Add((dynamic)juniorProduct);
+
+                            var fresherProducts = new List<ExpandoObject>();
+                            ((dynamic)juniorProduct).Freshers = fresherProducts;
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var fresherProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                                fresherProduct.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherProductManager).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        fresherProduct.Add(property.Name, value);
+                                    }
+                                }
+
+                                fresherProducts.Add((dynamic)fresherProduct);
+                            }
+                        }
+
+                        PrepareForInvalidScenario(midlevelProduct);
+                    }
+                }
+            }
+
+            foreach (var scrumTeamLead in chiefProductOfficer.ScrumMasterTeamLeads)
+            {
+                var scrumMasterTeamLead = new ExpandoObject() as IDictionary<string, object>;
+
+                scrumMasterTeamLead.Add("Id", scrumTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(ScrumMasterTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        scrumMasterTeamLead.Add(property.Name, value);
+                    }
+                }
+
+                scrumMasterTeamLeads.Add((dynamic)scrumMasterTeamLead);
+
+                var seniorScrumMasters = new List<ExpandoObject>();
+                ((dynamic)scrumMasterTeamLead).Seniors = seniorScrumMasters;
+
+                foreach (var senior in scrumTeamLead.Seniors)
+                {
+                    var seniorScrum = new ExpandoObject() as IDictionary<string, object>;
+
+                    seniorScrum.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorScrumMaster).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            seniorScrum.Add(property.Name, value);
+                        }
+                    }
+
+                    seniorScrumMasters.Add((dynamic)seniorScrum);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefMarketingOfficer
+
+            var marketingTeamLeads = new List<ExpandoObject>();
+
+            marketingOfficer.Add("Id", chiefMarketingOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefMarketingOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    marketingOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefMarketingOfficer.MarketingTeamLeads))
+                {
+                    marketingOfficer.Add(property.Name, marketingTeamLeads);
+                }
+            }
+
+            foreach (var marketingTeamLead in chiefMarketingOfficer!.MarketingTeamLeads)
+            {
+                var marketingSeniors = new List<ExpandoObject>();
+
+                var marketingLead = new ExpandoObject() as IDictionary<string, object>;
+
+                marketingLead.Add("Id", marketingTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(MarketingTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        marketingLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(MarketingTeamLead.Seniors))
+                    {
+                        marketingLead.Add(property.Name, marketingSeniors);
+                    }
+                }
+
+                marketingTeamLeads.Add((dynamic)marketingLead);
+
+                foreach (var senior in marketingTeamLead.Seniors)
+                {
+                    var marketingMidlevels = new List<ExpandoObject>();
+
+                    var marketingSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    marketingSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorMarketing).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            marketingSenior.Add(property.Name, value);
+                            continue;
+                        }
+
+                        if (property.Name is nameof(SeniorMarketing.Midlevels))
+                        {
+                            marketingSenior.Add(property.Name, marketingMidlevels);
+                        }
+                    }
+
+                    marketingSeniors.Add((dynamic)marketingSenior);
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var marketingJuniors = new List<ExpandoObject>();
+
+                        var marketingMidlevel = new ExpandoObject() as IDictionary<string, object>;
+
+                        marketingMidlevel.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelMarketing).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                marketingMidlevel.Add(property.Name, value);
+                                continue;
+                            }
+
+                            if (property.Name is nameof(MidlevelMarketing.Juniors))
+                            {
+                                marketingMidlevel.Add(property.Name, marketingJuniors);
+                            }
+                        }
+
+                        marketingMidlevels.Add((dynamic)marketingMidlevel);
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var marketingFreshers = new List<ExpandoObject>();
+
+                            var marketingJunior = new ExpandoObject() as IDictionary<string, object>;
+
+                            marketingJunior.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorMarketing).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    marketingJunior.Add(property.Name, value);
+                                    continue;
+                                }
+
+                                if (property.Name is nameof(JuniorMarketing.Freshers))
+                                {
+                                    marketingJunior.Add(property.Name, marketingFreshers);
+                                }
+                            }
+
+                            marketingJuniors.Add((dynamic)marketingJunior);
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var marketingFresher = new ExpandoObject() as IDictionary<string, object>;
+
+                                marketingFresher.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherMarketing).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        marketingFresher.Add(property.Name, value);
+                                    }
+                                }
+
+                                marketingFreshers.Add((dynamic)marketingFresher);
+                            }
+                        }
+
+                        PrepareForInvalidScenario(marketingMidlevel);
+                    }
+                }
+            }
+
+            #endregion
+
+
+            executiveOfficers.Add((dynamic)executiveOfficer);
+        }
+
+        return executiveOfficers;
+    }
+
+    public static List<ExpandoObject> CreateJuniorInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    {
+        var random = new Random();
+
+        var executiveOfficers = new List<ExpandoObject>();
+
+        foreach (var chiefExecutiveOfficer in chiefExecutiveOfficers)
+        {
+            ChiefProductOfficer? chiefProductOfficer = chiefExecutiveOfficer.ChiefProductOfficer;
+            ChiefTechnicalOfficer? chiefTechnicalOfficer = chiefExecutiveOfficer.ChiefTechnicalOfficer;
+            ChiefMarketingOfficer? chiefMarketingOfficer = chiefExecutiveOfficer.ChiefMarketingOfficer;
+
+            int index = random.Next(0, 6);
+
+            var propertyValues = new Dictionary<string, object?>();
+
+            var age = Ages[index];
+            var height = Heights[index];
+            var weight = Weights[index];
+            var address = Addresses[index];
+            var eyeColor = EyeColors[index];
+            var birthDate = BirthDates[index];
+            var isFired = FireStatuses[index];
+            var graduation = Graduations[index];
+            var experience = Experiences[index];
+            var officerName = OfficerNames[index];
+            var modifiedDate = ModifiedDates[index];
+            var organization = Organizations[index];
+            var nationalCode = NationalCodes[index];
+            var personalCode = PersonalCodes[index];
+            var daysOfVacation = DaysOfVacation[index];
+            var officerLastName = OfficerLastNames[index];
+            var contractDateEnd = ContractDatesEnd[index];
+            var uniqueIdentifier = UniqueIdentifiers[index];
+            var contractDateStart = ContractDatesStart[index];
+
+            propertyValues.Add(nameof(ChiefUnitIdentity.Age), 25.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Height), 188.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Weight), 85.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.IsFired), true.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Address), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Name), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.EyeColor), eyeColor?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.BirthDate), birthDate.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Experience), Experience.Elementary.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.Graduation), Graduation.Diploma.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.LastName), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.NationalCode), "99999999".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.PersonalCode), "Patched !".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ModifiedDate), modifiedDate?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.DaysOfVacation), daysOfVacation?.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ContractDateEnd), contractDateEnd.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.UniqueIdentifier), uniqueIdentifier.JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.AssignedOrganization), "SnappTrip".JsonElement());
+            propertyValues.Add(nameof(ChiefUnitIdentity.ContractDateStart), contractDateStart.JsonElement());
+
+            var executiveOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var technicalOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var marketingOfficer = new ExpandoObject() as IDictionary<string, object>;
+            var productOfficer = new ExpandoObject() as IDictionary<string, object>;
+
+
+            #region ChiefExecutiveOfficer
+
+            executiveOfficer.Add("Id", chiefExecutiveOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefExecutiveOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    executiveOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefTechnicalOfficer))
+                {
+                    executiveOfficer.Add(property.Name, technicalOfficer);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefProductOfficer))
+                {
+                    executiveOfficer.Add(property.Name, productOfficer);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefExecutiveOfficer.ChiefMarketingOfficer))
+                {
+                    executiveOfficer.Add(property.Name, marketingOfficer);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefTechnicalOfficer
+
+            var technicalTeamLeads = new List<ExpandoObject>();
+            var qATestingTeamLeads = new List<ExpandoObject>();
+
+            technicalOfficer.Add("Id", chiefTechnicalOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefTechnicalOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    technicalOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefTechnicalOfficer.TechnicalTeamLeads))
+                {
+                    technicalOfficer.Add(property.Name, technicalTeamLeads);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefTechnicalOfficer.QaTestingTeamLeads))
+                {
+                    technicalOfficer.Add(property.Name, qATestingTeamLeads);
+                }
+            }
+
+            foreach (var technicalTeamLead in chiefTechnicalOfficer!.TechnicalTeamLeads)
+            {
+                var technicalSeniors = new List<ExpandoObject>();
+
+                var technicalLead = new ExpandoObject() as IDictionary<string, object>;
+
+                technicalLead.Add("Id", technicalTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(TechnicalTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        technicalLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(TechnicalTeamLead.Seniors))
+                    {
+                        technicalLead.Add(property.Name, technicalSeniors);
+                    }
+                }
+
+                technicalTeamLeads.Add((dynamic)technicalLead);
+
+                foreach (var senior in technicalTeamLead.Seniors)
+                {
+                    var technicalMidlevels = new List<ExpandoObject>();
+
+                    var technicalSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    technicalSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorDeveloper).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            technicalSenior.Add(property.Name, value);
+                            continue;
+                        }
+
+                        if (property.Name is nameof(SeniorDeveloper.Midlevels))
+                        {
+                            technicalSenior.Add(property.Name, technicalMidlevels);
+                        }
+                    }
+
+                    technicalSeniors.Add((dynamic)technicalSenior);
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var technicalJuniors = new List<ExpandoObject>();
+
+                        var technicalMidlevel = new ExpandoObject() as IDictionary<string, object>;
+
+                        technicalMidlevel.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelDeveloper).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                technicalMidlevel.Add(property.Name, value);
+                                continue;
+                            }
+
+                            if (property.Name is nameof(MidlevelDeveloper.Juniors))
+                            {
+                                technicalMidlevel.Add(property.Name, technicalJuniors);
+                            }
+                        }
+
+                        technicalMidlevels.Add((dynamic)technicalMidlevel);
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var technicalFreshers = new List<ExpandoObject>();
+
+                            var technicalJunior = new ExpandoObject() as IDictionary<string, object>;
+
+                            technicalJunior.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorDeveloper).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    technicalJunior.Add(property.Name, value);
+                                    continue;
+                                }
+
+                                if (property.Name is nameof(JuniorDeveloper.Freshers))
+                                {
+                                    technicalJunior.Add(property.Name, technicalFreshers);
+                                }
+                            }
+
+                            technicalJuniors.Add((dynamic)technicalJunior);
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var technicalFresher = new ExpandoObject() as IDictionary<string, object>;
+
+                                technicalFresher.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherDeveloper).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        technicalFresher.Add(property.Name, value);
+                                    }
+                                }
+
+                                technicalFreshers.Add((dynamic)technicalFresher);
+                            }
+
+                            PrepareForInvalidScenario(technicalJunior);
+                        }
+                    }
+                }
+            }
+
+            foreach (var qaTestingTeamLead in chiefTechnicalOfficer.QaTestingTeamLeads)
+            {
+                var qATestingSeniors = new List<ExpandoObject>();
+
+                var qATestingLead = new ExpandoObject() as IDictionary<string, object>;
+
+                qATestingLead.Add("Id", qaTestingTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(QaTestingTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        qATestingLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(QaTestingTeamLead.Seniors))
+                    {
+                        qATestingLead.Add(property.Name, qATestingSeniors);
+                    }
+                }
+
+                qATestingTeamLeads.Add((dynamic)qATestingLead);
+
+                foreach (var senior in qaTestingTeamLead.Seniors)
+                {
+                    var qaTestingSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    qaTestingSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorDeveloper).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            qaTestingSenior.Add(property.Name, value);
+                            continue;
+                        }
+                    }
+
+                    qATestingSeniors.Add((dynamic)qaTestingSenior);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefProductOfficer
+
+            productOfficer.Add("Id", chiefProductOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefProductOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    productOfficer.Add(property.Name, value);
+                }
+            }
+
+            var productTeamLeads = new List<ExpandoObject>();
+            ((dynamic)productOfficer).ProductTeamLeads = productTeamLeads;
+
+            var scrumMasterTeamLeads = new List<ExpandoObject>();
+            ((dynamic)productOfficer).ScrumMasterTeamLeads = scrumMasterTeamLeads;
+
+            foreach (var productTeamLead in chiefProductOfficer!.ProductTeamLeads)
+            {
+                var productMangerLead = new ExpandoObject() as IDictionary<string, object>;
+
+                productMangerLead.Add("Id", productTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(ProductTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        productMangerLead.Add(property.Name, value);
+                    }
+                }
+
+                productTeamLeads.Add((dynamic)productMangerLead);
+
+                var seniorProducts = new List<ExpandoObject>();
+                ((dynamic)productMangerLead).Seniors = seniorProducts;
+
+                foreach (var senior in productTeamLead.Seniors)
+                {
+                    var seniorProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                    seniorProduct.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorProductManager).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            seniorProduct.Add(property.Name, value);
+                        }
+                    }
+
+                    seniorProducts.Add((dynamic)seniorProduct);
+
+                    var midlevelProducts = new List<ExpandoObject>();
+                    ((dynamic)seniorProduct).Midlevels = midlevelProducts;
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var midlevelProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                        midlevelProduct.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelProductManager).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                midlevelProduct.Add(property.Name, value);
+                            }
+                        }
+
+                        midlevelProducts.Add((dynamic)midlevelProduct);
+
+                        var juniorProducts = new List<ExpandoObject>();
+                        ((dynamic)midlevelProduct).Juniors = juniorProducts;
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var juniorProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                            juniorProduct.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorProductManager).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    juniorProduct.Add(property.Name, value);
+                                }
+                            }
+
+                            juniorProducts.Add((dynamic)juniorProduct);
+
+                            var fresherProducts = new List<ExpandoObject>();
+                            ((dynamic)juniorProduct).Freshers = fresherProducts;
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var fresherProduct = new ExpandoObject() as IDictionary<string, object>;
+
+                                fresherProduct.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherProductManager).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        fresherProduct.Add(property.Name, value);
+                                    }
+                                }
+
+                                fresherProducts.Add((dynamic)fresherProduct);
+                            }
+
+                            PrepareForInvalidScenario(juniorProduct);
+                        }
+                    }
+                }
+            }
+
+            foreach (var scrumTeamLead in chiefProductOfficer.ScrumMasterTeamLeads)
+            {
+                var scrumMasterTeamLead = new ExpandoObject() as IDictionary<string, object>;
+
+                scrumMasterTeamLead.Add("Id", scrumTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(ScrumMasterTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        scrumMasterTeamLead.Add(property.Name, value);
+                    }
+                }
+
+                scrumMasterTeamLeads.Add((dynamic)scrumMasterTeamLead);
+
+                var seniorScrumMasters = new List<ExpandoObject>();
+                ((dynamic)scrumMasterTeamLead).Seniors = seniorScrumMasters;
+
+                foreach (var senior in scrumTeamLead.Seniors)
+                {
+                    var seniorScrum = new ExpandoObject() as IDictionary<string, object>;
+
+                    seniorScrum.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorScrumMaster).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            seniorScrum.Add(property.Name, value);
+                        }
+                    }
+
+                    seniorScrumMasters.Add((dynamic)seniorScrum);
+                }
+            }
+
+            #endregion
+
+
+            #region ChiefMarketingOfficer
+
+            var marketingTeamLeads = new List<ExpandoObject>();
+
+            marketingOfficer.Add("Id", chiefMarketingOfficer.Id.JsonElement());
+
+            foreach (var property in typeof(ChiefMarketingOfficer).GetProperties())
+            {
+                if (propertyValues.TryGetValue(property.Name, out var value))
+                {
+                    marketingOfficer.Add(property.Name, value);
+                    continue;
+                }
+
+                if (property.Name is nameof(ChiefMarketingOfficer.MarketingTeamLeads))
+                {
+                    marketingOfficer.Add(property.Name, marketingTeamLeads);
+                }
+            }
+
+            foreach (var marketingTeamLead in chiefMarketingOfficer!.MarketingTeamLeads)
+            {
+                var marketingSeniors = new List<ExpandoObject>();
+
+                var marketingLead = new ExpandoObject() as IDictionary<string, object>;
+
+                marketingLead.Add("Id", marketingTeamLead.Id.JsonElement());
+
+                foreach (var property in typeof(MarketingTeamLead).GetProperties())
+                {
+                    if (propertyValues.TryGetValue(property.Name, out var value))
+                    {
+                        marketingLead.Add(property.Name, value);
+                        continue;
+                    }
+
+                    if (property.Name is nameof(MarketingTeamLead.Seniors))
+                    {
+                        marketingLead.Add(property.Name, marketingSeniors);
+                    }
+                }
+
+                marketingTeamLeads.Add((dynamic)marketingLead);
+
+                foreach (var senior in marketingTeamLead.Seniors)
+                {
+                    var marketingMidlevels = new List<ExpandoObject>();
+
+                    var marketingSenior = new ExpandoObject() as IDictionary<string, object>;
+
+                    marketingSenior.Add("Id", senior.Id.JsonElement());
+
+                    foreach (var property in typeof(SeniorMarketing).GetProperties())
+                    {
+                        if (propertyValues.TryGetValue(property.Name, out var value))
+                        {
+                            marketingSenior.Add(property.Name, value);
+                            continue;
+                        }
+
+                        if (property.Name is nameof(SeniorMarketing.Midlevels))
+                        {
+                            marketingSenior.Add(property.Name, marketingMidlevels);
+                        }
+                    }
+
+                    marketingSeniors.Add((dynamic)marketingSenior);
+
+                    foreach (var midlevel in senior.Midlevels)
+                    {
+                        var marketingJuniors = new List<ExpandoObject>();
+
+                        var marketingMidlevel = new ExpandoObject() as IDictionary<string, object>;
+
+                        marketingMidlevel.Add("Id", midlevel.Id.JsonElement());
+
+                        foreach (var property in typeof(MidlevelMarketing).GetProperties())
+                        {
+                            if (propertyValues.TryGetValue(property.Name, out var value))
+                            {
+                                marketingMidlevel.Add(property.Name, value);
+                                continue;
+                            }
+
+                            if (property.Name is nameof(MidlevelMarketing.Juniors))
+                            {
+                                marketingMidlevel.Add(property.Name, marketingJuniors);
+                            }
+                        }
+
+                        marketingMidlevels.Add((dynamic)marketingMidlevel);
+
+                        foreach (var junior in midlevel.Juniors)
+                        {
+                            var marketingFreshers = new List<ExpandoObject>();
+
+                            var marketingJunior = new ExpandoObject() as IDictionary<string, object>;
+
+                            marketingJunior.Add("Id", junior.Id.JsonElement());
+
+                            foreach (var property in typeof(JuniorMarketing).GetProperties())
+                            {
+                                if (propertyValues.TryGetValue(property.Name, out var value))
+                                {
+                                    marketingJunior.Add(property.Name, value);
+                                    continue;
+                                }
+
+                                if (property.Name is nameof(JuniorMarketing.Freshers))
+                                {
+                                    marketingJunior.Add(property.Name, marketingFreshers);
+                                }
+                            }
+
+                            marketingJuniors.Add((dynamic)marketingJunior);
+
+                            foreach (var fresher in junior.Freshers)
+                            {
+                                var marketingFresher = new ExpandoObject() as IDictionary<string, object>;
+
+                                marketingFresher.Add("Id", fresher.Id.JsonElement());
+
+                                foreach (var property in typeof(FresherMarketing).GetProperties())
+                                {
+                                    if (propertyValues.TryGetValue(property.Name, out var value))
+                                    {
+                                        marketingFresher.Add(property.Name, value);
+                                    }
+                                }
+
+                                marketingFreshers.Add((dynamic)marketingFresher);
+                            }
+
+                            PrepareForInvalidScenario(marketingJunior);
+                        }
+                    }
+                }
+            }
+
+            #endregion
+
+
+            executiveOfficers.Add((dynamic)executiveOfficer);
+        }
+
+        return executiveOfficers;
+    }
+
+    private static void PrepareForInvalidScenario(IDictionary<string, object> officerOrLowerLevel)
+    {
+        officerOrLowerLevel[nameof(ChiefUnitIdentity.Experience)] = null!;
+        officerOrLowerLevel[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
+        officerOrLowerLevel[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
+        officerOrLowerLevel[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
+        officerOrLowerLevel[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
+        officerOrLowerLevel[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
+        officerOrLowerLevel[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
+        officerOrLowerLevel[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
     }
 }
