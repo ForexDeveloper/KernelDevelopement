@@ -4,7 +4,6 @@ using Xunit;
 using System.Dynamic;
 using Newtonsoft.Json;
 using FluentAssertions;
-using Domain.ChiefOfficers;
 using Foodzilla.Kernel.Patch;
 using FluentAssertions.Execution;
 

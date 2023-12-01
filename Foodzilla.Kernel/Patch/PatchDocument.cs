@@ -148,9 +148,9 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
                 try
                 {
-                    StoreShallowOriginalValues(dbEntity, commonProperty);
-
                     if (NavigationPatchOperation(dbEntity, commonProperty, value, nameof(ApplyOneToOneRelatively))) continue;
+
+                    StoreShallowOriginalValues(dbEntity, commonProperty);
 
                     object castedValue = CastCorrectValue(commonProperty, value);
 
