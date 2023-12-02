@@ -214,7 +214,6 @@ public sealed class PatchDbContext<TEntity> where TEntity : Entity, IPatchValida
         {
             if (OperationFailed(dbEntity) || !patchValidator.OnPatchCompleted())
             {
-
                 PatchNavigationProperties(dbEntity, false);
             }
             else
