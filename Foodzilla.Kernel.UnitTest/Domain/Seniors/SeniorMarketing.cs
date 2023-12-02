@@ -19,6 +19,11 @@ public sealed class SeniorMarketing : Identity<long>, IPatchValidator
         MarketingTeamLeadId = marketingTeamLeadId;
     }
 
+    public SeniorMarketing()
+    {
+        
+    }
+
     public static SeniorMarketing Create(long id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, int marketingTeamLeadId)
     {
         return new SeniorMarketing(id, name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, marketingTeamLeadId);

@@ -19,6 +19,11 @@ public sealed class MarketingTeamLead : Identity<int>, IPatchValidator
         ChiefMarketingOfficerId = chiefMarketingOfficerId;
     }
 
+    public MarketingTeamLead()
+    {
+        
+    }
+
     public static MarketingTeamLead Create(int id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, int chiefMarketingOfficerId)
     {
         return new MarketingTeamLead(id, name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, chiefMarketingOfficerId);

@@ -19,6 +19,11 @@ public sealed class ScrumMasterTeamLead : Identity<int>, IPatchValidator
         ChiefProductOfficerId = chiefProductOfficerId;
     }
 
+    public ScrumMasterTeamLead()
+    {
+        
+    }
+
     public static ScrumMasterTeamLead Create(int id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, int chiefProductOfficerId)
     {
         return new ScrumMasterTeamLead(id, name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, chiefProductOfficerId);

@@ -10,6 +10,11 @@ public abstract class ChiefUnitIdentity : Identity<int>
         AssignedOrganization = assignedOrganization;
     }
 
+    protected ChiefUnitIdentity()
+    {
+
+    }
+
     public override bool IsPatched()
     {
         return AssignedOrganization == "SnappTrip" && base.IsPatched();

@@ -16,6 +16,11 @@ public sealed class FresherDeveloper : Identity<long>, IPatchValidator
         JuniorDeveloperId = juniorDeveloperId;
     }
 
+    public FresherDeveloper()
+    {
+        
+    }
+
     public static FresherDeveloper Create(long id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, long juniorDeveloperId)
     {
         return new FresherDeveloper(id, name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, juniorDeveloperId);

@@ -14,6 +14,7 @@ public static class PatchError
     public static string PropertyUnableToCastDateTime = "را ندارد DateTime فرمت مقدار ارسال شده قابل تبدیل شدن به";
     public static string PropertyAcceptsOnlyStringOrStruct = "فیلد مورد نظر تنها امکان دریافت رشته یا عدد را دارد";
     public static string PropertyUnableToCastDateTimeOffset = "را ندارد DateTimeOffset فرمت مقدار ارسال شده قابل تبدیل شدن به";
+    public static string PropertyIsNotDerivedFromEntity = "ارث بری ندارد Entity آبجکت مورد نظر از کلاس پایه";
 
     public static string PropertyUnableToCast(string fieldName)
     {

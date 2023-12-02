@@ -222,7 +222,7 @@ public static class PatchEngine
         return chiefExecutiveOfficers;
     }
 
-    public static List<ExpandoObject> CreatePatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    public static List<ExpandoObject> CreateValidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
     {
         var random = new Random();
         var executiveOfficers = new List<ExpandoObject>();

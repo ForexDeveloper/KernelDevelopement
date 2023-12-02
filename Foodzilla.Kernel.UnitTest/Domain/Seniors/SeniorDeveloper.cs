@@ -19,6 +19,11 @@ public sealed class SeniorDeveloper : Identity<long>, IPatchValidator
         TechnicalTeamLeadId = technicalTeamLeadId;
     }
 
+    public SeniorDeveloper()
+    {
+        
+    }
+
     public static SeniorDeveloper Create(long id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, int technicalTeamLeadId)
     {
         return new SeniorDeveloper(id, name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, technicalTeamLeadId);

@@ -1,7 +1,4 @@
 ﻿using Foodzilla.Kernel.Domain;
-using Foodzilla.Kernel.UnitTest.Patch;
-using Moq;
-using System.Runtime.InteropServices;
 
 namespace Foodzilla.Kernel.UnitTest.Domain;
 
@@ -13,7 +10,7 @@ public abstract class Identity<TKey> : Entity<TKey> where TKey : struct
 
     public string NationalCode { get; init; }
 
-    public string PersonalCode { get;  init; }
+    public string PersonalCode { get; init; }
 
     public string Address { get; init; }
 
@@ -44,6 +41,11 @@ public abstract class Identity<TKey> : Entity<TKey> where TKey : struct
     public DateTimeOffset ContractDateStart { get; init; }
 
     public virtual string[] RestrictedProperties { get; } = { nameof(NationalCode), nameof(PersonalCode) };
+
+    protected Identity()
+    {
+
+    }
 
     protected Identity(string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contractDateEnd, DateTimeOffset contractDateStart)
     {

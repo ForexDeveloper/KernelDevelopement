@@ -9,7 +9,7 @@ using FluentAssertions.Execution;
 
 public sealed class AdvanceTheories
 {
-    private const int TotalCount = 5;
+    private const int TotalCount = 4;
 
     public List<ExpandoObject> PatchOfficers { get; set; }
 
@@ -18,7 +18,7 @@ public sealed class AdvanceTheories
     public AdvanceTheories()
     {
         ChiefExecutiveOfficers = PatchEngine.CreateChiefExecutiveOfficers(TotalCount);
-        PatchOfficers = PatchEngine.CreatePatchExecutiveOfficers(ChiefExecutiveOfficers);
+        PatchOfficers = PatchEngine.CreateValidPatchExecutiveOfficers(ChiefExecutiveOfficers);
     }
 
     #region PatchOperation

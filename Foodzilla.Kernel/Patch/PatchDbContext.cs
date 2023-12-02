@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Foodzilla.Kernel.Patch;
 
-public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext where TEntity : Entity, IPatchValidator
+public sealed class PatchDbContext<TEntity> where TEntity : Entity, IPatchValidator
 {
     private static int total = 0;
     private const string Id = "Id";
@@ -27,25 +27,23 @@ public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext
     private readonly Dictionary<Entity, List<ExpandoObject>> _patchEntitiesDictionary;
     private readonly Dictionary<Entity, Dictionary<object, object>> _navigationProperties;
     private readonly Dictionary<Entity, Dictionary<PropertyInfo, object>> _originalValuesCollection;
-
-    public TContext DbContext { get; private set; }
+    private readonly Dictionary<Entity, Dictionary<PropertyInfo, object>> _modifiedValuesCollection;
 
     public List<string> EntityIds { get; private set; }
 
     public List<PatchInvalidResult> InvalidResults { get; init; } = new();
 
-    private PatchDbContext(TContext dbContext, ExpandoObject patchEntity, string webPathRoot, string rrr)
+    private PatchDbContext(ExpandoObject patchEntity, string webPathRoot, string rrr)
     {
-        DbContext = dbContext;
         _patchEntity = patchEntity;
         Initialize(webPathRoot);
     }
 
-    private PatchDbContext(TContext dbContext, ExpandoObject patchEntity, string webPathRoot)
+    private PatchDbContext(ExpandoObject patchEntity, string webPathRoot)
     {
         total++;
         Guid = new Guid();
-        DbContext = dbContext;
+
 
         _ignoreFields = new List<string>();
         _entityProperties = typeof(TEntity).GetProperties();
@@ -55,14 +53,14 @@ public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext
         _patchEntitiesDictionary = new Dictionary<Entity, List<ExpandoObject>>();
         _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
         _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
+        _modifiedValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
 
         InitializeIds(webPathRoot);
     }
 
-    private PatchDbContext(TContext dbContext, List<ExpandoObject> patchEntities, string webPathRoot)
+    private PatchDbContext(List<ExpandoObject> patchEntities, string webPathRoot)
     {
         total++;
-        DbContext = dbContext;
 
         _patchEntities = patchEntities ?? throw new NullReferenceException();
 
@@ -73,18 +71,28 @@ public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext
         _patchEntitiesDictionary = new Dictionary<Entity, List<ExpandoObject>>();
         _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
         _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
+        _modifiedValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
+    }
+
+    public static PatchDbContext<TEntity> Create(List<ExpandoObject> patchEntities, string webPathRoot = null)
+    {
+        return new PatchDbContext<TEntity>(patchEntities, webPathRoot);
+    }
+
+    public static PatchDbContext<TEntity> Create(ExpandoObject patchEntity, string webPathRoot = null)
+    {
+        return new PatchDbContext<TEntity>(patchEntity, webPathRoot);
     }
 
     public bool ApplyOneToOneRelatively()
     {
-        var dbEntity = new object() as Entity;
+        var dbEntity = Activator.CreateInstance<TEntity>();
 
         foreach (var patchEntity in _patchEntities)
         {
             foreach (var (property, value) in patchEntity)
             {
                 var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
-
 
                 if (commonProperty != null)
                 {
@@ -96,13 +104,33 @@ public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext
 
                     try
                     {
-                        if (NavigationShallowPatchOperation(dbEntity, commonProperty, value)) continue;
+                        var propertyType = commonProperty.PropertyType.BaseType;
 
-                        //StoreShallowOriginalValues(dbEntity, commonProperty);
+                        if (propertyType == typeof(ValueType))
+                        {
+                            if (StoreNavigationProperties(dbEntity, commonProperty, value)) continue;
 
-                        object castedValue = CastCorrectValue(commonProperty, value);
+                            object castedValue = CastCorrectValue(commonProperty, value);
 
-                        commonProperty.SetValue(dbEntity, castedValue);
+                            StoreModificationReadyValues(dbEntity, commonProperty, castedValue);
+                        }
+                        else
+                        {
+                            while (propertyType != null)
+                            {
+                                propertyType = propertyType.BaseType;
+
+                                if (propertyType == typeof(Entity))
+                                {
+                                    break;
+                                }
+
+                                if (propertyType is null)
+                                {
+                                    throw new Exception(PatchError.PropertyIsNotDerivedFromEntity);
+                                }
+                            }
+                        }
 
                     }
                     catch (Exception exception)
@@ -141,21 +169,57 @@ public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext
         return true;
     }
 
-    private bool NavigationShallowPatchOperation(Entity dbEntity, PropertyInfo commonProperty, object value)
+    private void StoreModificationReadyValues(Entity dbEntity, PropertyInfo commonProperty, object modifiedValue)
+    {
+        if (_modifiedValuesCollection.ContainsKey(dbEntity))
+        {
+            _modifiedValuesCollection[dbEntity].Add(commonProperty, modifiedValue);
+        }
+        else
+        {
+            Dictionary<PropertyInfo, object> originalValues = new() { { commonProperty, modifiedValue } };
+
+            _modifiedValuesCollection.Add(dbEntity, originalValues);
+        }
+    }
+
+    private void StoreShallowOriginalValues(Entity dbEntity, PropertyInfo commonProperty)
+    {
+        object originalValue = commonProperty.GetValue(dbEntity);
+
+        if (originalValue is Entity entity)
+        {
+            originalValue = entity.Clone();
+        }
+
+        if (originalValue is IEnumerable<Entity> entities)
+        {
+            originalValue = entities.Select(entityItem => entityItem.Clone()).ToList();
+        }
+
+        if (_originalValuesCollection.ContainsKey(dbEntity))
+        {
+            _originalValuesCollection[dbEntity].Add(commonProperty, originalValue);
+        }
+        else
+        {
+            Dictionary<PropertyInfo, object> originalValues = new() { { commonProperty, originalValue } };
+
+            _originalValuesCollection.Add(dbEntity, originalValues);
+        }
+    }
+
+    private bool StoreNavigationProperties(Entity dbEntity, PropertyInfo commonProperty, object value)
     {
         if (commonProperty.InquireOneToOneNavigability(dbEntity, out var outEntity))
         {
-            if (value != null)
+            if (_navigationProperties.ContainsKey(dbEntity))
             {
-                //StoreShallowOriginalValues(dbEntity, commonProperty);
-
-                _entityPropertiesDictionary.Add(outEntity, outEntity.GetRealType().GetProperties());
-
-                _patchEntitiesDictionary.Add(outEntity, new List<ExpandoObject> { (ExpandoObject)value });
-
-                //ApplyShallowOneToOne(outEntity);
-
-                _entityProperties = dbEntity.GetRealType().GetProperties();
+                _navigationProperties[dbEntity].Add(outEntity, value);
+            }
+            else
+            {
+                _navigationProperties.Add(dbEntity, new Dictionary<object, object> { { outEntity, value } });
             }
 
             return true;
@@ -163,20 +227,13 @@ public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext
 
         if (commonProperty.InquireOneToManyNavigability(dbEntity, out var outEntities))
         {
-            if (value != null && outEntities.Count != 0)
+            if (_navigationProperties.ContainsKey(dbEntity))
             {
-                //StoreShallowOriginalValues(dbEntity, commonProperty);
-
-                foreach (var unitEntity in outEntities)
-                {
-                    _patchEntitiesDictionary.Add(unitEntity, (List<ExpandoObject>)value);
-
-                    _entityPropertiesDictionary.Add(unitEntity, unitEntity.GetRealType().GetProperties());
-
-                    //ApplyShallowOneToOne(unitEntity);
-                }
-
-                _entityProperties = dbEntity.GetRealType().GetProperties();
+                _navigationProperties[dbEntity].Add(outEntities, value);
+            }
+            else
+            {
+                _navigationProperties.Add(dbEntity, new Dictionary<object, object> { { outEntities, value } });
             }
 
             return true;
