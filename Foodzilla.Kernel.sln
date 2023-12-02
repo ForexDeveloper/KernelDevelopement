@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foodzilla.Kernel.Persistenc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foodzilla.Kernel.Persistence.EF", "Foodzilla.Kernel.Persistence.EF\Foodzilla.Kernel.Persistence.EF.csproj", "{347904D1-FD5C-48AE-AC9F-65C0260ED1ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foodzilla.Kernel.UnitTest", "Foodzilla.Kernel.UnitTest\Foodzilla.Kernel.UnitTest.csproj", "{A34509E2-4016-481B-9E56-893795F00FF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foodzilla.Kernel.UnitTest", "Foodzilla.Kernel.UnitTest\Foodzilla.Kernel.UnitTest.csproj", "{A34509E2-4016-481B-9E56-893795F00FF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foodzilla.Kernel.Benchmark", "Foodzilla.Kernel.Benchmark\Foodzilla.Kernel.Benchmark.csproj", "{20D10222-146D-4173-A8A9-43BAB37B7277}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{A34509E2-4016-481B-9E56-893795F00FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A34509E2-4016-481B-9E56-893795F00FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A34509E2-4016-481B-9E56-893795F00FF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20D10222-146D-4173-A8A9-43BAB37B7277}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20D10222-146D-4173-A8A9-43BAB37B7277}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20D10222-146D-4173-A8A9-43BAB37B7277}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20D10222-146D-4173-A8A9-43BAB37B7277}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

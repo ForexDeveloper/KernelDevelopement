@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Foodzilla.Kernel.Patch;
 
-public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext where TEntity : Entity, IPatchValidator
+public sealed class PatchFetchDbContext<TContext, TEntity> where TContext : DbContext where TEntity : Entity, IPatchValidator
 {
     private static int total = 0;
     private const string Id = "Id";
@@ -34,14 +34,14 @@ public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext
 
     public List<PatchInvalidResult> InvalidResults { get; init; } = new();
 
-    private PatchDbContext(TContext dbContext, ExpandoObject patchEntity, string webPathRoot, string rrr)
+    private PatchFetchDbContext(TContext dbContext, ExpandoObject patchEntity, string webPathRoot, string rrr)
     {
         DbContext = dbContext;
         _patchEntity = patchEntity;
         Initialize(webPathRoot);
     }
 
-    private PatchDbContext(TContext dbContext, ExpandoObject patchEntity, string webPathRoot)
+    private PatchFetchDbContext(TContext dbContext, ExpandoObject patchEntity, string webPathRoot)
     {
         total++;
         Guid = new Guid();
@@ -59,7 +59,7 @@ public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext
         InitializeIds(webPathRoot);
     }
 
-    private PatchDbContext(TContext dbContext, List<ExpandoObject> patchEntities, string webPathRoot)
+    private PatchFetchDbContext(TContext dbContext, List<ExpandoObject> patchEntities, string webPathRoot)
     {
         total++;
         DbContext = dbContext;
@@ -81,7 +81,10 @@ public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext
         {
             foreach (var (property, value) in patchEntity)
             {
-                var propertyType = property
+                if (property == Id)
+                {
+
+                }
 
                 TEntity dbEntity = (TEntity)value;
 
