@@ -77,15 +77,14 @@ public sealed class PatchDbContext<TContext, TEntity> where TContext : DbContext
 
     public bool ApplyOneToOneRelatively()
     {
+        var dbEntity = new object() as Entity;
+
         foreach (var patchEntity in _patchEntities)
         {
             foreach (var (property, value) in patchEntity)
             {
-                var propertyType = property
-
-                TEntity dbEntity = (TEntity)value;
-
                 var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
+
 
                 if (commonProperty != null)
                 {
