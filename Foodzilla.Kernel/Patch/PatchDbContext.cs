@@ -7,6 +7,7 @@ using System.Runtime.InteropServices.ComTypes;
 using Foodzilla.Kernel.Domain;
 using Foodzilla.Kernel.Extension;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
 namespace Foodzilla.Kernel.Patch;
 
@@ -104,33 +105,13 @@ public sealed class PatchDbContext<TEntity> where TEntity : Entity, IPatchValida
 
                     try
                     {
-                        var propertyType = commonProperty.PropertyType.BaseType;
+                        if (StoreNavigationProperties(dbEntity, commonProperty, value)) continue;
 
-                        if (propertyType == typeof(ValueType))
-                        {
-                            if (StoreNavigationProperties(dbEntity, commonProperty, value)) continue;
+                        object castedValue = CastCorrectValue(commonProperty, value);
 
-                            object castedValue = CastCorrectValue(commonProperty, value);
+                        StoreModifiedReadyValues(dbEntity, commonProperty, castedValue);
 
-                            StoreModificationReadyValues(dbEntity, commonProperty, castedValue);
-                        }
-                        else
-                        {
-                            while (propertyType != null)
-                            {
-                                propertyType = propertyType.BaseType;
-
-                                if (propertyType == typeof(Entity))
-                                {
-                                    break;
-                                }
-
-                                if (propertyType is null)
-                                {
-                                    throw new Exception(PatchError.PropertyIsNotDerivedFromEntity);
-                                }
-                            }
-                        }
+                        commonProperty.SetValue(dbEntity, castedValue);
 
                     }
                     catch (Exception exception)
@@ -147,6 +128,18 @@ public sealed class PatchDbContext<TEntity> where TEntity : Entity, IPatchValida
                     Failed(dbEntity);
                 }
             }
+
+            if (OperationFailed(dbEntity) || !dbEntity.OnPatchCompleted())
+            {
+                PatchNavigationProperties(dbEntity, parentLoyalty: false);
+            }
+            else
+            {
+                //Attaching To DbContext
+                PatchNavigationProperties(dbEntity, parentLoyalty: true);
+            }
+
+            OperationReStart(dbEntity);
         }
 
         return true;
@@ -169,7 +162,74 @@ public sealed class PatchDbContext<TEntity> where TEntity : Entity, IPatchValida
         return true;
     }
 
-    private void StoreModificationReadyValues(Entity dbEntity, PropertyInfo commonProperty, object modifiedValue)
+    private void ApplyShallowOneToOne(Entity dbEntity, bool parentLoyalty)
+    {
+        //var idValueString = SetPatchEntity(dbEntity);
+
+        foreach ((string property, object value) in _patchEntity)
+        {
+            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
+
+            if (commonProperty != null)
+            {
+                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
+                {
+                    AddErrorResult(null, property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+                    continue;
+                }
+
+                try
+                {
+                    if (parentLoyalty)
+                    {
+                        StoreShallowOriginalValues(dbEntity, commonProperty);
+
+                        if (StoreNavigationProperties(dbEntity, commonProperty, value)) continue;
+
+                        object castedValue = CastCorrectValue(commonProperty, value);
+
+                        commonProperty.SetValue(dbEntity, castedValue);
+                    }
+                    else
+                    {
+                        StoreNavigationProperties(dbEntity, commonProperty, value);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    AddErrorResult(null, commonProperty.Name, value?.ToString(), exception.Message);
+
+                    Failed(dbEntity);
+                }
+            }
+            else
+            {
+                AddErrorResult(null, property, value?.ToString(), PatchError.PropertyMatchingFailed);
+
+                Failed(dbEntity);
+            }
+        }
+
+        if (dbEntity is IPatchValidator patchValidator)
+        {
+            if (OperationFailed(dbEntity) || !patchValidator.OnPatchCompleted())
+            {
+
+                PatchNavigationProperties(dbEntity, false);
+            }
+            else
+            {
+                //Attach to DbContext
+                PatchNavigationProperties(dbEntity, true);
+            }
+
+            OperationReStart(dbEntity);
+        }
+
+        OperationReStart(dbEntity);
+    }
+
+    private void StoreModifiedReadyValues(Entity dbEntity, PropertyInfo commonProperty, object modifiedValue)
     {
         if (_modifiedValuesCollection.ContainsKey(dbEntity))
         {
@@ -240,6 +300,48 @@ public sealed class PatchDbContext<TEntity> where TEntity : Entity, IPatchValida
         }
 
         return false;
+    }
+
+    private void PatchNavigationProperties(Entity dbEntity, bool parentLoyalty)
+    {
+        if (_navigationProperties.TryGetValue(dbEntity, out var navigationPropertyValues))
+        {
+            foreach (var (entity, value) in navigationPropertyValues)
+            {
+                if (entity is Entity outEntity)
+                {
+                    if (value != null)
+                    {
+                        _entityPropertiesDictionary.Add(outEntity, entity.GetRealType().GetProperties());
+
+                        _patchEntitiesDictionary.Add(outEntity, new List<ExpandoObject> { (ExpandoObject)value });
+
+                        ApplyShallowOneToOne(outEntity, parentLoyalty);
+
+                        _entityProperties = dbEntity.GetRealType().GetProperties();
+                    }
+                }
+
+                if (entity is IEnumerable<Entity> outEntities)
+                {
+                    var outEntitiesList = outEntities.ToList();
+
+                    if (value != null && outEntitiesList.ToList().Count != 0)
+                    {
+                        foreach (var unitEntity in outEntitiesList)
+                        {
+                            _patchEntitiesDictionary.Add(unitEntity, (List<ExpandoObject>)value);
+
+                            _entityPropertiesDictionary.Add(unitEntity, unitEntity.GetRealType().GetProperties());
+
+                            ApplyShallowOneToOne(unitEntity, parentLoyalty);
+                        }
+
+                        _entityProperties = dbEntity.GetRealType().GetProperties();
+                    }
+                }
+            }
+        }
     }
 
     private static object CastCorrectValue(PropertyInfo commonProperty, object value)
@@ -530,4 +632,54 @@ public sealed class PatchDbContext<TEntity> where TEntity : Entity, IPatchValida
         _entitiesStatusCollection.TryAdd(dbEntity, true);
     }
 
+    private bool OperationFailed()
+    {
+        return _failed;
+    }
+
+    private void OperationReStart()
+    {
+        _failed = false;
+    }
+
+    private bool OperationFailed(Entity dbEntity)
+    {
+        return _entitiesStatusCollection.GetValueOrDefault(dbEntity);
+    }
+
+    private void OperationReStart(Entity dbEntity)
+    {
+        _entitiesStatusCollection[dbEntity] = false;
+    }
+
+    private void AAA()
+    {
+        //var propertyType = commonProperty.PropertyType.BaseType;
+
+        //if (propertyType == typeof(ValueType))
+        //{
+        //    if (StoreNavigationProperties(dbEntity, commonProperty, value)) continue;
+
+        //    object castedValue = CastCorrectValue(commonProperty, value);
+
+        //    StoreModificationReadyValues(dbEntity, commonProperty, castedValue);
+        //}
+        //else
+        //{
+        //    while (propertyType != null)
+        //    {
+        //        propertyType = propertyType.BaseType;
+
+        //        if (propertyType == typeof(Entity))
+        //        {
+        //            break;
+        //        }
+
+        //        if (propertyType is null)
+        //        {
+        //            throw new Exception(PatchError.PropertyIsNotDerivedFromEntity);
+        //        }
+        //    }
+        //}
+    }
 }
