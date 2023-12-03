@@ -343,6 +343,11 @@ public sealed class PatchDbContext<TEntity> where TEntity : Entity, IPatchValida
         }
     }
 
+    private void AttachToDbContext()
+    {
+
+    }
+
     private static object CastCorrectValue(PropertyInfo commonProperty, object value)
     {
         object castedValue;

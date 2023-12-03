@@ -18,5 +18,7 @@ public sealed class DbContextTests
         var patchDbContext = PatchDbContext<ChiefExecutiveOfficer>.Create(patchExecutiveOfficers);
 
         patchDbContext.ApplyOneToOneRelatively();
+
+        await Task.CompletedTask;
     }
 }
