@@ -1,4 +1,5 @@
 ﻿using System.Dynamic;
+using Foodzilla.Kernel.Extension;
 using Foodzilla.Kernel.UnitTest.Patch;
 using Foodzilla.Kernel.UnitTest.Domain;
 using Foodzilla.Kernel.UnitTest.Domain.Juniors;

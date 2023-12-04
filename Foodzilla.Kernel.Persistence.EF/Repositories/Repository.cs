@@ -20,6 +20,8 @@ public abstract class Repository<TContext, TEntity, TKey> : IRepository<TEntity,
         DbContext = dbContext;
         _table = DbContext.Set<TEntity>();
         UnitOfWork = new UnitOfWork(dbContext);
+
+        DbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
     public virtual ValueTask<TEntity> GetAsync(TKey id)
