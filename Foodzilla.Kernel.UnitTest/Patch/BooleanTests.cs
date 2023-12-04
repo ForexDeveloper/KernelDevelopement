@@ -424,11 +424,6 @@ public sealed class BooleanTests
 }
 public static class ObjectExtension
 {
-    public static JsonElement JsonElement(this object @object)
-    {
-        return JsonSerializer.SerializeToElement(@object);
-    }
-
     public static object ToExpando(this object value)
     {
         IDictionary<string, object> expando = (IDictionary<string, object>)new ExpandoObject();

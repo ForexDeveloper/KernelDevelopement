@@ -1,4 +1,6 @@
-﻿namespace Foodzilla.Kernel.UnitTest.Patch;
+﻿using Foodzilla.Kernel.Extension;
+
+namespace Foodzilla.Kernel.UnitTest.Patch;
 
 using Xunit;
 using System.Dynamic;
