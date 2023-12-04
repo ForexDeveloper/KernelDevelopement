@@ -135,7 +135,7 @@ public sealed class PatchDbContext<TEntity> where TEntity : Entity, IPatchValida
             }
             else
             {
-                //Attaching To DbContext
+                
                 PatchNavigationProperties(dbEntity, parentLoyalty: true);
             }
 

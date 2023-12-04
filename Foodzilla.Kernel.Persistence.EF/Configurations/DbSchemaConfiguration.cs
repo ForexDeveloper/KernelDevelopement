@@ -1,6 +1,8 @@
-﻿namespace Foodzilla.Kernel.Persistence.EF.Configurations;
+﻿using Foodzilla.Kernel.Domain;
 
-public abstract class DbSchemaConfiguration<TEntity> where TEntity : class
+namespace Foodzilla.Kernel.Persistence.EF.Configurations;
+
+public abstract class DbSchemaConfiguration<TEntity> where TEntity : Entity
 {
     public const string Prefix = "Tbl_";
     public const string Suffix = "s";

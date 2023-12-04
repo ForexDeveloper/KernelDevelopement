@@ -1,5 +1,6 @@
 ﻿namespace Foodzilla.Kernel.Domain;
 
-internal interface IEntity
+public interface IEntity<TKey> where TKey : struct
 {
+    public TKey Id { get; protected set; }
 }
