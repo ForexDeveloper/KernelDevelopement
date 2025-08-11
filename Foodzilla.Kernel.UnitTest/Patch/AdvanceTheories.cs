@@ -74,7 +74,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchOperationParentDominance(patchOperation);
+        PatchOperationParentDominantly(patchOperation);
 
         await Task.CompletedTask;
 
@@ -167,7 +167,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchOperationParentDominance(patchOperation);
+        PatchOperationParentDominantly(patchOperation);
 
         await Task.CompletedTask;
 
@@ -261,7 +261,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchOperationParentDominance(patchOperation);
+        PatchOperationParentDominantly(patchOperation);
 
         await Task.CompletedTask;
 
@@ -355,7 +355,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchOperationParentDominance(patchOperation);
+        PatchOperationParentDominantly(patchOperation);
 
         await Task.CompletedTask;
 
@@ -449,7 +449,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchOperationParentDominance(patchOperation);
+        PatchOperationParentDominantly(patchOperation);
 
         await Task.CompletedTask;
 
@@ -543,7 +543,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchOperationParentDominance(patchOperation);
+        PatchOperationParentDominantly(patchOperation);
 
         await Task.CompletedTask;
 
@@ -637,7 +637,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchOperationParentDominance(patchOperation);
+        PatchOperationParentDominantly(patchOperation);
 
         await Task.CompletedTask;
 
@@ -824,7 +824,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchDocumentParentDominance(patchDocument);
+        PatchDocumentParentDominantly(patchDocument);
 
         await Task.CompletedTask;
 
@@ -918,7 +918,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchDocumentParentDominance(patchDocument);
+        PatchDocumentParentDominantly(patchDocument);
 
         await Task.CompletedTask;
 
@@ -1012,7 +1012,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchDocumentParentDominance(patchDocument);
+        PatchDocumentParentDominantly(patchDocument);
 
         await Task.CompletedTask;
 
@@ -1106,7 +1106,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchDocumentParentDominance(patchDocument);
+        PatchDocumentParentDominantly(patchDocument);
 
         await Task.CompletedTask;
 
@@ -1200,7 +1200,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchDocumentParentDominance(patchDocument);
+        PatchDocumentParentDominantly(patchDocument);
 
         await Task.CompletedTask;
 
@@ -1294,7 +1294,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        PatchDocumentParentDominance(patchDocument);
+        PatchDocumentParentDominantly(patchDocument);
 
         await Task.CompletedTask;
 
@@ -1334,6 +1334,15 @@ public sealed class AdvanceTheories
 
     #endregion
 
+
+    private void PatchDocumentAbsolutely(PatchDocument<ChiefExecutiveOfficer> patchDocument)
+    {
+        foreach (var chiefExecutiveOfficer in ChiefExecutiveOfficers)
+        {
+            patchDocument.ApplyOneToOneAbsolutely(chiefExecutiveOfficer);
+        }
+    }
+
     private void PatchDocumentRelatively(PatchDocument<ChiefExecutiveOfficer> patchDocument)
     {
         foreach (var chiefExecutiveOfficer in ChiefExecutiveOfficers)
@@ -1342,11 +1351,19 @@ public sealed class AdvanceTheories
         }
     }
 
-    private void PatchDocumentParentDominance(PatchDocument<ChiefExecutiveOfficer> patchDocument)
+    private void PatchDocumentParentDominantly(PatchDocument<ChiefExecutiveOfficer> patchDocument)
     {
         foreach (var chiefExecutiveOfficer in ChiefExecutiveOfficers)
         {
             patchDocument.ApplyOneToOneParentDominance(chiefExecutiveOfficer);
+        }
+    }
+
+    private void PatchOperationAbsolutely(PatchOperation<ChiefExecutiveOfficer> patchOperation)
+    {
+        foreach (var chiefExecutiveOfficer in ChiefExecutiveOfficers)
+        {
+            patchOperation.ApplyOneToOneAbsolutely(chiefExecutiveOfficer);
         }
     }
 
@@ -1358,7 +1375,7 @@ public sealed class AdvanceTheories
         }
     }
 
-    private void PatchOperationParentDominance(PatchOperation<ChiefExecutiveOfficer> patchOperation)
+    private void PatchOperationParentDominantly(PatchOperation<ChiefExecutiveOfficer> patchOperation)
     {
         foreach (var chiefExecutiveOfficer in ChiefExecutiveOfficers)
         {

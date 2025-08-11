@@ -125,7 +125,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
     /// <summary>
     /// This method uses single patchEntity to update single database entity
-    /// Navigation properties are independent of their parent so if parent patch fails, the navigation will stills accept changes
+    /// Navigation properties are independent of their parent so if parent patch fails, the navigation will still accept changes
     /// Apply patch while patchEntity contains id
     /// Id is sent inside each patchEntity. peer to peer patching
     /// Only one instant is applied to a single database entity
