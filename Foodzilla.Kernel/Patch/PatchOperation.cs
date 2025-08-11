@@ -996,16 +996,33 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
     private void StoreShallowOriginalValues(Entity dbEntity, PropertyInfo commonProperty)
     {
-        object originalValue = commonProperty.GetValue(dbEntity);
+        //object originalValue = commonProperty.GetValue(dbEntity);
 
-        if (originalValue is Entity entity)
+        //if (originalValue is Entity entity)
+        //{
+        //    originalValue = entity.Clone();
+        //}
+
+        //if (originalValue is IEnumerable<Entity> entities)
+        //{
+        //    originalValue = entities.Select(entityItem => entityItem.Clone()).ToList();
+        //}
+
+        object originalValue;
+
+        if (commonProperty.InquireOneToOneNavigability(dbEntity, out var outEntity))
         {
-            originalValue = entity.Clone();
+            originalValue = outEntity.Clone();
         }
 
-        if (originalValue is IEnumerable<Entity> entities)
+        else if (commonProperty.InquireOneToManyNavigability(dbEntity, out var outEntities))
         {
-            originalValue = entities.Select(entityItem => entityItem.Clone()).ToList();
+            originalValue = outEntities.Select(entityItem => entityItem.Clone()).ToList();
+        }
+
+        else
+        { 
+            originalValue = commonProperty.GetValue(dbEntity);
         }
 
         if (_originalValuesCollection.ContainsKey(dbEntity))
@@ -1077,7 +1094,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
                 {
                     var outEntitiesList = outEntities.ToList();
 
-                    if (value != null && outEntitiesList.ToList().Count != 0)
+                    if (value != null && outEntitiesList.Count != 0)
                     {
                         foreach (var unitEntity in outEntitiesList)
                         {
