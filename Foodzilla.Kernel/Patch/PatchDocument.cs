@@ -520,14 +520,14 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     {
         if (commonProperty.InquireOneToOneNavigability(dbEntity, out var outEntity))
         {
-            CreatePatchDocument(outEntity, value, true, applyMethodName);
+            CreatePatchDocument(outEntity, value, null, applyMethodName);
 
             return true;
         }
 
         if (commonProperty.InquireOneToManyNavigability(dbEntity, out var outEntities))
         {
-            CreatePatchDocument(outEntities, value, true, applyMethodName);
+            CreatePatchDocument(outEntities, value, null, applyMethodName);
 
             return true;
         }
