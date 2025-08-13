@@ -809,7 +809,7 @@ public static class PatchEngine
         return executiveOfficers;
     }
 
-    public static List<ExpandoObject> CreateRootInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    public static List<ExpandoObject> CreateRootInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers, int validItems)
     {
         var random = new Random();
 
@@ -1387,51 +1387,17 @@ public static class PatchEngine
             }
 
             #endregion
-
-            executiveOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
-            executiveOfficer[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
-            executiveOfficer[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
-            executiveOfficer[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
-            executiveOfficer[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
-            executiveOfficer[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
-            executiveOfficer[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
-            executiveOfficer[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
-
-            //technicalOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
-            //technicalOfficer[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
-            //technicalOfficer[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
-            //technicalOfficer[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
-            //technicalOfficer[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
-            //technicalOfficer[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
-            //technicalOfficer[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
-            //technicalOfficer[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
-
-            //productOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
-            //productOfficer[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
-            //productOfficer[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
-            //productOfficer[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
-            //productOfficer[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
-            //productOfficer[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
-            //productOfficer[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
-            //productOfficer[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
-
-            //marketingOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
-            //marketingOfficer[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
-            //marketingOfficer[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
-            //marketingOfficer[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
-            //marketingOfficer[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
-            //marketingOfficer[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
-            //marketingOfficer[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
-            //marketingOfficer[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
 
 
             executiveOfficers.Add((dynamic)executiveOfficer);
         }
 
+        PrepareForInvalidScenario(executiveOfficers, validItems);
+
         return executiveOfficers;
     }
 
-    public static List<ExpandoObject> CreateCLevelInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    public static List<ExpandoObject> CreateCLevelInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers, int validItems)
     {
         var random = new Random();
 
@@ -2010,43 +1976,26 @@ public static class PatchEngine
 
 
             #endregion
-
-
-            technicalOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
-            technicalOfficer[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
-            technicalOfficer[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
-            technicalOfficer[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
-            technicalOfficer[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
-            technicalOfficer[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
-            technicalOfficer[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
-            technicalOfficer[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
-
-            productOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
-            productOfficer[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
-            productOfficer[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
-            productOfficer[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
-            productOfficer[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
-            productOfficer[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
-            productOfficer[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
-            productOfficer[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
-
-            marketingOfficer[nameof(ChiefUnitIdentity.Experience)] = null!;
-            marketingOfficer[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
-            marketingOfficer[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
-            marketingOfficer[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
-            marketingOfficer[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
-            marketingOfficer[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
-            marketingOfficer[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
-            marketingOfficer[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
 
 
             executiveOfficers.Add((dynamic)executiveOfficer);
         }
 
+        foreach (IDictionary<string, object> executiveOfficer in executiveOfficers.Skip(validItems))
+        {
+            var productOfficer = executiveOfficer[nameof(ChiefExecutiveOfficer.ChiefProductOfficer)] as IDictionary<string, object>;
+            var technicalOfficer = executiveOfficer[nameof(ChiefExecutiveOfficer.ChiefTechnicalOfficer)] as IDictionary<string, object>;
+            var marketingOfficer = executiveOfficer[nameof(ChiefExecutiveOfficer.ChiefMarketingOfficer)] as IDictionary<string, object>;
+
+            PrepareForInvalidScenario(productOfficer);
+            PrepareForInvalidScenario(technicalOfficer);
+            PrepareForInvalidScenario(marketingOfficer);
+        }
+
         return executiveOfficers;
     }
 
-    public static List<ExpandoObject> CreateLeadInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    public static List<ExpandoObject> CreateLeadInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers, int validItems)
     {
         var random = new Random();
 
@@ -2283,9 +2232,9 @@ public static class PatchEngine
                         }
                     }
                 }
-
-                PrepareForInvalidScenario(technicalLead);
             }
+
+            PrepareForInvalidScenario(technicalTeamLeads, validItems);
 
             foreach (var qaTestingTeamLead in chiefTechnicalOfficer.QaTestingTeamLeads)
             {
@@ -2328,12 +2277,9 @@ public static class PatchEngine
 
                     qATestingSeniors.Add((dynamic)qaTestingSenior);
                 }
-
-                PrepareForInvalidScenario(qATestingLead);
             }
 
-            #endregion
-
+            PrepareForInvalidScenario(qATestingTeamLeads, validItems);
 
             #region ChiefProductOfficer
 
@@ -2448,9 +2394,9 @@ public static class PatchEngine
                         }
                     }
                 }
-
-                PrepareForInvalidScenario(productMangerLead);
             }
+
+            PrepareForInvalidScenario(productTeamLeads, validItems);
 
             foreach (var scrumTeamLead in chiefProductOfficer.ScrumMasterTeamLeads)
             {
@@ -2487,9 +2433,12 @@ public static class PatchEngine
 
                     seniorScrumMasters.Add((dynamic)seniorScrum);
                 }
-
-                PrepareForInvalidScenario(scrumMasterTeamLead);
             }
+
+            PrepareForInvalidScenario(scrumMasterTeamLeads, validItems);
+
+            #endregion
+
 
             #endregion
 
@@ -2513,6 +2462,8 @@ public static class PatchEngine
                     marketingOfficer.Add(property.Name, marketingTeamLeads);
                 }
             }
+
+            #region MarketingTeamLeads
 
             foreach (var marketingTeamLead in chiefMarketingOfficer!.MarketingTeamLeads)
             {
@@ -2629,9 +2580,12 @@ public static class PatchEngine
                         }
                     }
                 }
-
-                PrepareForInvalidScenario(marketingLead);
             }
+
+            PrepareForInvalidScenario(marketingTeamLeads, validItems);
+
+            #endregion
+
 
             #endregion
 
@@ -2642,7 +2596,7 @@ public static class PatchEngine
         return executiveOfficers;
     }
 
-    public static List<ExpandoObject> CreateSeniorInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    public static List<ExpandoObject> CreateSeniorInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers, int validItems)
     {
         var random = new Random();
 
@@ -2878,9 +2832,9 @@ public static class PatchEngine
                             }
                         }
                     }
-
-                    PrepareForInvalidScenario(technicalSenior);
                 }
+
+                PrepareForInvalidScenario(technicalSeniors, validItems);
             }
 
             foreach (var qaTestingTeamLead in chiefTechnicalOfficer.QaTestingTeamLeads)
@@ -2923,9 +2877,9 @@ public static class PatchEngine
                     }
 
                     qATestingSeniors.Add((dynamic)qaTestingSenior);
-
-                    PrepareForInvalidScenario(qaTestingSenior);
                 }
+
+                PrepareForInvalidScenario(qATestingSeniors, validItems);
             }
 
             #endregion
@@ -3043,9 +2997,9 @@ public static class PatchEngine
                             }
                         }
                     }
-
-                    PrepareForInvalidScenario(seniorProduct);
                 }
+
+                PrepareForInvalidScenario(seniorProducts, validItems);
             }
 
             foreach (var scrumTeamLead in chiefProductOfficer.ScrumMasterTeamLeads)
@@ -3082,9 +3036,9 @@ public static class PatchEngine
                     }
 
                     seniorScrumMasters.Add((dynamic)seniorScrum);
-
-                    PrepareForInvalidScenario(seniorScrum);
                 }
+
+                PrepareForInvalidScenario(seniorScrumMasters, validItems);
             }
 
             #endregion
@@ -3224,9 +3178,9 @@ public static class PatchEngine
                             }
                         }
                     }
-
-                    PrepareForInvalidScenario(marketingSenior);
                 }
+
+                PrepareForInvalidScenario(marketingSeniors, validItems);
             }
 
             #endregion
@@ -3238,7 +3192,7 @@ public static class PatchEngine
         return executiveOfficers;
     }
 
-    public static List<ExpandoObject> CreateMidlevelInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    public static List<ExpandoObject> CreateMidlevelInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers, int validItems)
     {
         var random = new Random();
 
@@ -3473,9 +3427,9 @@ public static class PatchEngine
                                 technicalFreshers.Add((dynamic)technicalFresher);
                             }
                         }
-
-                        PrepareForInvalidScenario(technicalMidlevel);
                     }
+
+                    PrepareForInvalidScenario(technicalMidlevels, validItems);
                 }
             }
 
@@ -3636,9 +3590,9 @@ public static class PatchEngine
                                 fresherProducts.Add((dynamic)fresherProduct);
                             }
                         }
-
-                        PrepareForInvalidScenario(midlevelProduct);
                     }
+
+                    PrepareForInvalidScenario(midlevelProducts, validItems);
                 }
             }
 
@@ -3815,9 +3769,9 @@ public static class PatchEngine
                                 marketingFreshers.Add((dynamic)marketingFresher);
                             }
                         }
-
-                        PrepareForInvalidScenario(marketingMidlevel);
                     }
+
+                    PrepareForInvalidScenario(marketingMidlevels, validItems);
                 }
             }
 
@@ -3830,7 +3784,7 @@ public static class PatchEngine
         return executiveOfficers;
     }
 
-    public static List<ExpandoObject> CreateJuniorInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers)
+    public static List<ExpandoObject> CreateJuniorInvalidPatchExecutiveOfficers(List<ChiefExecutiveOfficer> chiefExecutiveOfficers, int validItems)
     {
         var random = new Random();
 
@@ -4064,9 +4018,9 @@ public static class PatchEngine
 
                                 technicalFreshers.Add((dynamic)technicalFresher);
                             }
-
-                            PrepareForInvalidScenario(technicalJunior);
                         }
+
+                        PrepareForInvalidScenario(technicalJuniors, validItems);
                     }
                 }
             }
@@ -4227,9 +4181,9 @@ public static class PatchEngine
 
                                 fresherProducts.Add((dynamic)fresherProduct);
                             }
-
-                            PrepareForInvalidScenario(juniorProduct);
                         }
+
+                        PrepareForInvalidScenario(juniorProducts, validItems);
                     }
                 }
             }
@@ -4406,9 +4360,9 @@ public static class PatchEngine
 
                                 marketingFreshers.Add((dynamic)marketingFresher);
                             }
-
-                            PrepareForInvalidScenario(marketingJunior);
                         }
+
+                        PrepareForInvalidScenario(marketingJuniors, validItems);
                     }
                 }
             }
@@ -4432,5 +4386,20 @@ public static class PatchEngine
         officerOrLowerLevel[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
         officerOrLowerLevel[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
         officerOrLowerLevel[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
+    }
+
+    private static void PrepareForInvalidScenario(IEnumerable<ExpandoObject> officerOrLowerLevels, int validItems)
+    {
+        foreach (IDictionary<string, object> officerOrLowerLevel in officerOrLowerLevels.Skip(validItems))
+        {
+            officerOrLowerLevel[nameof(ChiefUnitIdentity.Experience)] = null!;
+            officerOrLowerLevel[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
+            officerOrLowerLevel[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
+            officerOrLowerLevel[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
+            officerOrLowerLevel[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
+            officerOrLowerLevel[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();
+            officerOrLowerLevel[nameof(ChiefUnitIdentity.BirthDate)] = "XXXXXX".JsonElement();
+            officerOrLowerLevel[nameof(ChiefUnitIdentity.IsFired)] = "BooleanTrueOrFalse".JsonElement();
+        }
     }
 }

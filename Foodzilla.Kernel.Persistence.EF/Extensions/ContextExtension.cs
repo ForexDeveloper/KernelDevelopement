@@ -1,7 +1,8 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
-using Foodzilla.Kernel.Persistence.EF.Commons;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Foodzilla.Kernel.Persistence.EF.Commons;
+
 
 namespace Foodzilla.Kernel.Persistence.EF.Extensions;
 
