@@ -47,7 +47,7 @@ public static class DbSetExtension
         if (entity is ISequentialEntity)
         {
             var id = typeof(TEntity).GetProperty("Id");
-            var idType = id.GetType();
+            var idType = id?.GetType();
             var sequentialId = await context.GetNextSequenceIdAsync<TEntity>(idType);
             id.SetValue(entity, sequentialId, null);
         }
@@ -75,7 +75,7 @@ public static class DbSetExtension
         if (entity is ISequentialEntity)
         {
             var id = typeof(TEntity).GetProperty("Id");
-            var idType = id.GetType();
+            var idType = id!.GetType();
             var sequentialId = context.GetNextSequenceId<TEntity>(idType);
             id.SetValue(entity, sequentialId, null);
         }
@@ -86,7 +86,7 @@ public static class DbSetExtension
         if (entities?[0] is ISequentialEntity)
         {
             var id = typeof(TEntity).GetProperty(nameof(Entity<long>.Id));
-            var idType = id.GetType();
+            var idType = id!.GetType();
             var sequentialIds = context.GetNextSequenceIds<TEntity>(entities.Count, idType);
             var i = 0;
             foreach (var sequentialId in sequentialIds)
