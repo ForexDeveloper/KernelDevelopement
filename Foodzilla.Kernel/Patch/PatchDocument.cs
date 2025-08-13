@@ -73,7 +73,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     /// This method uses single patchEntity to update single database entity
     /// Apply patch while patchEntity does not contain Id
     /// Id is sent separated in request body
-    /// Only one instant is apply to a single database entity
+    /// Only one instant is applied to a single database entity
     /// </summary>
     public bool ApplyOneToAll(TEntity dbEntity)
     {
@@ -125,10 +125,10 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
     /// <summary>
     /// This method uses single patchEntity to update single database entity
-    /// Navigation properties are independent of their parent so if parent patch fails, the navigation will stills accept changes
+    /// Navigation properties are independent of their parent so if parent patch fails, the navigation will still accept changes
     /// Apply patch while patchEntity contains id
-    /// Id is sent inside of each patchEntity. peer to peer patching
-    /// Only one instant is apply to a single database entity
+    /// Id is sent inside each patchEntity. peer to peer patching
+    /// Only one instant is applied to a single database entity
     /// </summary>
     public bool ApplyOneToOneRelatively(TEntity dbEntity, bool? parentAllegiance = null)
     {
@@ -205,8 +205,8 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     /// This method uses single patchEntity to update single database entity
     /// Navigation properties are dependent of their parent so if parent patch fails, the navigation will not accept changes
     /// Apply patch while patchEntity contains id
-    /// Id is sent inside of each patchEntity. peer to peer patching
-    /// Only one instant is apply to a single database entity
+    /// Id is sent inside each patchEntity. peer to peer patching
+    /// Only one instant is applied to a single database entity
     /// </summary>
     public bool ApplyOneToOneAbsolutely(TEntity dbEntity)
     {
@@ -520,14 +520,14 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     {
         if (commonProperty.InquireOneToOneNavigability(dbEntity, out var outEntity))
         {
-            CreatePatchDocument(outEntity, value, true, applyMethodName);
+            CreatePatchDocument(outEntity, value, null, applyMethodName);
 
             return true;
         }
 
         if (commonProperty.InquireOneToManyNavigability(dbEntity, out var outEntities))
         {
-            CreatePatchDocument(outEntities, value, true, applyMethodName);
+            CreatePatchDocument(outEntities, value, null, applyMethodName);
 
             return true;
         }

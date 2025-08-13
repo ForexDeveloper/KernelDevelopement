@@ -3,6 +3,7 @@
 namespace Foodzilla.Kernel.UnitTest.Patch;
 
 using Xunit;
+using Extension;
 using System.Dynamic;
 using Newtonsoft.Json;
 using FluentAssertions;
@@ -19,6 +20,8 @@ public sealed class ScenarioTests
         Customers = PatchBuilder.CreateComplexEntities(TotalCount);
     }
 
+    #region PatchDocument
+
     [Fact]
     public async Task HandleApplyOneToOneRelatively_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
@@ -28,7 +31,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchRelatively(patchDocument);
+        PatchDocumentRelatively(patchDocument);
 
         await Task.CompletedTask;
 
@@ -61,7 +64,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchRelatively(patchDocument);
+        PatchDocumentRelatively(patchDocument);
 
         await Task.CompletedTask;
 
@@ -94,7 +97,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchRelatively(patchDocument);
+        PatchDocumentRelatively(patchDocument);
 
         await Task.CompletedTask;
 
@@ -126,7 +129,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDominantly(patchDocument);
+        PatchDocumentParentDominantly(patchDocument);
 
         await Task.CompletedTask;
 
@@ -159,7 +162,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDominantly(patchDocument);
+        PatchDocumentParentDominantly(patchDocument);
 
         await Task.CompletedTask;
 
@@ -194,7 +197,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDominantly(patchDocument);
+        PatchDocumentParentDominantly(patchDocument);
 
         await Task.CompletedTask;
 
@@ -226,7 +229,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchAbsolutely(patchDocument);
+        PatchDocumentAbsolutely(patchDocument);
 
         await Task.CompletedTask;
 
@@ -259,7 +262,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchAbsolutely(patchDocument);
+        PatchDocumentAbsolutely(patchDocument);
 
         await Task.CompletedTask;
 
@@ -292,7 +295,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchAbsolutely(patchDocument);
+        PatchDocumentAbsolutely(patchDocument);
 
         await Task.CompletedTask;
 
@@ -316,8 +319,13 @@ public sealed class ScenarioTests
         }
     }
 
+    #endregion
+
+
+    #region PatchOperation
+
     [Fact]
-    public async Task HandleApplyFastOneToOneRelatively_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
+    public async Task HandleSingleCoreApplyOneToOneRelatively_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
         const int totalCount = 10;
 
@@ -325,10 +333,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneRelatively(customer);
-        }
+        PatchOperationRelatively(patchOperation);
 
         await Task.CompletedTask;
 
@@ -353,7 +358,7 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleApplyFastOneToOneRelatively_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAllEntities()
+    public async Task HandleSingleCoreApplyOneToOneRelatively_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAllEntities()
     {
         const int totalCount = 10;
 
@@ -361,10 +366,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneRelatively(customer);
-        }
+        PatchOperationRelatively(patchOperation);
 
         await Task.CompletedTask;
 
@@ -389,7 +391,7 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleApplyFastOneToOneRelatively_WhenMiddleLayerOfPatchEntitiesAreInvalid_ShouldNotPatchAllEntities()
+    public async Task HandleSingleCoreApplyOneToOneRelatively_WhenMiddleLayerOfPatchEntitiesAreInvalid_ShouldNotPatchAllEntities()
     {
         const int totalCount = 10;
 
@@ -397,10 +399,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneRelatively(customer);
-        }
+        PatchOperationRelatively(patchOperation);
 
         await Task.CompletedTask;
 
@@ -424,7 +423,7 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleApplyFastOneToOneParentDominance_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
+    public async Task HandleSingleCoreApplyOneToOneParentDominance_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
         const int totalCount = 10;
 
@@ -432,10 +431,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneParentDominance(customer);
-        }
+        PatchOperationParentDominantly(patchOperation);
 
         await Task.CompletedTask;
 
@@ -460,7 +456,7 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleApplyFastOneToOneParentDominance_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAny()
+    public async Task HandleSingleCoreApplyOneToOneParentDominance_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAny()
     {
         const int totalCount = 10;
 
@@ -468,10 +464,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneParentDominance(customer);
-        }
+        PatchOperationParentDominantly(patchOperation);
 
         await Task.CompletedTask;
 
@@ -498,7 +491,7 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleApplyFastOneToOneParentDominance_WhenMiddleOfPatchEntitiesAreInvalid_ShouldNotPatchAll()
+    public async Task HandleSingleCoreApplyOneToOneParentDominance_WhenMiddleOfPatchEntitiesAreInvalid_ShouldNotPatchAll()
     {
         const int totalCount = 10;
 
@@ -506,10 +499,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneParentDominance(customer);
-        }
+        PatchOperationParentDominantly(patchOperation);
 
         await Task.CompletedTask;
 
@@ -533,7 +523,7 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleApplyFastOneToOneAbsolutely_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
+    public async Task HandleSingleCoreApplyOneToOneAbsolutely_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
         const int totalCount = 10;
 
@@ -541,10 +531,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneAbsolutely(customer);
-        }
+        PatchOperationAbsolutely(patchOperation);
 
         await Task.CompletedTask;
 
@@ -569,7 +556,7 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleApplyFastOneToOneAbsolutely_WhenRootOfPatchEntitiesAreInvalid_ShouldOnlyIgnorePatchForRoot()
+    public async Task HandleSingleCoreApplyOneToOneAbsolutely_WhenRootOfPatchEntitiesAreInvalid_ShouldOnlyIgnorePatchForRoot()
     {
         const int totalCount = 10;
 
@@ -577,10 +564,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneAbsolutely(customer);
-        }
+        PatchOperationAbsolutely(patchOperation);
 
         await Task.CompletedTask;
 
@@ -605,7 +589,7 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleApplyFastOneToOneAbsolutely_WhenMiddleLayerOfPatchEntitiesAreInvalid_ShouldOnlyIgnorePatchForMiddle()
+    public async Task HandleSingleCoreApplyOneToOneAbsolutely_WhenMiddleLayerOfPatchEntitiesAreInvalid_ShouldOnlyIgnorePatchForMiddle()
     {
         const int totalCount = 10;
 
@@ -613,10 +597,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneAbsolutely(customer);
-        }
+        PatchOperationAbsolutely(patchOperation);
 
         await Task.CompletedTask;
 
@@ -639,6 +620,8 @@ public sealed class ScenarioTests
             Customers.SelectMany(p => p.NavigationListCustomer.SelectMany(q => q.NavigationListOrder)).All(p => p.IsPatched()).Should().BeTrue();
         }
     }
+
+    #endregion
 
     private List<ExpandoObject> CreateCompletePatchEntities()
     {
@@ -897,7 +880,7 @@ public sealed class ScenarioTests
         return patchEntity;
     }
 
-    private void PatchRelatively(PatchDocument<Customer> patchDocument)
+    private void PatchDocumentRelatively(PatchDocument<Customer> patchDocument)
     {
         foreach (var customer in Customers)
         {
@@ -905,7 +888,7 @@ public sealed class ScenarioTests
         }
     }
 
-    private void PatchAbsolutely(PatchDocument<Customer> patchDocument)
+    private void PatchDocumentAbsolutely(PatchDocument<Customer> patchDocument)
     {
         foreach (var customer in Customers)
         {
@@ -913,11 +896,35 @@ public sealed class ScenarioTests
         }
     }
 
-    private void PatchDominantly(PatchDocument<Customer> patchDocument)
+    private void PatchDocumentParentDominantly(PatchDocument<Customer> patchDocument)
     {
         foreach (var customer in Customers)
         {
             patchDocument.ApplyOneToOneParentDominance(customer);
+        }
+    }
+
+    private void PatchOperationRelatively(PatchOperation<Customer> patchOperation)
+    {
+        foreach (var customer in Customers)
+        {
+            patchOperation.ApplyOneToOneRelatively(customer);
+        }
+    }
+
+    private void PatchOperationAbsolutely(PatchOperation<Customer> patchOperation)
+    {
+        foreach (var customer in Customers)
+        {
+            patchOperation.ApplyOneToOneAbsolutely(customer);
+        }
+    }
+
+    private void PatchOperationParentDominantly(PatchOperation<Customer> patchOperation)
+    {
+        foreach (var customer in Customers)
+        {
+            patchOperation.ApplyOneToOneParentDominance(customer);
         }
     }
 
