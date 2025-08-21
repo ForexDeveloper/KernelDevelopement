@@ -2236,6 +2236,8 @@ public static class PatchEngine
 
             PrepareForInvalidScenario(technicalTeamLeads, validItems);
 
+            PrepareForInvalidScenario(technicalTeamLeads, validItems);
+
             foreach (var qaTestingTeamLead in chiefTechnicalOfficer.QaTestingTeamLeads)
             {
                 var qATestingSeniors = new List<ExpandoObject>();
@@ -2278,6 +2280,8 @@ public static class PatchEngine
                     qATestingSeniors.Add((dynamic)qaTestingSenior);
                 }
             }
+
+            PrepareForInvalidScenario(qATestingTeamLeads, validItems);
 
             PrepareForInvalidScenario(qATestingTeamLeads, validItems);
 
@@ -2436,9 +2440,6 @@ public static class PatchEngine
             }
 
             PrepareForInvalidScenario(scrumMasterTeamLeads, validItems);
-
-            #endregion
-
 
             #endregion
 
@@ -3906,7 +3907,7 @@ public static class PatchEngine
                 }
             }
 
-            foreach (var technicalTeamLead in chiefTechnicalOfficer!.TechnicalTeamLeads)
+            foreach (var technicalTeamLead in chiefTechnicalOfficer.TechnicalTeamLeads)
             {
                 var technicalSeniors = new List<ExpandoObject>();
 
@@ -4060,7 +4061,6 @@ public static class PatchEngine
                         if (propertyValues.TryGetValue(property.Name, out var value))
                         {
                             qaTestingSenior.Add(property.Name, value);
-                            continue;
                         }
                     }
 
@@ -4089,7 +4089,7 @@ public static class PatchEngine
             var scrumMasterTeamLeads = new List<ExpandoObject>();
             ((dynamic)productOfficer).ScrumMasterTeamLeads = scrumMasterTeamLeads;
 
-            foreach (var productTeamLead in chiefProductOfficer!.ProductTeamLeads)
+            foreach (var productTeamLead in chiefProductOfficer.ProductTeamLeads)
             {
                 var productMangerLead = new ExpandoObject() as IDictionary<string, object>;
 
@@ -4395,6 +4395,7 @@ public static class PatchEngine
             officerOrLowerLevel[nameof(ChiefUnitIdentity.Experience)] = null!;
             officerOrLowerLevel[nameof(ChiefUnitIdentity.UniqueIdentifier)] = null!;
             officerOrLowerLevel[nameof(ChiefUnitIdentity.Age)] = "XXXXXX".JsonElement();
+            officerOrLowerLevel[nameof(ChiefUnitIdentity.Name)] = "XXXXXX".JsonElement();
             officerOrLowerLevel[nameof(ChiefUnitIdentity.Height)] = "XXXXXX".JsonElement();
             officerOrLowerLevel[nameof(ChiefUnitIdentity.Weight)] = "XXXXXX".JsonElement();
             officerOrLowerLevel[nameof(ChiefUnitIdentity.EyeColor)] = "Purple".JsonElement();

@@ -69,6 +69,30 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         return new PatchDocument<TEntity>(patchEntities, webPathRoot);
     }
 
+    public void ApplyOneToOneRelatively(List<TEntity> dbEntities)
+    {
+        foreach (var dbEntity in dbEntities)
+        {
+            ApplyOneToOneRelatively(dbEntity);
+        }
+    }
+
+    public void ApplyOneToOneAbsolutely(List<TEntity> dbEntities)
+    {
+        foreach (var dbEntity in dbEntities)
+        {
+            ApplyOneToOneAbsolutely(dbEntity);
+        }
+    }
+
+    public void ApplyOneToOneParentDominance(List<TEntity> dbEntities)
+    {
+        foreach (var dbEntity in dbEntities)
+        {
+            ApplyOneToOneParentDominance(dbEntity);
+        }
+    }
+
     /// <summary>
     /// This method uses single patchEntity to update single database entity
     /// Apply patch while patchEntity does not contain Id

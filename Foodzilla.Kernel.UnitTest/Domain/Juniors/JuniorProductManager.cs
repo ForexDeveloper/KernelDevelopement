@@ -10,11 +10,12 @@ public sealed class JuniorProductManager : Identity<long>, IPatchValidator
 
     public MidlevelProductManager? MidlevelProductManager { get; init; }
 
-    public List<FresherProductManager> Freshers { get; init; } = new List<FresherProductManager>();
+    public List<FresherProductManager> Freshers { get; init; } = [];
 
     private JuniorProductManager(long id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, long midlevelProductManagerId)
         : base(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart)
     {
+        SetIdentity(id);
         MidlevelProductManagerId = midlevelProductManagerId;
     }
 

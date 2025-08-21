@@ -661,14 +661,14 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
         var idProperty = entityProperties.First(p => p.Name.EqualsIgnoreCase(Id));
 
-        var idValueString = idProperty.GetValue(dbEntity).ToString();
+        var idValueString = idProperty.GetValue(dbEntity)!.ToString();
 
         if (_patchEntitiesDictionary.TryGetValue(dbEntity, out var patchEntities))
         {
             _patchEntity = patchEntities.Find(p =>
             {
                 var value = p.FirstOrDefault(q => q.Key.EqualsIgnoreCase(Id)).Value;
-                return value != null && value.ToString().Equals(idValueString);
+                return value != null && value.ToString()!.Equals(idValueString);
             }) ?? new ExpandoObject();
         }
         else
@@ -676,7 +676,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
             _patchEntity = _patchEntities.Find(p =>
             {
                 var value = p.FirstOrDefault(q => q.Key.EqualsIgnoreCase(Id)).Value;
-                return value != null && value.ToString().Equals(idValueString);
+                return value != null && value.ToString()!.Equals(idValueString);
             }) ?? new ExpandoObject();
         }
 
@@ -1244,6 +1244,11 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
         if (commonProperty.InquireOneToManyNavigability(dbEntity, out var outEntities))
         {
+            if (commonProperty.Name == "Juniors")
+            {
+
+            }
+
             if (value != null && outEntities.Count != 0)
             {
                 StoreDeepOriginalValues(dbEntity, commonProperty);
