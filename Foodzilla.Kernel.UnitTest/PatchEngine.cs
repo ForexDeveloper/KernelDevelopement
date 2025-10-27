@@ -1,6 +1,5 @@
 ﻿using System.Dynamic;
 using Foodzilla.Kernel.Extension;
-using Foodzilla.Kernel.UnitTest.Patch;
 using Foodzilla.Kernel.UnitTest.Domain;
 using Foodzilla.Kernel.UnitTest.Domain.Juniors;
 using Foodzilla.Kernel.UnitTest.Domain.Seniors;
@@ -36,47 +35,47 @@ public static class PatchEngine
     private static readonly DateTimeOffset ContractDateStart5 = ContractDateEnd1.AddYears(-5);
     private static readonly DateTimeOffset ContractDateStart6 = ContractDateEnd1.AddYears(-6);
 
-    private static string[] Organizations => new[] { "Google", "Microsoft", "Apple", "SpaceX", "Amazon", "Facebook" };
+    private static string[] Organizations => ["Google", "Microsoft", "Apple", "SpaceX", "Amazon", "Facebook"];
 
-    private static string[] OfficerNames => new[] { "Christopher", "David", "John", "Steve", "Leonardo", "Rafael" };
+    private static string[] OfficerNames => ["Christopher", "David", "John", "Steve", "Leonardo", "Rafael"];
 
-    private static string[] OfficerLastNames => new[] { "Stones", "Hamilton", "Rabin", "Anderson", "Kane", "Smith" };
+    private static string[] OfficerLastNames => ["Stones", "Hamilton", "Rabin", "Anderson", "Kane", "Smith"];
 
-    private static string[] OtherLevelNames => new[] { "Micheal", "Tom", "Victor", "Williams", "Sam", "Harry" };
+    private static string[] OtherLevelNames => ["Micheal", "Tom", "Victor", "Williams", "Sam", "Harry"];
 
-    private static string[] OtherLevelLastNames => new[] { "Jordan", "Kennedy", "Graham", "Jenkins", "Garret", "Bradley" };
+    private static string[] OtherLevelLastNames => ["Jordan", "Kennedy", "Graham", "Jenkins", "Garret", "Bradley"];
 
-    private static string[] NationalCodes => new[] { "4120583732", "9182736455", "1324354657", "0897867564", "1425364758", "0896857463" };
+    private static string[] NationalCodes => ["4120583732", "9182736455", "1324354657", "0897867564", "1425364758", "0896857463"];
 
-    private static string[] PersonalCodes => new[] { "#MdEjdSjE$kEfKxD#", "#MdRkXkEk&jDjExS#", "#MdsSdkEk&jDjExS#", "#PoLefDkEk&jDjExS#", "#OldElXkEk&jDjExS#", "#QrEtyUeIkEk&jDjEx#" };
+    private static string[] PersonalCodes => ["#MdEjdSjE$kEfKxD#", "#MdRkXkEk&jDjExS#", "#MdsSdkEk&jDjExS#", "#PoLefDkEk&jDjExS#", "#OldElXkEk&jDjExS#", "#QrEtyUeIkEk&jDjEx#"];
 
-    private static string[] Addresses => new[] { "#MdEjdSjE$kEfKxD#", "#MdRkXkEk&jDjExS#", "#MdsSdkEk&jDjExS#", "#PoLefDkEk&jDjExS#", "#OldElXkEk&jDjExS#", "#QrEtyUeIkEk&jDjEx#" };
+    private static string[] Addresses => ["#MdEjdSjE$kEfKxD#", "#MdRkXkEk&jDjExS#", "#MdsSdkEk&jDjExS#", "#PoLefDkEk&jDjExS#", "#OldElXkEk&jDjExS#", "#QrEtyUeIkEk&jDjEx#"];
 
-    private static int[] Ages => new[] { 25, 30, 35, 45, 55, 65 };
+    private static int[] Ages => [25, 30, 35, 45, 55, 65];
 
-    private static bool[] FireStatuses => new[] { true, false, true, false, true, false };
+    private static bool[] FireStatuses => [true, false, true, false, true, false];
 
-    private static decimal?[] Weights => new decimal?[] { 80, null, 78.5M, null, 85, null };
+    private static decimal?[] Weights => [80, null, 78.5M, null, 85, null];
 
-    private static decimal?[] Heights => new decimal?[] { 187.56M, null, 178.5M, null, 196, null };
+    private static decimal?[] Heights => [187.56M, null, 178.5M, null, 196, null];
 
-    private static int?[] DaysOfVacation => new int?[] { 2, null, 3, null, 4, null };
+    private static int?[] DaysOfVacation => [2, null, 3, null, 4, null];
 
-    private static EyeColor?[] EyeColors => new EyeColor?[] { EyeColor.Black, null, EyeColor.Blue, null, EyeColor.Green, null };
+    private static EyeColor?[] EyeColors => [EyeColor.Black, null, EyeColor.Blue, null, EyeColor.Green, null];
 
-    private static Graduation[] Graduations => new[] { Graduation.Diploma, Graduation.Bachelor, Graduation.Associate, Graduation.Master, Graduation.Phd, Graduation.Bachelor };
+    private static Graduation[] Graduations => [Graduation.Diploma, Graduation.Bachelor, Graduation.Associate, Graduation.Master, Graduation.Phd, Graduation.Bachelor];
 
-    private static Experience[] Experiences => new[] { Experience.Elementary, Experience.Intermediate, Experience.Advance, Experience.Elementary, Experience.Intermediate, Experience.Advance };
+    private static Experience[] Experiences => [Experience.Elementary, Experience.Intermediate, Experience.Advance, Experience.Elementary, Experience.Intermediate, Experience.Advance];
 
-    private static DateTimeOffset[] BirthDates => new[] { BirthDate, BirthDate10, BirthDate20, BirthDate30, BirthDate40, BirthDate50 };
+    private static DateTimeOffset[] BirthDates => [BirthDate, BirthDate10, BirthDate20, BirthDate30, BirthDate40, BirthDate50];
 
-    private static DateTimeOffset?[] ModifiedDates => new DateTimeOffset?[] { ModifiedDate, ModifiedDate.AddDays(1), null, ModifiedDate.AddDays(-10), null, null };
+    private static DateTimeOffset?[] ModifiedDates => [ModifiedDate, ModifiedDate.AddDays(1), null, ModifiedDate.AddDays(-10), null, null];
 
-    private static DateTimeOffset[] ContractDatesStart => new[] { ContractDateStart1, ContractDateStart2, ContractDateStart3, ContractDateStart4, ContractDateStart5, ContractDateStart6 };
+    private static DateTimeOffset[] ContractDatesStart => [ContractDateStart1, ContractDateStart2, ContractDateStart3, ContractDateStart4, ContractDateStart5, ContractDateStart6];
 
-    private static DateTimeOffset[] ContractDatesEnd => new[] { ContractDateEnd1, ContractDateEnd2, ContractDateEnd3, ContractDateEnd4, ContractDateEnd5, ContractDateEnd6 };
+    private static DateTimeOffset[] ContractDatesEnd => [ContractDateEnd1, ContractDateEnd2, ContractDateEnd3, ContractDateEnd4, ContractDateEnd5, ContractDateEnd6];
 
-    private static Guid[] UniqueIdentifiers => new[] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+    private static Guid[] UniqueIdentifiers => [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
 
     public static List<ChiefExecutiveOfficer> CreateChiefExecutiveOfficers(int count)
     {
@@ -2284,6 +2283,9 @@ public static class PatchEngine
             PrepareForInvalidScenario(qATestingTeamLeads, validItems);
 
             PrepareForInvalidScenario(qATestingTeamLeads, validItems);
+
+            #endregion
+
 
             #region ChiefProductOfficer
 

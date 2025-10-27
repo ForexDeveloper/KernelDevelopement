@@ -15,8 +15,8 @@ public sealed class AdvanceTheories
     private readonly int _juniorCount;
     private readonly int _fresherCount;
 
-    private static readonly int TotalCount = Random.Shared.Next(1, 6);
-    private static readonly int ValidCount = Random.Shared.Next(1, TotalCount);
+    private static readonly int _totalCount = Random.Shared.Next(1, 6);
+    private static readonly int _validCount = Random.Shared.Next(1, _totalCount);
 
     public List<ExpandoObject> PatchOfficers { get; set; } = [];
 
@@ -24,13 +24,13 @@ public sealed class AdvanceTheories
 
     public AdvanceTheories()
     {
-        _leadCount = ValidCount * TotalCount;
-        _seniorCount = _leadCount * TotalCount;
-        _midlevelCount = _seniorCount * TotalCount;
-        _juniorCount = _midlevelCount * TotalCount;
-        _fresherCount = _juniorCount * TotalCount;
+        _leadCount = _validCount * _totalCount;
+        _seniorCount = _leadCount * _totalCount;
+        _midlevelCount = _seniorCount * _totalCount;
+        _juniorCount = _midlevelCount * _totalCount;
+        _fresherCount = _juniorCount * _totalCount;
 
-        ChiefExecutiveOfficers = PatchEngine.CreateChiefExecutiveOfficers(TotalCount);
+        ChiefExecutiveOfficers = PatchEngine.CreateChiefExecutiveOfficers(_totalCount);
     }
 
     #region PatchOperation
@@ -38,8 +38,6 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreAbsolutely_WhenAllPatchOfficersAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         PatchOfficers = PatchEngine.CreateValidPatchExecutiveOfficers(ChiefExecutiveOfficers);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
@@ -84,8 +82,6 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreRelatively_WhenAllPatchOfficersAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         PatchOfficers = PatchEngine.CreateValidPatchExecutiveOfficers(ChiefExecutiveOfficers);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
@@ -130,8 +126,6 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreParentDominance_WhenAllPatchOfficersAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         PatchOfficers = PatchEngine.CreateValidPatchExecutiveOfficers(ChiefExecutiveOfficers);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
@@ -176,9 +170,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreAbsolutely_WhenRootOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlyRoot()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -188,11 +180,11 @@ public sealed class AdvanceTheories
 
         using (new AssertionScope())
         {
-            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(_validCount);
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -223,9 +215,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreRelatively_WhenRootOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllOfficers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -235,11 +225,11 @@ public sealed class AdvanceTheories
 
         using (new AssertionScope())
         {
-            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(_validCount);
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
 
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -271,9 +261,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreParentDominance_WhenRootOfPatchOfficersAreInvalid_ShouldAvoidPatchPatchForAllOtherLevels()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -283,11 +271,11 @@ public sealed class AdvanceTheories
 
         using (new AssertionScope())
         {
-            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(_validCount);
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -318,9 +306,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreAbsolutely_WhenCLevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlyCLevels()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -332,9 +318,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -365,9 +351,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreRelatively_WhenCLevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllTeamLeads()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -379,9 +363,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -412,9 +396,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreParentDominance_WhenCLevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllOtherLevels()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -426,9 +408,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -459,9 +441,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreAbsolutely_WhenLeadsOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlyLeads()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -473,9 +453,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -508,7 +488,7 @@ public sealed class AdvanceTheories
     {
         const int totalCount = 10;
 
-        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -520,9 +500,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -553,9 +533,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreParentDominance_WhenLeadsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Seniors_Midlevels_Juniors_Freshers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -567,9 +545,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -600,9 +578,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreAbsolutely_WhenSeniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlySeniors()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -647,9 +623,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreRelatively_WhenSeniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllMidlevels()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -694,9 +668,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreParentDominance_WhenSeniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Midlevels_Juniors_Freshers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -741,9 +713,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreAbsolutely_WhenMidlevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlyMidlevels()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -755,9 +725,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -784,9 +754,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreRelatively_WhenMidlevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllJuniors()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -798,9 +766,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -831,9 +799,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreParentDominance_WhenMidlevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Juniors_Freshers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -845,9 +811,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -878,9 +844,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreAbsolutely_WhenJuniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlyJuniors()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -925,9 +889,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreRelatively_WhenJuniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllFreshers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -972,9 +934,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreParentDominance_WhenJuniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllFreshers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1024,8 +984,6 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleAbsolutely_WhenAllPatchOfficersAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         PatchOfficers = PatchEngine.CreateValidPatchExecutiveOfficers(ChiefExecutiveOfficers);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
@@ -1070,8 +1028,6 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleRelatively_WhenAllPatchOfficersAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         PatchOfficers = PatchEngine.CreateValidPatchExecutiveOfficers(ChiefExecutiveOfficers);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
@@ -1116,8 +1072,6 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleParentDominance_WhenAllPatchOfficersAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         PatchOfficers = PatchEngine.CreateValidPatchExecutiveOfficers(ChiefExecutiveOfficers);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
@@ -1162,9 +1116,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleAbsolutely_WhenRootOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlyRoot()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1174,7 +1126,7 @@ public sealed class AdvanceTheories
 
         using (new AssertionScope())
         {
-            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(_validCount);
 
             ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
@@ -1209,9 +1161,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleRelatively_WhenRootOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllOfficers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1221,11 +1171,11 @@ public sealed class AdvanceTheories
 
         using (new AssertionScope())
         {
-            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(_validCount);
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -1256,9 +1206,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleParentDominance_WhenRootOfPatchOfficersAreInvalid_ShouldAvoidPatchPatchForAllOtherLevels()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1268,11 +1216,11 @@ public sealed class AdvanceTheories
 
         using (new AssertionScope())
         {
-            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(_validCount);
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -1303,9 +1251,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleAbsolutely_WhenCLevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlyCLevels()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1317,9 +1263,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -1350,9 +1296,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleRelatively_WhenCLevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllTeamLeads()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1364,9 +1308,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -1397,9 +1341,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleParentDominance_WhenCLevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllOtherLevels()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1411,9 +1353,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(_validCount);
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -1444,9 +1386,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleAbsolutely_WhenLeadsOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlyLeads()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1458,9 +1398,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -1491,9 +1431,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleRelatively_WhenLeadsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllSeniors()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1505,9 +1443,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -1538,9 +1476,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleParentDominance_WhenLeadsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Seniors_Midlevels_Juniors_Freshers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1552,9 +1488,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
@@ -1585,9 +1521,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleAbsolutely_WhenSeniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlySeniors()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1632,9 +1566,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleRelatively_WhenSeniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllMidlevels()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1679,9 +1611,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleParentDominance_WhenSeniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Midlevels_Juniors_Freshers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1726,9 +1656,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleAbsolutely_WhenMidlevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlyMidlevels()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1740,9 +1668,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -1769,9 +1697,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleRelatively_WhenMidlevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllJuniors()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1783,9 +1709,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -1816,9 +1742,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleParentDominance_WhenMidlevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Juniors_Freshers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1830,9 +1754,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -1863,9 +1787,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleAbsolutely_WhenJuniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForOnlyJuniors()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1910,9 +1832,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleRelatively_WhenJuniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllFreshers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
@@ -1957,9 +1877,7 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleParentDominance_WhenJuniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllFreshers()
     {
-        const int totalCount = 10;
-
-        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, ValidCount);
+        PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
