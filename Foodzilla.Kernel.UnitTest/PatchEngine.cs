@@ -2236,6 +2236,8 @@ public static class PatchEngine
 
             PrepareForInvalidScenario(technicalTeamLeads, validItems);
 
+            PrepareForInvalidScenario(technicalTeamLeads, validItems);
+
             foreach (var qaTestingTeamLead in chiefTechnicalOfficer.QaTestingTeamLeads)
             {
                 var qATestingSeniors = new List<ExpandoObject>();
@@ -2281,8 +2283,7 @@ public static class PatchEngine
 
             PrepareForInvalidScenario(qATestingTeamLeads, validItems);
 
-            #endregion
-
+            PrepareForInvalidScenario(qATestingTeamLeads, validItems);
 
             #region ChiefProductOfficer
 
