@@ -1176,9 +1176,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeTrue();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p!.IsPatched()).Should().BeTrue();
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p!.IsPatched()).Should().BeTrue();
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -1221,11 +1221,11 @@ public sealed class AdvanceTheories
 
         using (new AssertionScope())
         {
-            ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeFalse();
+            ChiefExecutiveOfficers.Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeFalse();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeFalse();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeFalse();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p!.IsPatched()).Should().HaveCount(ValidCount);
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads.Select(q => q)).All(p => p.IsPatched()).Should().BeTrue();
@@ -1364,9 +1364,9 @@ public sealed class AdvanceTheories
         {
             ChiefExecutiveOfficers.All(p => p.IsPatched()).Should().BeTrue();
 
-            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).All(p => p.IsPatched()).Should().BeFalse();
-            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).All(p => p.IsPatched()).Should().BeFalse();
-            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).All(p => p.IsPatched()).Should().BeFalse();
+            ChiefExecutiveOfficers.Select(p => p.ChiefProductOfficer).Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefTechnicalOfficer).Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
+            ChiefExecutiveOfficers.Select(p => p.ChiefMarketingOfficer).Where(p => p.IsPatched()).Should().HaveCount(ValidCount);
 
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ProductTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
             ChiefExecutiveOfficers.SelectMany(p => p.ChiefProductOfficer!.ScrumMasterTeamLeads).Where(p => p.IsPatched()).Should().HaveCount(_leadCount);
