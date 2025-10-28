@@ -1,6 +1,6 @@
-﻿using Foodzilla.Kernel.Patch;
+﻿using Xunit;
+using Foodzilla.Kernel.Patch;
 using Foodzilla.Kernel.UnitTest.Domain.ChiefOfficers;
-using Xunit;
 
 namespace Foodzilla.Kernel.UnitTest.Patch;
 

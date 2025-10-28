@@ -10,7 +10,6 @@ namespace Foodzilla.Kernel.Patch;
 
 public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValidator
 {
-    private static int total = 0;
     private const string Id = "Id";
 
     internal Guid Guid;
@@ -28,22 +27,15 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
     public List<string> EntityIds { get; private set; }
 
-    public List<PatchInvalidResult> InvalidResults { get; init; } = new();
-
-    private PatchOperation(ExpandoObject patchEntity, string webPathRoot, string rrr)
-    {
-        _patchEntity = patchEntity;
-        Initialize(webPathRoot);
-    }
+    public List<PatchInvalidResult> InvalidResults { get; init; } = [];
 
     private PatchOperation(ExpandoObject patchEntity, string webPathRoot)
     {
-        total++;
-        Guid = new Guid();
+        Guid = Guid.Empty;
 
+        _patchEntities = [patchEntity];
         _ignoreFields = new List<string>();
         _entityProperties = typeof(TEntity).GetProperties();
-        _patchEntities = new List<ExpandoObject> { patchEntity };
         _entitiesStatusCollection = new Dictionary<Entity, bool>();
         _entityPropertiesDictionary = new Dictionary<Entity, PropertyInfo[]>();
         _patchEntitiesDictionary = new Dictionary<Entity, List<ExpandoObject>>();
@@ -55,8 +47,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
     private PatchOperation(List<ExpandoObject> patchEntities, string webPathRoot)
     {
-        total++;
-
         _patchEntities = patchEntities ?? throw new NullReferenceException();
 
         _ignoreFields = new List<string>();
