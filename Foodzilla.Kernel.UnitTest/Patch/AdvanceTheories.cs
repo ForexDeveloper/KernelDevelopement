@@ -486,8 +486,6 @@ public sealed class AdvanceTheories
     [Fact]
     public async Task HandleSingleCoreRelatively_WhenLeadsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllSeniors()
     {
-        const int totalCount = 10;
-
         PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
