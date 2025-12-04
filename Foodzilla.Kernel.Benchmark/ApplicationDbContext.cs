@@ -2,7 +2,4 @@
 
 namespace Foodzilla.Kernel.Benchmark;
 
-public sealed class ApplicationDbContext : DbContext
-{
-
-}
+public sealed class ApplicationDbContext : DbContext;

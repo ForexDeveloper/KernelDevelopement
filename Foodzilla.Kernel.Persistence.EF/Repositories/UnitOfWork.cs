@@ -1,41 +1,35 @@
-﻿using Foodzilla.Kernel.Contract.Repositories;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Foodzilla.Kernel.Contract.Repositories;
 
 namespace Foodzilla.Kernel.Persistence.EF.Repositories;
 
-public sealed class UnitOfWork : IUnitOfWork
+public sealed class UnitOfWork(DbContext dbContext) : IUnitOfWork
 {
     private bool _disposed;
-    private readonly DbContext _dbContext;
-
-    public UnitOfWork(DbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
 
     public void SaveChanges()
     {
-        _dbContext.SaveChanges();
+        dbContext.SaveChanges();
     }
 
     public async Task SaveChangesAsync()
     {
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
     }
 
     public async Task BeginTransaction()
     {
-        await _dbContext.Database.BeginTransactionAsync();
+        await dbContext.Database.BeginTransactionAsync();
     }
 
     public async Task Commit()
     {
-        await _dbContext.Database.CommitTransactionAsync();
+        await dbContext.Database.CommitTransactionAsync();
     }
 
     public async Task Rollback()
     {
-        await _dbContext.Database.RollbackTransactionAsync();
+        await dbContext.Database.RollbackTransactionAsync();
     }
 
     protected void Dispose(bool disposing)
@@ -44,7 +38,7 @@ public sealed class UnitOfWork : IUnitOfWork
         {
             if (disposing)
             {
-                _dbContext.Dispose();
+                dbContext.Dispose();
             }
         }
 

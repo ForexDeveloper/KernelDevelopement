@@ -7,7 +7,7 @@ public interface IRepository<TEntity, in TKey> : IDisposable, IScoped
     where TEntity : Entity<TKey>, IAggregateRoot
     where TKey : struct
 {
-    ValueTask<TEntity> GetAsync(TKey id);
+    ValueTask<TEntity?> GetAsync(TKey id);
 
     Task<List<TEntity>> GetAllAsync(IEnumerable<TKey> ids);
 

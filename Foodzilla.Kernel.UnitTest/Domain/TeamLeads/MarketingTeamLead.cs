@@ -10,7 +10,7 @@ public sealed class MarketingTeamLead : Identity<int>, IPatchValidator
 
     public ChiefMarketingOfficer? ChiefMarketingOfficer { get; init; }
 
-    public List<SeniorMarketing> Seniors { get; init; } = new List<SeniorMarketing>();
+    public List<SeniorMarketing> Seniors { get; init; } = [];
 
     private MarketingTeamLead(int id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, int chiefMarketingOfficerId)
         : base(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart)

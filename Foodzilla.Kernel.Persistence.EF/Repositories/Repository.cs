@@ -1,7 +1,7 @@
 ﻿using EFCore.BulkExtensions;
-using Foodzilla.Kernel.Contract.Repositories;
 using Foodzilla.Kernel.Domain;
 using Microsoft.EntityFrameworkCore;
+using Foodzilla.Kernel.Contract.Repositories;
 
 namespace Foodzilla.Kernel.Persistence.EF.Repositories;
 
@@ -21,10 +21,10 @@ public abstract class Repository<TContext, TEntity, TKey> : IRepository<TEntity,
         _table = DbContext.Set<TEntity>();
         UnitOfWork = new UnitOfWork(dbContext);
 
-        DbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        DbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
     }
 
-    public virtual ValueTask<TEntity> GetAsync(TKey id)
+    public virtual ValueTask<TEntity?> GetAsync(TKey id)
     {
         return _table.FindAsync(id);
     }
