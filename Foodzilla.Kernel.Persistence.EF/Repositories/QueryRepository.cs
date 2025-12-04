@@ -1,5 +1,5 @@
-﻿using Foodzilla.Kernel.Contract.Repositories;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Foodzilla.Kernel.Contract.Repositories;
 
 namespace Foodzilla.Kernel.Persistence.EF.Repositories;
 

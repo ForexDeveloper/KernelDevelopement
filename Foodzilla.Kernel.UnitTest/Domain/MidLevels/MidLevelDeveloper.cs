@@ -10,7 +10,7 @@ public sealed class MidlevelDeveloper : Identity<long>, IPatchValidator
 
     public SeniorDeveloper? SeniorDeveloper { get; init; }
 
-    public List<JuniorDeveloper> Juniors { get; init; } = new List<JuniorDeveloper>();
+    public List<JuniorDeveloper> Juniors { get; init; } = [];
 
     private MidlevelDeveloper(long id, string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contraDateEnd, DateTimeOffset contraDateStart, long seniorDeveloperId)
         : base(name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart)

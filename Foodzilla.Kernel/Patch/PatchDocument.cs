@@ -10,14 +10,13 @@ namespace Foodzilla.Kernel.Patch;
 
 public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidator
 {
-    private static int total = 0;
     private const string Id = "Id";
 
     internal Guid Guid;
     internal Entity Entity;
     private bool _failed = false;
     private ExpandoObject _patchEntity;
-    private PropertyInfo[] _entityProperties;
+    private readonly PropertyInfo[] _entityProperties;
     private readonly IEnumerable<string> _ignoreFields;
     private readonly List<ExpandoObject> _patchEntities;
     private readonly Dictionary<Entity, Dictionary<object, object>> _navigationProperties;
@@ -25,22 +24,15 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
     public List<string> EntityIds { get; private set; }
 
-    public List<PatchInvalidResult> InvalidResults { get; init; } = new();
-
-    private PatchDocument(ExpandoObject patchEntity, string webPathRoot, string rrr)
-    {
-        _patchEntity = patchEntity;
-        Initialize(webPathRoot);
-    }
+    public List<PatchInvalidResult> InvalidResults { get; init; } = [];
 
     private PatchDocument(ExpandoObject patchEntity, string webPathRoot)
     {
-        total++;
-        Guid = new Guid();
+        Guid = Guid.Empty;
 
+        _patchEntities = [patchEntity];
         _ignoreFields = new List<string>();
         _entityProperties = typeof(TEntity).GetProperties();
-        _patchEntities = new List<ExpandoObject> { patchEntity };
         _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
         _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
 
@@ -49,8 +41,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
     private PatchDocument(List<ExpandoObject> patchEntities, string webPathRoot)
     {
-        total++;
-
         _patchEntities = patchEntities ?? throw new NullReferenceException();
 
         _ignoreFields = new List<string>();
@@ -67,30 +57,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     public static PatchDocument<TEntity> Create(List<ExpandoObject> patchEntities, string webPathRoot = null)
     {
         return new PatchDocument<TEntity>(patchEntities, webPathRoot);
-    }
-
-    public void ApplyOneToOneRelatively(List<TEntity> dbEntities)
-    {
-        foreach (var dbEntity in dbEntities)
-        {
-            ApplyOneToOneRelatively(dbEntity);
-        }
-    }
-
-    public void ApplyOneToOneAbsolutely(List<TEntity> dbEntities)
-    {
-        foreach (var dbEntity in dbEntities)
-        {
-            ApplyOneToOneAbsolutely(dbEntity);
-        }
-    }
-
-    public void ApplyOneToOneParentDominance(List<TEntity> dbEntities)
-    {
-        foreach (var dbEntity in dbEntities)
-        {
-            ApplyOneToOneParentDominance(dbEntity);
-        }
     }
 
     /// <summary>
@@ -344,173 +310,28 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         return true;
     }
 
-    public bool ApplyOneToOneTransactional(TEntity dbEntity)
+    public void ApplyOneToOneRelatively(List<TEntity> dbEntities)
     {
-        var idValueString = SetPatchEntity(dbEntity);
-
-        foreach ((string property, object value) in _patchEntity)
+        foreach (var dbEntity in dbEntities)
         {
-            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
-
-            if (commonProperty != null)
-            {
-                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
-                {
-                    AddErrorResult(idValueString, property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
-                    continue;
-                }
-
-                try
-                {
-                    StoreDeepOriginalValues(dbEntity, commonProperty);
-
-                    if (StoreNavigationProperties(dbEntity, commonProperty, value)) continue;
-
-                    object castedValue = CastCorrectValue(commonProperty, value);
-
-                    commonProperty.SetValue(dbEntity, castedValue);
-
-                }
-                catch (Exception exception)
-                {
-                    AddErrorResult(idValueString, commonProperty.Name, value?.ToString(), exception.Message);
-
-                    Failed();
-                }
-            }
-            else
-            {
-                AddErrorResult(idValueString, property, value?.ToString(), PatchError.PropertyMatchingFailed);
-
-                Failed();
-            }
-        }
-
-        if (OperationFailed() || !dbEntity.OnPatchCompleted())
-        {
-            RestoreOriginalValues(dbEntity);
-
-            return false;
-        }
-        else
-        {
-            PatchNavigationProperties(dbEntity);
-        }
-
-        OperationReStart();
-
-        return true;
-    }
-
-    public bool ApplyOneToOne(TEntity dbEntity, ExpandoObject patchEntity, PropertyInfo[] entityProperties)
-    {
-        var idProperty = entityProperties.First(p => p.Name.EqualsIgnoreCase(Id));
-
-        var idValueString = idProperty.GetValue(dbEntity)?.ToString();
-
-        foreach ((string property, object value) in patchEntity)
-        {
-            var commonProperty = entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
-
-            if (commonProperty != null)
-            {
-                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
-                {
-                    AddErrorResult(idValueString, property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
-                    continue;
-                }
-
-                try
-                {
-                    StoreDeepOriginalValues(dbEntity, commonProperty);
-
-                    //if (InnerPatchOperation(commonProperty, value)) continue;
-
-                    object castedValue = CastCorrectValue(commonProperty, value);
-
-                    commonProperty.SetValue(dbEntity, castedValue);
-
-                }
-                catch (Exception exception)
-                {
-                    AddErrorResult(idValueString, commonProperty.Name, value?.ToString(), exception.Message);
-
-                    Failed();
-                }
-            }
-            else
-            {
-                AddErrorResult(idValueString, property, value?.ToString(), PatchError.PropertyMatchingFailed);
-
-                Failed();
-            }
-        }
-
-        if (OperationFailed() || !dbEntity.OnPatchCompleted())
-        {
-            RestoreOriginalValues(dbEntity);
-
-            return false;
-        }
-
-        OperationReStart();
-
-        return true;
-    }
-
-    public bool Apply()
-    {
-        return true;
-    }
-
-    /// <summary>
-    /// This method uses single patchEntity to update set of database entities
-    /// Apply patch while patchEntity does not contain Id
-    /// Id is sent separated in request body
-    /// Only one instant is applied to a set of database Entities
-    /// </summary>
-    public void ApplyWithoutIdentifier(List<TEntity> dbEntities)
-    {
-        var type = typeof(TEntity);
-        var properties = type.GetProperties();
-
-        for (var i = dbEntities.Count - 1; i >= 0; i--)
-        {
-            var dbEntity = dbEntities[i];
-
-            foreach ((string property, object value) in _patchEntity)
-            {
-                var commonProperty = properties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property) && !_ignoreFields.Contains(p.Name.ToLower()));
-
-                if (commonProperty != null)
-                {
-                    try
-                    {
-                        StoreDeepOriginalValues(dbEntity, commonProperty);
-
-                        object castedValue = CastCorrectValue(commonProperty, value);
-
-                        commonProperty.SetValue(dbEntity, castedValue);
-                    }
-                    catch (Exception)
-                    {
-                        RestoreOriginalValues(dbEntity);
-                        dbEntities.RemoveAt(i);
-                        break;
-                    }
-                }
-            }
+            ApplyOneToOneRelatively(dbEntity);
         }
     }
 
-    private void Initialize(string contentRootPath)
+    public void ApplyOneToOneAbsolutely(List<TEntity> dbEntities)
     {
-        if (_patchEntity == null)
+        foreach (var dbEntity in dbEntities)
         {
-            throw new NullReferenceException();
+            ApplyOneToOneAbsolutely(dbEntity);
         }
+    }
 
-        _entityProperties = typeof(TEntity).GetProperties();
+    public void ApplyOneToOneParentDominance(List<TEntity> dbEntities)
+    {
+        foreach (var dbEntity in dbEntities)
+        {
+            ApplyOneToOneParentDominance(dbEntity);
+        }
     }
 
     private void InitializeIds(string contentRootPath)
@@ -876,7 +697,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
     private static IEnumerable<object> GetArrayData(JsonElement element)
     {
-        List<object> objects = new();
+        List<object> objects = [];
 
         var enumerator = element.EnumerateArray();
 
@@ -953,9 +774,9 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     {
         object originalValue = commonProperty.GetValue(dbEntity);
 
-        if (_originalValuesCollection.ContainsKey(dbEntity))
+        if (_originalValuesCollection.TryGetValue(dbEntity, out var value))
         {
-            _originalValuesCollection[dbEntity].Add(commonProperty, originalValue);
+            value.Add(commonProperty, originalValue);
         }
         else
         {
@@ -979,9 +800,9 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
             originalValue = entities.Select(entityItem => entityItem.Clone()).ToList();
         }
 
-        if (_originalValuesCollection.ContainsKey(dbEntity))
+        if (_originalValuesCollection.TryGetValue(dbEntity, out var value))
         {
-            _originalValuesCollection[dbEntity].Add(commonProperty, originalValue);
+            value.Add(commonProperty, originalValue);
         }
         else
         {

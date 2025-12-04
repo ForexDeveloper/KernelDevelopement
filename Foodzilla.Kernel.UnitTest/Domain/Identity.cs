@@ -40,14 +40,17 @@ public abstract class Identity<TKey> : Entity<TKey> where TKey : struct
 
     public DateTimeOffset ContractDateStart { get; init; }
 
-    public virtual string[] RestrictedProperties { get; } = { nameof(NationalCode), nameof(PersonalCode) };
+    public virtual string[] RestrictedProperties { get; } = [nameof(NationalCode), nameof(PersonalCode)];
 
     protected Identity()
     {
 
     }
 
-    protected Identity(string name, string lastName, string nationalCode, string personalCode, string address, int age, int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor, Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate, DateTimeOffset contractDateEnd, DateTimeOffset contractDateStart)
+    protected Identity(string name, string lastName, string nationalCode, string personalCode, string address, int age,
+        int? daysOfVacation, decimal? height, decimal? weight, bool isFired, Guid uniqueIdentifier, EyeColor? eyeColor,
+        Graduation graduation, Experience experience, DateTimeOffset? modifiedDate, DateTimeOffset birthDate,
+        DateTimeOffset contractDateEnd, DateTimeOffset contractDateStart)
     {
         Age = age;
         Name = name;
