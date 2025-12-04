@@ -243,12 +243,12 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         {
             RestoreOriginalValues(dbEntity);
 
+            PatchDeepNavigationProperties(dbEntity);
+
             return false;
         }
-        else
-        {
-            PatchDeepNavigationProperties(dbEntity);
-        }
+
+        PatchDeepNavigationProperties(dbEntity);
 
         OperationReStart(dbEntity);
 
@@ -574,15 +574,15 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
             if (OperationFailed(dbEntity) || !patchValidator.OnPatchCompleted())
             {
                 RestoreOriginalValues(dbEntity);
-            }
-            else
-            {
+
                 PatchDeepNavigationProperties(dbEntity);
             }
         }
         else
         {
             RestoreOriginalValues(dbEntity);
+
+            PatchDeepNavigationProperties(dbEntity);
         }
 
         OperationReStart(dbEntity);
@@ -963,7 +963,22 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
     private void StoreDeepOriginalValues(Entity dbEntity, PropertyInfo commonProperty)
     {
-        object originalValue = commonProperty.GetValue(dbEntity);
+        object originalValue;
+
+        if (commonProperty.InquireOneToOneNavigability(dbEntity, out var outEntity))
+        {
+            originalValue = outEntity;
+        }
+
+        else if (commonProperty.InquireOneToManyNavigability(dbEntity, out var outEntities))
+        {
+            originalValue = outEntities;
+        }
+
+        else
+        {
+            originalValue = commonProperty.GetValue(dbEntity);
+        }
 
         if (_originalValuesCollection.TryGetValue(dbEntity, out var propertyValues))
         {
@@ -1043,7 +1058,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
     private void PatchNavigationProperties(Entity dbEntity)
     {
-        var navigationProperties = _navigationProperties.GetValueOrDefault(dbEntity);
+        if (!_navigationProperties.TryGetValue(dbEntity, out var navigationProperties)) return;
 
         foreach (var (entity, value) in navigationProperties)
         {
@@ -1084,7 +1099,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
     private void PatchNavigationProperties(Entity dbEntity, bool parentLoyalty)
     {
-        _navigationProperties.TryGetValue(dbEntity, out var navigationProperties) == false ? ret;
+        if (!_navigationProperties.TryGetValue(dbEntity, out var navigationProperties)) return;
 
         foreach (var (entity, value) in navigationProperties)
         {
@@ -1092,13 +1107,13 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
             {
                 if (value != null)
                 {
+                    _entityProperties = dbEntity.GetRealType().GetProperties();
+
                     _entityPropertiesDictionary.Add(outEntity, entity.GetRealType().GetProperties());
 
                     _patchEntitiesDictionary.Add(outEntity, [(ExpandoObject)value]);
 
                     ApplyShallowOneToOne(outEntity, parentLoyalty);
-
-                    _entityProperties = dbEntity.GetRealType().GetProperties();
                 }
             }
 
@@ -1108,6 +1123,8 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                 if (value != null && outEntitiesList.Count != 0)
                 {
+                    _entityProperties = dbEntity.GetRealType().GetProperties();
+
                     foreach (var unitEntity in outEntitiesList)
                     {
                         _patchEntitiesDictionary.Add(unitEntity, (List<ExpandoObject>)value);
@@ -1116,8 +1133,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                         ApplyShallowOneToOne(unitEntity, parentLoyalty);
                     }
-
-                    _entityProperties = dbEntity.GetRealType().GetProperties();
                 }
             }
         }
@@ -1169,7 +1184,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
     private void PatchDeepNavigationProperties(Entity dbEntity)
     {
-        var navigationProperties = _navigationProperties.GetValueOrDefault(dbEntity);
+        if (!_navigationProperties.TryGetValue(dbEntity, out var navigationProperties)) return;
 
         foreach (var (entity, value) in navigationProperties)
         {
@@ -1177,13 +1192,13 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
             {
                 if (value != null)
                 {
+                    _entityProperties = dbEntity.GetRealType().GetProperties();
+
                     _entityPropertiesDictionary.Add(outEntity, entity.GetRealType().GetProperties());
 
                     _patchEntitiesDictionary.Add(outEntity, [(ExpandoObject)value]);
 
                     ApplyDeepOneToOne(outEntity);
-
-                    _entityProperties = dbEntity.GetRealType().GetProperties();
                 }
             }
 
@@ -1193,6 +1208,8 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                 if (value != null && outEntitiesList.Count != 0)
                 {
+                    _entityProperties = dbEntity.GetRealType().GetProperties();
+
                     foreach (var unitEntity in outEntitiesList)
                     {
                         _patchEntitiesDictionary.Add(unitEntity, (List<ExpandoObject>)value);
@@ -1201,8 +1218,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                         ApplyDeepOneToOne(unitEntity);
                     }
-
-                    _entityProperties = dbEntity.GetRealType().GetProperties();
                 }
             }
         }
