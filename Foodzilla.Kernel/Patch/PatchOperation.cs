@@ -1206,18 +1206,17 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
             {
                 var outEntitiesList = outEntities.ToList();
 
-                if (value != null && outEntitiesList.Count != 0)
+                if (value == null || outEntitiesList.Count == 0) continue;
+
+                _entityProperties = dbEntity.GetRealType().GetProperties();
+
+                foreach (var unitEntity in outEntitiesList)
                 {
-                    _entityProperties = dbEntity.GetRealType().GetProperties();
+                    _patchEntitiesDictionary.Add(unitEntity, (List<ExpandoObject>)value);
 
-                    foreach (var unitEntity in outEntitiesList)
-                    {
-                        _patchEntitiesDictionary.Add(unitEntity, (List<ExpandoObject>)value);
+                    _entityPropertiesDictionary.Add(unitEntity, unitEntity.GetRealType().GetProperties());
 
-                        _entityPropertiesDictionary.Add(unitEntity, unitEntity.GetRealType().GetProperties());
-
-                        ApplyDeepOneToOne(unitEntity);
-                    }
+                    ApplyDeepOneToOne(unitEntity);
                 }
             }
         }
