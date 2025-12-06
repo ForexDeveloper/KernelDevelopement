@@ -26,7 +26,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
     public List<PatchInvalidResult> InvalidResults { get; init; } = [];
 
-    private PatchDocument(ExpandoObject patchEntity, string webPathRoot)
+    private PatchDocument(ExpandoObject patchEntity)
     {
         Guid = Guid.Empty;
 
@@ -36,10 +36,10 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
         _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
 
-        InitializeIds(webPathRoot);
+        InitializeIds();
     }
 
-    private PatchDocument(List<ExpandoObject> patchEntities, string webPathRoot)
+    private PatchDocument(List<ExpandoObject> patchEntities)
     {
         _patchEntities = patchEntities ?? throw new NullReferenceException();
 
@@ -51,66 +51,12 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
     public static PatchDocument<TEntity> Create(ExpandoObject patchEntity, string webPathRoot = null)
     {
-        return new PatchDocument<TEntity>(patchEntity, webPathRoot);
+        return new PatchDocument<TEntity>(patchEntity);
     }
 
     public static PatchDocument<TEntity> Create(List<ExpandoObject> patchEntities, string webPathRoot = null)
     {
-        return new PatchDocument<TEntity>(patchEntities, webPathRoot);
-    }
-
-    /// <summary>
-    /// This method uses single patchEntity to update single database entity
-    /// Apply patch while patchEntity does not contain Id
-    /// Id is sent separated in request body
-    /// Only one instant is applied to a single database entity
-    /// </summary>
-    public bool ApplyOneToAll(TEntity dbEntity)
-    {
-        foreach ((string property, object value) in _patchEntity)
-        {
-            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
-
-            if (commonProperty != null)
-            {
-                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
-                {
-                    AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
-                    continue;
-                }
-
-                try
-                {
-                    StoreDeepOriginalValues(dbEntity, commonProperty);
-
-                    object castedValue = CastCorrectValue(commonProperty, value);
-
-                    commonProperty.SetValue(dbEntity, castedValue);
-
-                }
-                catch (Exception exception)
-                {
-                    Failed();
-                    AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
-                }
-            }
-            else
-            {
-                Failed();
-                AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
-            }
-        }
-
-        if (OperationFailed() || !dbEntity.OnPatchCompleted())
-        {
-            RestoreOriginalValues(dbEntity);
-
-            return false;
-        }
-
-        OperationReStart();
-
-        return true;
+        return new PatchDocument<TEntity>(patchEntities);
     }
 
     /// <summary>
@@ -124,7 +70,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     {
         var idValueString = SetPatchEntity(dbEntity);
 
-        foreach ((string property, object value) in _patchEntity)
+        foreach (var (property, value) in _patchEntity)
         {
             var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
 
@@ -141,13 +87,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
                     switch (parentAllegiance)
                     {
                         case null:
-                            {
-                                StoreDeepOriginalValues(dbEntity, commonProperty);
-                                if (StoreNavigationProperties(dbEntity, commonProperty, value)) continue;
-                                object castedValue = CastCorrectValue(commonProperty, value);
-                                commonProperty.SetValue(dbEntity, castedValue);
-                                break;
-                            }
                         case true:
                             {
                                 StoreDeepOriginalValues(dbEntity, commonProperty);
@@ -202,7 +141,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     {
         var idValueString = SetPatchEntity(dbEntity);
 
-        foreach ((string property, object value) in _patchEntity)
+        foreach (var (property, value) in _patchEntity)
         {
             var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
 
@@ -256,7 +195,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     {
         var idValueString = SetPatchEntity(dbEntity);
 
-        foreach ((string property, object value) in _patchEntity)
+        foreach (var (property, value) in _patchEntity)
         {
             var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
 
@@ -334,7 +273,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         }
     }
 
-    private void InitializeIds(string contentRootPath)
+    private void InitializeIds()
     {
         if (_patchEntities == null)
         {
@@ -380,40 +319,20 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         return false;
     }
 
-    private void PatchNavigationProperties(TEntity dbEntity)
-    {
-        if (_navigationProperties.TryGetValue(dbEntity, out var navigationPropertyValues))
-        {
-            foreach (var (outEntity, value) in navigationPropertyValues)
-            {
-                if (outEntity is Entity entity)
-                {
-                    CreatePatchDocument(entity, value, null, nameof(ApplyOneToOneParentDominance));
-                }
-
-                if (outEntity is IEnumerable<Entity> outEntities)
-                {
-                    CreatePatchDocument(outEntities.ToList(), value, null, nameof(ApplyOneToOneParentDominance));
-                }
-            }
-        }
-    }
-
     private void PatchNavigationProperties(TEntity dbEntity, bool? parentAllegiance, string applyMethodName)
     {
-        if (_navigationProperties.TryGetValue(dbEntity, out var navigationPropertyValues))
-        {
-            foreach (var (outEntity, value) in navigationPropertyValues)
-            {
-                if (outEntity is Entity entity)
-                {
-                    CreatePatchDocument(entity, value, parentAllegiance, applyMethodName);
-                }
+        if (!_navigationProperties.TryGetValue(dbEntity, out var navigationProperties)) return;
 
-                if (outEntity is IEnumerable<Entity> outEntities)
-                {
-                    CreatePatchDocument(outEntities.ToList(), value, parentAllegiance, applyMethodName);
-                }
+        foreach (var (outEntity, value) in navigationProperties)
+        {
+            if (outEntity is Entity entity)
+            {
+                CreatePatchDocument(entity, value, parentAllegiance, applyMethodName);
+            }
+
+            if (outEntity is IEnumerable<Entity> outEntities)
+            {
+                CreatePatchDocument(outEntities.ToList(), value, parentAllegiance, applyMethodName);
             }
         }
     }
@@ -432,23 +351,22 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         var type = typeof(PatchDocument<>).MakeGenericType(proxyType!);
 
         var patchDocument = Activator.CreateInstance(type, BindingFlags.Instance | BindingFlags.NonPublic, null,
-            new object[] { patchEntity, null }, null);
+            [patchEntity], null);
 
         MethodInfo methodInfo;
 
         if (parentAllegiance.HasValue)
         {
-            methodInfo = type.GetMethod(applyMethodName,
-                BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType, typeof(bool?) }, null);
+            methodInfo = type.GetMethod(applyMethodName, BindingFlags.Instance | BindingFlags.Public, null,
+                [proxyType, typeof(bool?)], null);
 
-            methodInfo!.Invoke(patchDocument, new object[] { outEntity, parentAllegiance });
+            methodInfo!.Invoke(patchDocument, [outEntity, parentAllegiance]);
         }
         else
         {
-            methodInfo = type.GetMethod(applyMethodName,
-                BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType }, null);
+            methodInfo = type.GetMethod(applyMethodName, BindingFlags.Instance | BindingFlags.Public, null, [proxyType], null);
 
-            methodInfo!.Invoke(patchDocument, new object[] { outEntity });
+            methodInfo!.Invoke(patchDocument, [outEntity]);
         }
     }
 
@@ -466,29 +384,27 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         var type = typeof(PatchDocument<>).MakeGenericType(proxyType!);
 
         var patchDocument = Activator.CreateInstance(type, BindingFlags.Instance | BindingFlags.NonPublic, null,
-            new object[] { patchEntities, null }, null);
+            [patchEntities], null);
 
-        MethodInfo methodInfo = type.GetMethod(applyMethodName,
-            BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType, typeof(bool?) }, null);
+        MethodInfo methodInfo;
 
         if (parentAllegiance.HasValue)
         {
-            methodInfo = type.GetMethod(applyMethodName,
-                BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType, typeof(bool?) }, null);
+            methodInfo = type.GetMethod(applyMethodName, BindingFlags.Instance | BindingFlags.Public, null,
+                [proxyType, typeof(bool?)], null);
 
             foreach (var unitEntity in outEntities)
             {
-                methodInfo!.Invoke(patchDocument, new object[] { unitEntity, parentAllegiance });
+                methodInfo!.Invoke(patchDocument, [unitEntity, parentAllegiance]);
             }
         }
         else
         {
-            methodInfo = type.GetMethod(applyMethodName,
-                BindingFlags.Instance | BindingFlags.Public, null, new Type[] { proxyType }, null);
+            methodInfo = type.GetMethod(applyMethodName, BindingFlags.Instance | BindingFlags.Public, null, [proxyType], null);
 
             foreach (var unitEntity in outEntities)
             {
-                methodInfo!.Invoke(patchDocument, new object[] { unitEntity });
+                methodInfo!.Invoke(patchDocument, [unitEntity]);
             }
         }
     }
@@ -786,32 +702,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         }
     }
 
-    private void StoreShallowOriginalValues(TEntity dbEntity, PropertyInfo commonProperty)
-    {
-        object originalValue = commonProperty.GetValue(dbEntity);
-
-        if (originalValue is Entity entity)
-        {
-            originalValue = entity.Clone();
-        }
-
-        if (originalValue is IEnumerable<Entity> entities)
-        {
-            originalValue = entities.Select(entityItem => entityItem.Clone()).ToList();
-        }
-
-        if (_originalValuesCollection.TryGetValue(dbEntity, out var value))
-        {
-            value.Add(commonProperty, originalValue);
-        }
-        else
-        {
-            Dictionary<PropertyInfo, object> originalValues = new() { { commonProperty, originalValue } };
-
-            _originalValuesCollection.Add(dbEntity, originalValues);
-        }
-    }
-
     private bool StoreNavigationProperties(TEntity dbEntity, PropertyInfo commonProperty, object value)
     {
         if (commonProperty.InquireOneToOneNavigability(dbEntity, out var outEntity))
@@ -843,22 +733,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         }
 
         return false;
-    }
-
-    private void StoreOriginalValues(TEntity dbEntity, PropertyInfo commonProperty, IDictionary<TEntity, Dictionary<PropertyInfo, object>> originalValuesCollection)
-    {
-        object originalValue = commonProperty.GetValue(dbEntity);
-
-        if (originalValuesCollection.ContainsKey(dbEntity))
-        {
-            originalValuesCollection[dbEntity].Add(commonProperty, originalValue);
-        }
-        else
-        {
-            Dictionary<PropertyInfo, object> originalValues = new() { { commonProperty, originalValue } };
-
-            originalValuesCollection.Add(dbEntity, originalValues);
-        }
     }
 
     private void AddErrorResult(string field, object value, string message)
