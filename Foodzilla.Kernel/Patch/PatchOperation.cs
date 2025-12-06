@@ -1195,11 +1195,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
         if (commonProperty.InquireOneToManyNavigability(dbEntity, out var outEntities))
         {
-            if (commonProperty.Name == "Juniors")
-            {
-
-            }
-
             if (value != null && outEntities.Count != 0)
             {
                 StoreDeepOriginalValues(dbEntity, commonProperty);

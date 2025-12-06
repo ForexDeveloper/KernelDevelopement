@@ -2282,8 +2282,6 @@ public static class PatchEngine
 
             PrepareForInvalidScenario(qATestingTeamLeads, validItems);
 
-            PrepareForInvalidScenario(qATestingTeamLeads, validItems);
-
             #endregion
 
 
