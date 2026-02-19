@@ -15,7 +15,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     internal Guid Guid;
     internal Entity Entity;
     internal object EntityId;
-    internal bool _failed = false;
     private ExpandoObject _patchEntity;
     private PropertyInfo[] _entityProperties;
     private readonly IEnumerable<string> _ignoreFields;
@@ -78,7 +77,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     /// Id is sent inside each patchEntity. peer to peer patching
     /// Only one instant is applied to a single database entity
     /// </summary>
-    public bool ApplyOneToOneRelatively(List<TEntity> dbEntities)
+    public void ApplyOneToOneRelatively(List<TEntity> dbEntities)
     {
         foreach (var dbEntity in dbEntities)
         {
@@ -122,22 +121,19 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
                 }
             }
 
-            if (OperationFailed() || !dbEntity.OnPatchCompleted())
+            if (OperationFailed() || !((TEntity)Entity).OnPatchCompleted())
             {
                 RestoreOriginalValues();
 
                 PatchShallowNavigationProperties(parentLoyalty: false);
-
-                return false;
             }
+            else
+            {
+                PatchShallowNavigationProperties(parentLoyalty: true);
 
-            PatchShallowNavigationProperties(parentLoyalty: true);
-
-            OperationReStart();
-
+                OperationReStart();
+            }
         }
-
-        return true;
     }
 
     /// <summary>
@@ -147,7 +143,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     /// Id is sent inside each patchEntity. peer to peer patching
     /// Only one instant is applied to a single database entity
     /// </summary>
-    public bool ApplyOneToOneAbsolutely(List<TEntity> dbEntities)
+    public void ApplyOneToOneAbsolutely(List<TEntity> dbEntities)
     {
         foreach (var dbEntity in dbEntities)
         {
@@ -191,24 +187,22 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
                 }
             }
 
-            if (OperationFailed() || !dbEntity.OnPatchCompleted())
+            if (OperationFailed() || !((TEntity)Entity).OnPatchCompleted())
             {
                 RestoreOriginalValues();
 
                 PatchDeepNavigationProperties();
-
-                return false;
             }
+            else
+            {
+                PatchDeepNavigationProperties();
 
-            PatchDeepNavigationProperties();
-
-            OperationReStart();
+                OperationReStart();
+            }
         }
-
-        return true;
     }
 
-    public bool ApplyOneToOneParentDominance(List<TEntity> dbEntities)
+    public void ApplyOneToOneParentDominance(List<TEntity> dbEntities)
     {
         foreach (var dbEntity in dbEntities)
         {
@@ -252,19 +246,17 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
                 }
             }
 
-            if (OperationFailed() || !dbEntity.OnPatchCompleted())
+            if (OperationFailed() || !((TEntity)Entity).OnPatchCompleted())
             {
                 RestoreOriginalValues();
-
-                return false;
             }
+            else
+            {
+                PatchShallowNavigationProperties();
 
-            PatchShallowNavigationProperties();
-
-            OperationReStart();
+                OperationReStart();
+            }
         }
-
-        return true;
     }
 
     private void ApplyShallowOneToOne(Entity dbEntity)
@@ -319,8 +311,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
             {
                 PatchShallowNavigationProperties();
             }
-
-            OperationReStart();
         }
         else
         {
@@ -390,8 +380,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
             {
                 PatchShallowNavigationProperties(true);
             }
-
-            OperationReStart();
         }
         else
         {

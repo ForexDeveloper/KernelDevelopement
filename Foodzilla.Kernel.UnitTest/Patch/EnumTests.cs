@@ -57,7 +57,7 @@ public sealed class EnumTests
 
         List<(int, Dictionary<string, object>)> propertyValues =
         [
-            (validCount, new Dictionary<string, object> { { nameof(Customer.Enum), "GOLD" } }),
+            (validCount, new Dictionary<string, object> { { nameof(Customer.Enum), "SILVER" } }),
             (invalidCount, new Dictionary<string, object> { { nameof(Customer.Enum), "XXXXXX" } })
         ];
 
@@ -73,7 +73,7 @@ public sealed class EnumTests
 
         using (new AssertionScope())
         {
-            customers.Count(p => p.Enum is RankingEnum.Gold).Should().Be(validCount);
+            customers.Count(p => p.Enum is RankingEnum.Silver).Should().Be(validCount);
             patchDocument.InvalidResults.Should().NotBeNullOrEmpty().And.HaveCount(invalidCount);
         }
     }

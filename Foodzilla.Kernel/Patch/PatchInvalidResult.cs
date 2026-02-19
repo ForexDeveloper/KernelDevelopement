@@ -1,6 +1,6 @@
 ﻿namespace Foodzilla.Kernel.Patch;
 
-public sealed class PatchInvalidResult
+public sealed record PatchInvalidResult
 {
     public object EntityId { get; init; }
 
