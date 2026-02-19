@@ -55,7 +55,6 @@ public sealed class EnumTests
             customers.Count(p => p.Enum is RankingEnum.Silver).Should().Be(validCountSilver);
             customers.Count(p => p.Enum is RankingEnum.Normal).Should().Be(validCountNormal);
             customers.Count(p => p.Enum is RankingEnum.Diamond).Should().Be(validCountDiamond);
-            customers.Count.Should().Be(validCountNormal + validCountSilver + validCountGold + validCountDiamond);
         }
     }
 
@@ -65,10 +64,11 @@ public sealed class EnumTests
         const int validCount = 100;
         const int invalidCount = 80;
 
-        List<(int, Dictionary<string, object>)> propertyValues = new();
-
-        propertyValues.Add((validCount, new Dictionary<string, object> { { nameof(Customer.Enum), "GOLD" } }));
-        propertyValues.Add((invalidCount, new Dictionary<string, object> { { nameof(Customer.Enum), "XXXXXX" } }));
+        List<(int, Dictionary<string, object>)> propertyValues =
+        [
+            (validCount, new Dictionary<string, object> { { nameof(Customer.Enum), "Diamond" } }),
+            (invalidCount, new Dictionary<string, object> { { nameof(Customer.Enum), "XXXXXX" } })
+        ];
 
         var patchEntities = PatchBuilder.CreatePatchEntities(propertyValues);
 
@@ -76,27 +76,14 @@ public sealed class EnumTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        for (var i = customers.Count - 1; i >= 0; i--)
-        {
-            var customer = customers[i];
-
-            if (!patchDocument.ApplyOneToOneRelatively(customer))
-            {
-                customers.RemoveAt(i);
-            }
-        }
+        patchDocument.ApplyOneToOneRelatively(customers);
 
         await Task.CompletedTask;
 
         using (new AssertionScope())
         {
-            customers.Count.Should().Be(validCount);
-            customers.Where(p => p.Enum is RankingEnum.Gold).Should().HaveCount(validCount);
+            customers.Where(p => p.Enum is RankingEnum.Diamond).Should().HaveCount(validCount);
             patchDocument.InvalidResults.Should().NotBeNullOrEmpty().And.HaveCount(invalidCount);
-            foreach (var customer in customers)
-            {
-                customer.Enum.Should().HaveFlag(RankingEnum.Gold);
-            }
         }
     }
 

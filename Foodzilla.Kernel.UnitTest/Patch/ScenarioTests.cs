@@ -13,12 +13,8 @@ using FluentAssertions.Execution;
 public sealed class ScenarioTests
 {
     private const int TotalCount = 5;
-    public readonly List<Customer> Customers;
 
-    public ScenarioTests()
-    {
-        Customers = PatchBuilder.CreateComplexEntities(TotalCount);
-    }
+    public readonly List<Customer> Customers = PatchBuilder.CreateComplexEntities(TotalCount);
 
     #region PatchDocument
 

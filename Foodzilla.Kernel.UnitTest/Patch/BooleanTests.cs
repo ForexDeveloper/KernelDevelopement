@@ -422,13 +422,3 @@ public sealed class BooleanTests
 
     #endregion
 }
-public static class ObjectExtension
-{
-    public static object ToExpando(this object value)
-    {
-        IDictionary<string, object> expando = (IDictionary<string, object>)new ExpandoObject();
-        foreach (PropertyInfo property in value.GetType().GetTypeInfo().GetProperties())
-            expando.Add(property.Name, property.GetValue(value, (object[])null));
-        return (object)(expando as ExpandoObject);
-    }
-}
