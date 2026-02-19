@@ -2,23 +2,20 @@
 
 namespace Foodzilla.Kernel.UnitTest.Patch;
 
-using Xunit;
+using Castle.Core.Resource;
 using Extension;
-using System.Dynamic;
-using Newtonsoft.Json;
 using FluentAssertions;
-using Foodzilla.Kernel.Patch;
 using FluentAssertions.Execution;
+using Foodzilla.Kernel.Patch;
+using Newtonsoft.Json;
+using System.Dynamic;
+using Xunit;
 
 public sealed class ScenarioTests
 {
     private const int TotalCount = 5;
-    public readonly List<Customer> Customers;
 
-    public ScenarioTests()
-    {
-        Customers = PatchBuilder.CreateComplexEntities(TotalCount);
-    }
+    public readonly List<Customer> Customers = PatchBuilder.CreateComplexEntities(TotalCount);
 
     #region PatchDocument
 
@@ -31,7 +28,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDocumentRelatively(patchDocument);
+        patchDocument.ApplyOneToOneRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -64,7 +61,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDocumentRelatively(patchDocument);
+        patchDocument.ApplyOneToOneRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -97,7 +94,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDocumentRelatively(patchDocument);
+        patchDocument.ApplyOneToOneRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -129,7 +126,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDocumentParentDominantly(patchDocument);
+        patchDocument.ApplyOneToOneParentDominance(Customers);
 
         await Task.CompletedTask;
 
@@ -162,7 +159,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDocumentParentDominantly(patchDocument);
+        patchDocument.ApplyOneToOneParentDominance(Customers);
 
         await Task.CompletedTask;
 
@@ -197,7 +194,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDocumentParentDominantly(patchDocument);
+        patchDocument.ApplyOneToOneParentDominance(Customers);
 
         await Task.CompletedTask;
 
@@ -229,7 +226,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDocumentAbsolutely(patchDocument);
+        patchDocument.ApplyOneToOneAbsolutely(Customers);
 
         await Task.CompletedTask;
 
@@ -262,7 +259,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDocumentAbsolutely(patchDocument);
+        patchDocument.ApplyOneToOneAbsolutely(Customers);
 
         await Task.CompletedTask;
 
@@ -295,7 +292,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        PatchDocumentAbsolutely(patchDocument);
+        patchDocument.ApplyOneToOneAbsolutely(Customers);
 
         await Task.CompletedTask;
 
@@ -333,7 +330,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        PatchOperationRelatively(patchOperation);
+        patchOperation.ApplyOneToOneRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -366,7 +363,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        PatchOperationRelatively(patchOperation);
+        patchOperation.ApplyOneToOneRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -399,7 +396,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        PatchOperationRelatively(patchOperation);
+        patchOperation.ApplyOneToOneRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -431,7 +428,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        PatchOperationParentDominantly(patchOperation);
+        patchOperation.ApplyOneToOneParentDominance(Customers);
 
         await Task.CompletedTask;
 
@@ -464,7 +461,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        PatchOperationParentDominantly(patchOperation);
+        patchOperation.ApplyOneToOneParentDominance(Customers);
 
         await Task.CompletedTask;
 
@@ -499,7 +496,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        PatchOperationParentDominantly(patchOperation);
+        patchOperation.ApplyOneToOneParentDominance(Customers);
 
         await Task.CompletedTask;
 
@@ -531,7 +528,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        PatchOperationAbsolutely(patchOperation);
+        patchOperation.ApplyOneToOneAbsolutely(Customers);
 
         await Task.CompletedTask;
 
@@ -564,7 +561,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        PatchOperationAbsolutely(patchOperation);
+        patchOperation.ApplyOneToOneAbsolutely(Customers);
 
         await Task.CompletedTask;
 
@@ -597,7 +594,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        PatchOperationAbsolutely(patchOperation);
+        patchOperation.ApplyOneToOneAbsolutely(Customers);
 
         await Task.CompletedTask;
 
@@ -879,122 +876,4 @@ public sealed class ScenarioTests
 
         return patchEntity;
     }
-
-    private void PatchDocumentRelatively(PatchDocument<Customer> patchDocument)
-    {
-        foreach (var customer in Customers)
-        {
-            patchDocument.ApplyOneToOneRelatively(customer);
-        }
-    }
-
-    private void PatchDocumentAbsolutely(PatchDocument<Customer> patchDocument)
-    {
-        foreach (var customer in Customers)
-        {
-            patchDocument.ApplyOneToOneAbsolutely(customer);
-        }
-    }
-
-    private void PatchDocumentParentDominantly(PatchDocument<Customer> patchDocument)
-    {
-        foreach (var customer in Customers)
-        {
-            patchDocument.ApplyOneToOneParentDominance(customer);
-        }
-    }
-
-    private void PatchOperationRelatively(PatchOperation<Customer> patchOperation)
-    {
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneRelatively(customer);
-        }
-    }
-
-    private void PatchOperationAbsolutely(PatchOperation<Customer> patchOperation)
-    {
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneAbsolutely(customer);
-        }
-    }
-
-    private void PatchOperationParentDominantly(PatchOperation<Customer> patchOperation)
-    {
-        foreach (var customer in Customers)
-        {
-            patchOperation.ApplyOneToOneParentDominance(customer);
-        }
-    }
-
-    private static ExpandoObject Clone(dynamic @object)
-    {
-        return JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(@object));
-    }
-
-
-    #region OldVersion
-
-    private List<ExpandoObject> OldVersionCreatePatchEntities()
-    {
-        var patchEntities = new List<ExpandoObject>();
-
-        foreach (dynamic customer in Customers)
-        {
-            dynamic navigationListOrder = new List<ExpandoObject>();
-            dynamic navigationListCustomer = new List<ExpandoObject>();
-
-            dynamic navigationListOrder1 = new List<ExpandoObject>();
-            dynamic navigationListCustomer1 = new List<ExpandoObject>();
-
-            var patchEntity = CreatePatchEntity(customer.Id);
-            var navigationOrder = CreatePatchEntity(customer.Id);
-            var navigationCustomer = CreatePatchEntity(customer.Id);
-
-            patchEntity.NavigationOrder = navigationOrder;
-            patchEntity.NavigationCustomer = navigationCustomer;
-
-            foreach (var navigateItem in customer.NavigationListCustomer)
-            {
-                var navigationOrderItem = CreatePatchEntity(navigateItem.Id);
-                var navigationCustomerItem = CreatePatchEntity(navigateItem.Id);
-
-                navigationListOrder.Add(navigationOrderItem);
-                navigationListCustomer.Add(navigationCustomerItem);
-
-                patchEntity.NavigationListOrder = navigationListOrder;
-                patchEntity.NavigationListCustomer = navigationListCustomer;
-
-                var navigationOrder1 = CreatePatchEntity(navigateItem.Id);
-                var navigationCustomer1 = CreatePatchEntity(navigateItem.Id);
-
-                patchEntity.NavigationCustomer.NavigationOrder = navigationOrder1;
-                patchEntity.NavigationCustomer.NavigationCustomer = navigationCustomer1;
-
-                navigationListOrder1.Add(navigationOrderItem);
-                navigationListCustomer1.Add(navigationCustomerItem);
-
-                patchEntity.NavigationCustomer.NavigationListOrder = navigationListOrder1;
-                patchEntity.NavigationCustomer.NavigationListCustomer = navigationListCustomer1;
-
-                patchEntity.NavigationOrder.NavigationListOrder = navigationListOrder1;
-
-                dynamic navigationListOrder2 = new List<ExpandoObject>();
-
-                foreach (var navigationOrderItem1 in customer.NavigationListCustomer[0].NavigationListOrder)
-                {
-                    var navigationOrderItem2 = CreatePatchEntity(navigationOrderItem1.Id);
-                    navigationCustomerItem.NavigationListOrder = navigationListOrder2;
-                    navigationListOrder2.Add(navigationOrderItem2);
-                }
-            }
-
-            patchEntities.Add(patchEntity);
-        }
-
-        return patchEntities;
-    }
-
-    #endregion
 }

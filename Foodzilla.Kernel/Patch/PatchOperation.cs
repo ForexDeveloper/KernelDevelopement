@@ -78,62 +78,64 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     /// Id is sent inside each patchEntity. peer to peer patching
     /// Only one instant is applied to a single database entity
     /// </summary>
-    public bool ApplyOneToOneRelatively(TEntity dbEntity)
+    public bool ApplyOneToOneRelatively(List<TEntity> dbEntities)
     {
-        SetPatchEntity(dbEntity);
-
-        foreach (var (property, value) in _patchEntity)
+        foreach (var dbEntity in dbEntities)
         {
-            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
+            SetPatchEntity(dbEntity);
 
-            if (commonProperty != null)
+            foreach (var (property, value) in _patchEntity)
             {
-                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
+                var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
+
+                if (commonProperty != null)
                 {
-                    AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
-                    continue;
+                    if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
+                    {
+                        AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+                        continue;
+                    }
+
+                    try
+                    {
+                        StoreShallowOriginalValues(commonProperty);
+
+                        if (StoreNavigationProperties(commonProperty, value)) continue;
+
+                        object castedValue = CastCorrectValue(commonProperty, value);
+
+                        commonProperty.SetValue(Entity, castedValue);
+
+                    }
+                    catch (Exception exception)
+                    {
+                        AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
+
+                        Failed();
+                    }
                 }
-
-                try
+                else
                 {
-                    StoreShallowOriginalValues(commonProperty);
-
-                    if (StoreNavigationProperties(commonProperty, value)) continue;
-
-                    object castedValue = CastCorrectValue(commonProperty, value);
-
-                    commonProperty.SetValue(Entity, castedValue);
-
-                }
-                catch (Exception exception)
-                {
-                    AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
+                    AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
 
                     Failed();
                 }
             }
-            else
+
+            if (OperationFailed() || !dbEntity.OnPatchCompleted())
             {
-                AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
+                RestoreOriginalValues();
 
-                Failed();
+                PatchShallowNavigationProperties(parentLoyalty: false);
+
+                return false;
             }
-        }
 
-        if (OperationFailed() || !dbEntity.OnPatchCompleted())
-        {
-            RestoreOriginalValues();
-
-            PatchShallowNavigationProperties(parentLoyalty: false);
-
-            return false;
-        }
-        else
-        {
             PatchShallowNavigationProperties(parentLoyalty: true);
-        }
 
-        OperationReStart();
+            OperationReStart();
+
+        }
 
         return true;
     }
@@ -145,144 +147,124 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     /// Id is sent inside each patchEntity. peer to peer patching
     /// Only one instant is applied to a single database entity
     /// </summary>
-    public bool ApplyOneToOneAbsolutely(TEntity dbEntity)
+    public bool ApplyOneToOneAbsolutely(List<TEntity> dbEntities)
     {
-        SetPatchEntity(dbEntity);
-
-        foreach (var (property, value) in _patchEntity)
+        foreach (var dbEntity in dbEntities)
         {
-            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
+            SetPatchEntity(dbEntity);
 
-            if (commonProperty != null)
+            foreach (var (property, value) in _patchEntity)
             {
-                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
+                var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
+
+                if (commonProperty != null)
                 {
-                    AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
-                    continue;
+                    if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
+                    {
+                        AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+                        continue;
+                    }
+
+                    try
+                    {
+                        StoreDeepOriginalValues(commonProperty);
+
+                        if (StoreNavigationProperties(commonProperty, value)) continue;
+
+                        object castedValue = CastCorrectValue(commonProperty, value);
+
+                        commonProperty.SetValue(Entity, castedValue);
+
+                    }
+                    catch (Exception exception)
+                    {
+                        AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
+
+                        Failed();
+                    }
                 }
-
-                try
+                else
                 {
-                    StoreDeepOriginalValues(commonProperty);
-
-                    if (StoreNavigationProperties(commonProperty, value)) continue;
-
-                    object castedValue = CastCorrectValue(commonProperty, value);
-
-                    commonProperty.SetValue(Entity, castedValue);
-
-                }
-                catch (Exception exception)
-                {
-                    AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
+                    AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
 
                     Failed();
                 }
             }
-            else
+
+            if (OperationFailed() || !dbEntity.OnPatchCompleted())
             {
-                AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
+                RestoreOriginalValues();
 
-                Failed();
+                PatchDeepNavigationProperties();
+
+                return false;
             }
-        }
-
-        if (OperationFailed() || !dbEntity.OnPatchCompleted())
-        {
-            RestoreOriginalValues();
 
             PatchDeepNavigationProperties();
 
-            return false;
+            OperationReStart();
         }
-
-        PatchDeepNavigationProperties();
-
-        OperationReStart();
 
         return true;
     }
 
-    public bool ApplyOneToOneParentDominance(TEntity dbEntity)
+    public bool ApplyOneToOneParentDominance(List<TEntity> dbEntities)
     {
-        SetPatchEntity(dbEntity);
-
-        foreach (var (property, value) in _patchEntity)
+        foreach (var dbEntity in dbEntities)
         {
-            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
+            SetPatchEntity(dbEntity);
 
-            if (commonProperty != null)
+            foreach (var (property, value) in _patchEntity)
             {
-                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
+                var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
+
+                if (commonProperty != null)
                 {
-                    AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
-                    continue;
+                    if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
+                    {
+                        AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+                        continue;
+                    }
+
+                    try
+                    {
+                        StoreShallowOriginalValues(commonProperty);
+
+                        if (StoreNavigationProperties(commonProperty, value)) continue;
+
+                        object castedValue = CastCorrectValue(commonProperty, value);
+
+                        commonProperty.SetValue(Entity, castedValue);
+
+                    }
+                    catch (Exception exception)
+                    {
+                        AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
+
+                        Failed();
+                    }
                 }
-
-                try
+                else
                 {
-                    StoreShallowOriginalValues(commonProperty);
-
-                    if (StoreNavigationProperties(commonProperty, value)) continue;
-
-                    object castedValue = CastCorrectValue(commonProperty, value);
-
-                    commonProperty.SetValue(Entity, castedValue);
-
-                }
-                catch (Exception exception)
-                {
-                    AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
+                    AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
 
                     Failed();
                 }
             }
-            else
+
+            if (OperationFailed() || !dbEntity.OnPatchCompleted())
             {
-                AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
+                RestoreOriginalValues();
 
-                Failed();
+                return false;
             }
-        }
 
-        if (OperationFailed() || !dbEntity.OnPatchCompleted())
-        {
-            RestoreOriginalValues();
-
-            return false;
-        }
-        else
-        {
             PatchShallowNavigationProperties();
-        }
 
-        OperationReStart();
+            OperationReStart();
+        }
 
         return true;
-    }
-
-    public void ApplyOneToOneRelatively(List<TEntity> dbEntities)
-    {
-        foreach (var dbEntity in dbEntities)
-        {
-            ApplyOneToOneRelatively(dbEntity);
-        }
-    }
-
-    public void ApplyOneToOneAbsolutely(List<TEntity> dbEntities)
-    {
-        foreach (var dbEntity in dbEntities)
-        {
-            ApplyOneToOneAbsolutely(dbEntity);
-        }
-    }
-
-    public void ApplyOneToOneParentDominance(List<TEntity> dbEntities)
-    {
-        foreach (var dbEntity in dbEntities)
-        {
-            ApplyOneToOneParentDominance(dbEntity);
-        }
     }
 
     private void ApplyShallowOneToOne(Entity dbEntity)
