@@ -35,13 +35,15 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         Guid = Guid.Empty;
 
         _patchEntities = [patchEntity];
-        _ignoreFields = new List<string>();
+
+        _ignoreFields = [];
+        _navigationProperties = [];
+        _patchEntitiesDictionary = [];
+        _originalValuesCollection = [];
+        _entitiesStatusCollection = [];
+        _entityPropertiesDictionary = [];
+
         _entityProperties = typeof(TEntity).GetProperties();
-        _entitiesStatusCollection = new Dictionary<Entity, bool>();
-        _entityPropertiesDictionary = new Dictionary<Entity, PropertyInfo[]>();
-        _patchEntitiesDictionary = new Dictionary<Entity, List<ExpandoObject>>();
-        _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
-        _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
 
         InitializeIds();
     }
@@ -50,13 +52,13 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     {
         _patchEntities = patchEntities ?? throw new NullReferenceException();
 
-        _ignoreFields = new List<string>();
+        _ignoreFields = [];
+        _navigationProperties = [];
+        _patchEntitiesDictionary = [];
+        _originalValuesCollection = [];
+        _entitiesStatusCollection = [];
+        _entityPropertiesDictionary = [];
         _entityProperties = typeof(TEntity).GetProperties();
-        _entitiesStatusCollection = new Dictionary<Entity, bool>();
-        _entityPropertiesDictionary = new Dictionary<Entity, PropertyInfo[]>();
-        _patchEntitiesDictionary = new Dictionary<Entity, List<ExpandoObject>>();
-        _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
-        _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
     }
 
     public static PatchOperation<TEntity> Create(ExpandoObject patchEntity, string webPathRoot = null)
@@ -1012,59 +1014,9 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         }
     }
 
-    private bool NavigationShallowPatchOperation(Entity dbEntity, PropertyInfo commonProperty, object value)
-    {
-        if (commonProperty.InquireOneToOneNavigability(dbEntity, out var outEntity))
-        {
-            if (value != null)
-            {
-                StoreShallowOriginalValues(commonProperty);
-
-                _entityPropertiesDictionary.Add(outEntity, outEntity.GetRealType().GetProperties());
-
-                _patchEntitiesDictionary.Add(outEntity, [(ExpandoObject)value]);
-
-                ApplyShallowOneToOne(outEntity);
-
-                _entityProperties = dbEntity.GetRealType().GetProperties();
-            }
-
-            return true;
-        }
-
-        if (commonProperty.InquireOneToManyNavigability(dbEntity, out var outEntities))
-        {
-            if (value != null && outEntities.Count != 0)
-            {
-                StoreShallowOriginalValues(commonProperty);
-
-                foreach (var unitEntity in outEntities)
-                {
-                    _patchEntitiesDictionary.Add(unitEntity, (List<ExpandoObject>)value);
-
-                    _entityPropertiesDictionary.Add(unitEntity, unitEntity.GetRealType().GetProperties());
-
-                    ApplyShallowOneToOne(unitEntity);
-                }
-
-                _entityProperties = dbEntity.GetRealType().GetProperties();
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
     private void AddErrorResult(string field, object value, string message)
     {
         var result = PatchInvalidResult.Create(Id, field, value, message);
-        InvalidResults.Add(result);
-    }
-
-    private void AddErrorResult(object entityId, string field, object value, string message)
-    {
-        var result = PatchInvalidResult.Create(entityId, field, value, message);
         InvalidResults.Add(result);
     }
 

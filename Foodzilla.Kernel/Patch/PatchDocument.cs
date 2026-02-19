@@ -31,10 +31,11 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         Guid = Guid.Empty;
 
         _patchEntities = [patchEntity];
-        _ignoreFields = new List<string>();
+        _ignoreFields = [];
+        _navigationProperties = [];
+        _originalValuesCollection = [];
+
         _entityProperties = typeof(TEntity).GetProperties();
-        _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
-        _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
 
         InitializeIds();
     }
@@ -43,10 +44,11 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     {
         _patchEntities = patchEntities ?? throw new NullReferenceException();
 
-        _ignoreFields = new List<string>();
+        _ignoreFields = [];
+        _navigationProperties = [];
+        _originalValuesCollection = [];
+
         _entityProperties = typeof(TEntity).GetProperties();
-        _navigationProperties = new Dictionary<Entity, Dictionary<object, object>>();
-        _originalValuesCollection = new Dictionary<Entity, Dictionary<PropertyInfo, object>>();
     }
 
     public static PatchDocument<TEntity> Create(ExpandoObject patchEntity, string webPathRoot = null)
@@ -733,12 +735,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         }
 
         return false;
-    }
-
-    private void AddErrorResult(string field, object value, string message)
-    {
-        var result = PatchInvalidResult.Create(field, value, message);
-        InvalidResults.Add(result);
     }
 
     private void AddErrorResult(object entityId, string field, object value, string message)
