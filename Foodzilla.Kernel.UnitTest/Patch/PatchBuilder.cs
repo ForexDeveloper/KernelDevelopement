@@ -6,61 +6,11 @@ using Foodzilla.Kernel.Domain;
 
 namespace Foodzilla.Kernel.UnitTest.Patch;
 
-public sealed class PatchBuilder
+public sealed class PatchBuilder(Faker faker)
 {
-    private readonly Faker _faker;
-
-    public PatchBuilder(Faker faker)
-    {
-        _faker = faker;
-    }
-
     public static PatchDocument<Customer> Create(ExpandoObject patchEntity)
     {
         return PatchDocument<Customer>.Create(new List<ExpandoObject> { patchEntity });
-    }
-
-    public static List<Customer> CreateValidEntities()
-    {
-        var now = DateTimeOffset.Now;
-
-        var customer1 = Customer.Create(1, "MohammadReza", "JavidPoor", "4120583732", "String", null, RankingEnum.Gold, null, true, null, 10, null, 40, null, 321312.12321M, null, 400, null, Guid.NewGuid(), null, now, null);
-        var customer2 = Customer.Create(2, "Mehran", "Hashemi", "3120583632", "String", null, RankingEnum.Silver, RankingEnum.Diamond, true, null, 10, null, 40, null, 321312.12321M, null, 400, null, Guid.NewGuid(), null, now, null);
-        var customer3 = Customer.Create(3, "Mehran", "Hashemi", "3120583632", "String", null, RankingEnum.Diamond, RankingEnum.Silver, true, false, 10, null, 40, null, 321312.12321M, null, 400, null, Guid.NewGuid(), null, now, null);
-        var customer4 = Customer.Create(4, "Mehdi", "Ebrahimi", "0120583632", "String", null, RankingEnum.Gold, RankingEnum.Normal, true, false, 10, 20, 40, null, 321312.12321M, null, 400, null, Guid.NewGuid(), null, now, null);
-        var customer5 = Customer.Create(5, "Ghazaleh", "Eshghi", "9120583632", "String", null, RankingEnum.Gold, RankingEnum.Normal, true, false, 10, 20, 40, 50, 321312.12321M, null, 400, null, Guid.NewGuid(), null, now, null);
-        var customer6 = Customer.Create(6, "Amir", "Heydari", "3120583632", "String", null, RankingEnum.Gold, RankingEnum.Normal, true, false, 10, 20, 40, 50, 321312.12321M, null, 400, 56, Guid.NewGuid(), null, now, null);
-        var customer7 = Customer.Create(7, "Amin", "Salami", "3120583632", "String", null, RankingEnum.Gold, RankingEnum.Normal, true, false, 10, 20, 40, 50, 321312.12321M, null, 400, 56, Guid.NewGuid(), null, now, now.AddDays(120));
-
-        var customer8 = Customer.Create(8, "MohammadReza", "JavidPoor", "4120583732", "String", "NullableString", RankingEnum.Gold, null, true, null, 10, null, 40, null, 321312.12321M, null, 400, null, Guid.NewGuid(), null, now, null);
-        var customer9 = Customer.Create(9, "Mehran", "Hashemi", "3120583632", "String", "NullableString", RankingEnum.Silver, RankingEnum.Diamond, true, null, 10, null, 40, null, 321312.12321M, null, 400, null, Guid.NewGuid(), null, now, null);
-        var customer10 = Customer.Create(10, "Mehran", "Hashemi", "3120583632", "String", "NullableString", RankingEnum.Diamond, RankingEnum.Silver, true, false, 10, null, 40, null, 321312.12321M, null, 400, null, Guid.NewGuid(), null, now, null);
-        var customer11 = Customer.Create(11, "Mehdi", "Ebrahimi", "0120583632", "String", "NullableString", RankingEnum.Gold, RankingEnum.Normal, true, false, 10, 20, 40, null, 321312.12321M, null, 400, null, Guid.NewGuid(), null, now, null);
-        var customer12 = Customer.Create(12, "Queen", "Eshghi", "9120583632", "String", "NullableString", RankingEnum.Gold, RankingEnum.Normal, true, false, 10, 20, 40, 50, 321312.12321M, null, 400, null, Guid.NewGuid(), null, now, null);
-        var customer13 = Customer.Create(13, "Amir", "Heydari", "3120583632", "String", "NullableString", RankingEnum.Gold, RankingEnum.Normal, true, false, 10, 20, 40, 50, 321312.12321M, null, 400, 56, Guid.NewGuid(), null, now, null);
-        var customer14 = Customer.Create(14, "Amin", "Salami", "3120583632", "String", "NullableString", RankingEnum.Gold, RankingEnum.Normal, true, false, 10, 20, 40, 50, 321312.12321M, null, 400, 56, Guid.NewGuid(), null, now, now.AddDays(120));
-
-        var customers = new List<Customer>
-        {
-            customer1,
-            customer2,
-            customer3,
-            customer3,
-            customer4,
-            customer5,
-            customer6,
-            customer7,
-            customer8,
-            customer9,
-            customer10,
-            customer10,
-            customer11,
-            customer12,
-            customer13,
-            customer14
-        };
-
-        return customers;
     }
 
     public static List<Customer> CreateValidEntities(int instanceCount)
@@ -346,7 +296,7 @@ public sealed class PatchBuilder
             nullableString,
             RankingEnum.Gold,
             RankingEnum.Normal,
-            true,
+            false,
             false,
             10,
             20,

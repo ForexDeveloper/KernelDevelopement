@@ -68,7 +68,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     /// Id is sent inside each patchEntity. peer to peer patching
     /// Only one instant is applied to a single database entity
     /// </summary>
-    public bool ApplyOneToOneRelatively(List<TEntity> dbEntities, bool? parentAllegiance = null)
+    public void ApplyOneToOneRelatively(List<TEntity> dbEntities, bool? parentAllegiance = null)
     {
         foreach (var dbEntity in dbEntities)
         {
@@ -123,16 +123,14 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
                 RestoreOriginalValues(dbEntity);
 
                 PatchNavigationProperties(dbEntity, false, nameof(ApplyOneToOneRelatively));
-
-                return false;
             }
+            else
+            {
+                PatchNavigationProperties(dbEntity, true, nameof(ApplyOneToOneRelatively));
 
-            PatchNavigationProperties(dbEntity, true, nameof(ApplyOneToOneRelatively));
-
-            OperationReStart();
+                OperationReStart();
+            }
         }
-
-        return true;
     }
 
     /// <summary>
@@ -142,7 +140,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     /// Id is sent inside each patchEntity. peer to peer patching
     /// Only one instant is applied to a single database entity
     /// </summary>
-    public bool ApplyOneToOneAbsolutely(List<TEntity> dbEntities)
+    public void ApplyOneToOneAbsolutely(List<TEntity> dbEntities)
     {
         foreach (var dbEntity in dbEntities)
         {
@@ -189,17 +187,15 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
             if (OperationFailed() || !dbEntity.OnPatchCompleted())
             {
                 RestoreOriginalValues(dbEntity);
-
-                return false;
             }
-
-            OperationReStart();
+            else
+            {
+                OperationReStart();
+            }
         }
-
-        return true;
     }
 
-    public bool ApplyOneToOneParentDominance(List<TEntity> dbEntities)
+    public void ApplyOneToOneParentDominance(List<TEntity> dbEntities)
     {
         foreach (var dbEntity in dbEntities)
         {
@@ -246,16 +242,14 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
             if (OperationFailed() || !dbEntity.OnPatchCompleted())
             {
                 RestoreOriginalValues(dbEntity);
-
-                return false;
             }
+            else
+            {
+                PatchNavigationProperties(dbEntity, null, nameof(ApplyOneToOneParentDominance));
 
-            PatchNavigationProperties(dbEntity, null, nameof(ApplyOneToOneParentDominance));
-
-            OperationReStart();
+                OperationReStart();
+            }
         }
-
-        return true;
     }
 
     private void InitializeIds()

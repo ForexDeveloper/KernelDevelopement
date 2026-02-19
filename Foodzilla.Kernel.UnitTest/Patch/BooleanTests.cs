@@ -109,7 +109,7 @@ public sealed class BooleanTests
 
         List<(int, Dictionary<string, object>)> propertyValues =
         [
-            (validCount, new Dictionary<string, object> { { nameof(Customer.Boolean), 0 } }),
+            (validCount, new Dictionary<string, object> { { nameof(Customer.Boolean), 1 } }),
             (invalidCount, new Dictionary<string, object> { { nameof(Customer.Boolean), 12 } })
         ];
 
@@ -125,7 +125,7 @@ public sealed class BooleanTests
 
         using (new AssertionScope())
         {
-            customers.Count(p => p.Boolean is false).Should().Be(validCount);
+            customers.Count(p => p.Boolean is true).Should().Be(validCount);
             patchDocument.InvalidResults.Should().NotBeNullOrEmpty().And.HaveCount(invalidCount);
         }
     }
@@ -263,7 +263,7 @@ public sealed class BooleanTests
 
         List<ValueTuple<int, Dictionary<string, object>>> propertyValues =
         [
-            (validCount, new Dictionary<string, object> { { nameof(Customer.NullableBoolean), 0 } }),
+            (validCount, new Dictionary<string, object> { { nameof(Customer.NullableBoolean), 1 } }),
             (invalidCount, new Dictionary<string, object> { { nameof(Customer.NullableBoolean), 12 } })
         ];
 
@@ -279,7 +279,7 @@ public sealed class BooleanTests
 
         using (new AssertionScope())
         {
-            customers.Count(p => p.NullableBoolean is false).Should().Be(validCount);
+            customers.Count(p => p.NullableBoolean is true).Should().Be(validCount);
             patchDocument.InvalidResults.Should().NotBeNullOrEmpty().And.HaveCount(invalidCount);
         }
     }
