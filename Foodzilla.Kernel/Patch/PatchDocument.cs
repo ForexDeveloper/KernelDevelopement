@@ -84,6 +84,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
                     if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
                     {
                         AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+
                         continue;
                     }
 
@@ -93,13 +94,16 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
                         {
                             case null:
                             case true:
-                                {
-                                    StoreDeepOriginalValues(commonProperty);
-                                    if (StoreNavigationProperties(commonProperty, value)) continue;
-                                    object castedValue = CastCorrectValue(commonProperty, value);
-                                    commonProperty.SetValue(Entity, castedValue);
-                                    break;
-                                }
+
+                                StoreOriginalValues(commonProperty);
+
+                                if (StoreNavigationProperties(commonProperty, value)) continue;
+
+                                object castedValue = CastCorrectValue(commonProperty, value);
+
+                                commonProperty.SetValue(Entity, castedValue);
+
+                                break;
                         }
 
                         StoreNavigationProperties(commonProperty, value);
@@ -123,11 +127,11 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
             {
                 RestoreOriginalValues();
 
-                PatchNavigationProperties(false, nameof(ApplyOneToOneRelatively));
+                PatchNavigationProperties(nameof(ApplyOneToOneRelatively), false);
             }
             else
             {
-                PatchNavigationProperties(true, nameof(ApplyOneToOneRelatively));
+                PatchNavigationProperties(nameof(ApplyOneToOneRelatively), true);
 
                 OperationReStart();
             }
@@ -156,12 +160,13 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
                     if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
                     {
                         AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+
                         continue;
                     }
 
                     try
                     {
-                        StoreDeepOriginalValues(commonProperty);
+                        StoreOriginalValues(commonProperty);
 
                         if (NavigationPatchOperation(commonProperty, value, nameof(ApplyOneToOneAbsolutely))) continue;
 
@@ -211,12 +216,13 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
                     if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
                     {
                         AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+
                         continue;
                     }
 
                     try
                     {
-                        StoreDeepOriginalValues(commonProperty);
+                        StoreOriginalValues(commonProperty);
 
                         if (StoreNavigationProperties(commonProperty, value)) continue;
 
@@ -246,7 +252,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
             }
             else
             {
-                PatchNavigationProperties(null, nameof(ApplyOneToOneParentDominance));
+                PatchNavigationProperties(nameof(ApplyOneToOneParentDominance));
 
                 OperationReStart();
             }
@@ -283,14 +289,14 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     {
         if (commonProperty.InquireOneToOneNavigability(Entity, out var outEntity))
         {
-            CreatePatchDocument(outEntity, value, null, applyMethodName);
+            CreatePatchDocument(outEntity, value, applyMethodName);
 
             return true;
         }
 
         if (commonProperty.InquireOneToManyNavigability(Entity, out var outEntities))
         {
-            CreatePatchDocument(outEntities, value, null, applyMethodName);
+            CreatePatchDocument(outEntities, value, applyMethodName);
 
             return true;
         }
@@ -298,7 +304,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         return false;
     }
 
-    private void PatchNavigationProperties(bool? parentAllegiance, string applyMethodName)
+    private void PatchNavigationProperties(string applyMethodName, bool? parentAllegiance = null)
     {
         if (!_navigationProperties.TryGetValue(Entity, out var navigationProperties)) return;
 
@@ -306,17 +312,17 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         {
             if (outEntity is Entity entity)
             {
-                CreatePatchDocument(entity, value, parentAllegiance, applyMethodName);
+                CreatePatchDocument(entity, value, applyMethodName, parentAllegiance);
             }
 
             if (outEntity is IEnumerable<Entity> entities)
             {
-                CreatePatchDocument(entities.ToList(), value, parentAllegiance, applyMethodName);
+                CreatePatchDocument(entities.ToList(), value, applyMethodName, parentAllegiance);
             }
         }
     }
 
-    private static void CreatePatchDocument(Entity entity, object value, bool? parentAllegiance, string applyMethodName)
+    private static void CreatePatchDocument(Entity entity, object value, string applyMethodName, bool? parentAllegiance = null)
     {
         if (value == null)
         {
@@ -356,7 +362,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         }
     }
 
-    private static void CreatePatchDocument(List<Entity> entities, object value, bool? parentAllegiance, string applyMethodName)
+    private static void CreatePatchDocument(List<Entity> entities, object value, string applyMethodName, bool? parentAllegiance = null)
     {
         if (value == null || entities.Count == 0)
         {
@@ -676,7 +682,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         OperationReStart();
     }
 
-    private void StoreDeepOriginalValues(PropertyInfo commonProperty)
+    private void StoreOriginalValues(PropertyInfo commonProperty)
     {
         object originalValue = commonProperty.GetValue(Entity);
 
