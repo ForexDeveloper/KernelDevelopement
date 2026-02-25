@@ -35,7 +35,7 @@ public sealed class EnumTests
 
         var customers = PatchBuilder.CreateValidEntities(validCountNormal + validCountSilver + validCountGold + validCountDiamond);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -67,7 +67,7 @@ public sealed class EnumTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -100,7 +100,7 @@ public sealed class EnumTests
 
         var customers = PatchBuilder.CreateValidEntities(validCountNormal + validCountSilver + validCountGold + validCountDiamond);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -132,7 +132,7 @@ public sealed class EnumTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -161,7 +161,7 @@ public sealed class EnumTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -202,7 +202,7 @@ public sealed class EnumTests
 
         var customers = PatchBuilder.CreateValidEntities(validCountNormal + validCountSilver + validCountGold + validCountDiamond);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -234,7 +234,7 @@ public sealed class EnumTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -267,7 +267,7 @@ public sealed class EnumTests
 
         var customers = PatchBuilder.CreateValidEntities(validCountNormal + validCountSilver + validCountGold + validCountDiamond);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -299,7 +299,7 @@ public sealed class EnumTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -334,7 +334,7 @@ public sealed class EnumTests
 
         var customers = PatchBuilder.CreateValidEntities(validCountNull + validCountNormal + validCountSilver + validCountGold + validCountDiamond);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 

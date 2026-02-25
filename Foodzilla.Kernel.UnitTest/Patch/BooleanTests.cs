@@ -29,7 +29,7 @@ public sealed class BooleanTests
 
         var customers = PatchBuilder.CreateValidEntities(validCountTrue + validCountFalse);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -60,7 +60,7 @@ public sealed class BooleanTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -89,7 +89,7 @@ public sealed class BooleanTests
 
         var customers = PatchBuilder.CreateValidEntities(validCountTrue + validCountFalse);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -119,7 +119,7 @@ public sealed class BooleanTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -148,7 +148,7 @@ public sealed class BooleanTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -183,7 +183,7 @@ public sealed class BooleanTests
 
         var customers = PatchBuilder.CreateValidEntities(validCountTrue + validCountFalse);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -214,7 +214,7 @@ public sealed class BooleanTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -243,7 +243,7 @@ public sealed class BooleanTests
 
         var customers = PatchBuilder.CreateValidEntities(validCountTrue + validCountFalse);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -273,7 +273,7 @@ public sealed class BooleanTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -304,7 +304,7 @@ public sealed class BooleanTests
 
         var customers = PatchBuilder.CreateValidEntities(validCountNull + validCountFalse + validCountTrue);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 

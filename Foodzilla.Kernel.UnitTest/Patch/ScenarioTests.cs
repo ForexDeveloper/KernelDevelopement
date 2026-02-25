@@ -28,7 +28,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyOneToOneRelatively(Customers);
+        patchDocument.ApplyRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -61,7 +61,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyOneToOneRelatively(Customers);
+        patchDocument.ApplyRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -94,7 +94,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyOneToOneRelatively(Customers);
+        patchDocument.ApplyRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -126,7 +126,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyOneToOneParentDominance(Customers);
+        patchDocument.ApplyParentDominantly(Customers);
 
         await Task.CompletedTask;
 
@@ -159,7 +159,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyOneToOneParentDominance(Customers);
+        patchDocument.ApplyParentDominantly(Customers);
 
         await Task.CompletedTask;
 
@@ -194,7 +194,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyOneToOneParentDominance(Customers);
+        patchDocument.ApplyParentDominantly(Customers);
 
         await Task.CompletedTask;
 
@@ -226,7 +226,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyOneToOneAbsolutely(Customers);
+        patchDocument.ApplyAbsolutely(Customers);
 
         await Task.CompletedTask;
 
@@ -259,7 +259,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyOneToOneAbsolutely(Customers);
+        patchDocument.ApplyAbsolutely(Customers);
 
         await Task.CompletedTask;
 
@@ -292,7 +292,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyOneToOneAbsolutely(Customers);
+        patchDocument.ApplyAbsolutely(Customers);
 
         await Task.CompletedTask;
 
@@ -330,7 +330,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyOneToOneRelatively(Customers);
+        patchOperation.ApplyRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -363,7 +363,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyOneToOneRelatively(Customers);
+        patchOperation.ApplyRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -396,7 +396,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyOneToOneRelatively(Customers);
+        patchOperation.ApplyRelatively(Customers);
 
         await Task.CompletedTask;
 
@@ -428,7 +428,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyOneToOneParentDominance(Customers);
+        patchOperation.ApplyParentDominantly(Customers);
 
         await Task.CompletedTask;
 
@@ -461,7 +461,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyOneToOneParentDominance(Customers);
+        patchOperation.ApplyParentDominantly(Customers);
 
         await Task.CompletedTask;
 
@@ -496,7 +496,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyOneToOneParentDominance(Customers);
+        patchOperation.ApplyParentDominantly(Customers);
 
         await Task.CompletedTask;
 
@@ -528,7 +528,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyOneToOneAbsolutely(Customers);
+        patchOperation.ApplyAbsolutely(Customers);
 
         await Task.CompletedTask;
 
@@ -561,7 +561,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyOneToOneAbsolutely(Customers);
+        patchOperation.ApplyAbsolutely(Customers);
 
         await Task.CompletedTask;
 
@@ -594,7 +594,7 @@ public sealed class ScenarioTests
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyOneToOneAbsolutely(Customers);
+        patchOperation.ApplyAbsolutely(Customers);
 
         await Task.CompletedTask;
 

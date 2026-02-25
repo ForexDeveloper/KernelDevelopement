@@ -42,7 +42,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchOperation.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -86,7 +86,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchOperation.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -130,7 +130,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -174,7 +174,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchOperation.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -219,7 +219,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchOperation.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -265,7 +265,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -310,7 +310,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchOperation.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -352,7 +352,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchOperation.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -397,7 +397,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -442,7 +442,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchOperation.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -487,7 +487,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchOperation.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -532,7 +532,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -577,7 +577,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchOperation.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -622,7 +622,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchOperation.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -667,7 +667,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -712,7 +712,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchOperation.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -753,7 +753,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchOperation.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -798,7 +798,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -843,7 +843,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchOperation.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -888,7 +888,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchOperation.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -933,7 +933,7 @@ public sealed class AdvanceTheories
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -983,7 +983,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchDocument.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1027,7 +1027,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchDocument.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1071,7 +1071,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1115,7 +1115,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchDocument.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1160,7 +1160,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchDocument.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1205,7 +1205,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1250,7 +1250,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchDocument.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1295,7 +1295,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchDocument.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1340,7 +1340,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1385,7 +1385,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchDocument.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1430,7 +1430,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchDocument.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1475,7 +1475,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1520,7 +1520,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchDocument.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1565,7 +1565,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchDocument.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1610,7 +1610,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1655,7 +1655,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchDocument.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1696,7 +1696,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchDocument.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1741,7 +1741,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1786,7 +1786,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneAbsolutely(ChiefExecutiveOfficers);
+        patchDocument.ApplyAbsolutely(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1831,7 +1831,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneRelatively(ChiefExecutiveOfficers);
+        patchDocument.ApplyRelatively(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1876,7 +1876,7 @@ public sealed class AdvanceTheories
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyOneToOneParentDominance(ChiefExecutiveOfficers);
+        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 

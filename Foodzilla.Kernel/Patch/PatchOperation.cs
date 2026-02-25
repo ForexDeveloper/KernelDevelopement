@@ -25,27 +25,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     private readonly Dictionary<Entity, Dictionary<object, object>> _navigationProperties;
     private readonly Dictionary<Entity, Dictionary<PropertyInfo, object>> _originalValuesCollection;
 
-    public List<string> EntityIds { get; private set; }
-
     public List<PatchInvalidResult> InvalidResults { get; init; } = [];
-
-    private PatchOperation(ExpandoObject patchEntity)
-    {
-        Guid = Guid.Empty;
-
-        _patchEntities = [patchEntity];
-
-        _ignoreFields = [];
-        _navigationProperties = [];
-        _patchEntitiesDictionary = [];
-        _originalValuesCollection = [];
-        _entitiesStatusCollection = [];
-        _entityPropertiesDictionary = [];
-
-        _entityProperties = typeof(TEntity).GetProperties();
-
-        InitializeIds();
-    }
 
     private PatchOperation(List<ExpandoObject> patchEntities)
     {
@@ -60,11 +40,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         _entityProperties = typeof(TEntity).GetProperties();
     }
 
-    public static PatchOperation<TEntity> Create(ExpandoObject patchEntity, string webPathRoot = null)
-    {
-        return new PatchOperation<TEntity>(patchEntity);
-    }
-
     public static PatchOperation<TEntity> Create(List<ExpandoObject> patchEntities, string webPathRoot = null)
     {
         return new PatchOperation<TEntity>(patchEntities);
@@ -77,7 +52,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     /// Id is sent inside each patchEntity. peer to peer patching
     /// Only one instant is applied to a single database entity
     /// </summary>
-    public void ApplyOneToOneRelatively(List<TEntity> dbEntities)
+    public void ApplyRelatively(List<TEntity> dbEntities)
     {
         foreach (var dbEntity in dbEntities)
         {
@@ -143,7 +118,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     /// Id is sent inside each patchEntity. peer to peer patching
     /// Only one instant is applied to a single database entity
     /// </summary>
-    public void ApplyOneToOneAbsolutely(List<TEntity> dbEntities)
+    public void ApplyAbsolutely(List<TEntity> dbEntities)
     {
         foreach (var dbEntity in dbEntities)
         {
@@ -202,7 +177,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         }
     }
 
-    public void ApplyOneToOneParentDominance(List<TEntity> dbEntities)
+    public void ApplyParentDominantly(List<TEntity> dbEntities)
     {
         foreach (var dbEntity in dbEntities)
         {
@@ -259,7 +234,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         }
     }
 
-    private void ApplyShallowOneToOne(Entity dbEntity)
+    private void ApplyShallowOneToOne(Entity dbEntity, bool? parentLoyalty = null)
     {
         SetPatchEntity(dbEntity);
 
@@ -277,80 +252,26 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                 try
                 {
-                    StoreShallowOriginalValues(commonProperty);
-
-                    if (StoreNavigationProperties(commonProperty, value)) continue;
-
-                    object castedValue = CastCorrectValue(commonProperty, value);
-
-                    commonProperty.SetValue(Entity, castedValue);
-
-                }
-                catch (Exception exception)
-                {
-                    AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
-
-                    Failed();
-                }
-            }
-            else
-            {
-                AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
-
-                Failed();
-            }
-        }
-
-        if (Entity is IPatchValidator patchValidator)
-        {
-            if (OperationFailed() || !patchValidator.OnPatchCompleted())
-            {
-                RestoreOriginalValues();
-            }
-            else
-            {
-                PatchShallowNavigationProperties();
-            }
-        }
-        else
-        {
-            RestoreOriginalValues();
-        }
-
-        OperationReStart();
-    }
-
-    private void ApplyShallowOneToOne(Entity dbEntity, bool parentLoyalty)
-    {
-        SetPatchEntity(dbEntity);
-
-        foreach (var (property, value) in _patchEntity)
-        {
-            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
-
-            if (commonProperty != null)
-            {
-                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
-                {
-                    AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
-                    continue;
-                }
-
-                try
-                {
-                    if (parentLoyalty)
+                    switch (parentLoyalty)
                     {
-                        StoreShallowOriginalValues(commonProperty);
+                        case null:
+                        case true:
 
-                        if (StoreNavigationProperties(commonProperty, value)) continue;
+                            StoreShallowOriginalValues(commonProperty);
 
-                        object castedValue = CastCorrectValue(commonProperty, value);
+                            if (StoreNavigationProperties(commonProperty, value)) continue;
 
-                        commonProperty.SetValue(Entity, castedValue);
-                    }
-                    else
-                    {
-                        StoreNavigationProperties(commonProperty, value);
+                            object castedValue = CastCorrectValue(commonProperty, value);
+
+                            commonProperty.SetValue(Entity, castedValue);
+
+                            break;
+
+                        case false:
+
+                            StoreNavigationProperties(commonProperty, value);
+
+                            break;
                     }
                 }
                 catch (Exception exception)
@@ -446,16 +367,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         }
 
         OperationReStart();
-    }
-
-    private void InitializeIds()
-    {
-        if (_patchEntities == null)
-        {
-            throw new NullReferenceException();
-        }
-
-        EntityIds = _patchEntities.Select(p => p.FirstOrDefault(q => q.Key.EqualsIgnoreCase(Id)).Value?.ToString()).ToList();
     }
 
     private void SetPatchEntity(Entity dbEntity)
@@ -903,48 +814,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         }
     }
 
-    private void PatchShallowNavigationProperties()
-    {
-        if (!_navigationProperties.TryGetValue(Entity, out var navigationProperties)) return;
-
-        foreach (var (entity, value) in navigationProperties)
-        {
-            if (entity is Entity outEntity)
-            {
-                if (value != null)
-                {
-                    _entityPropertiesDictionary.Add(outEntity, entity.GetRealType().GetProperties());
-
-                    _patchEntitiesDictionary.Add(outEntity, [(ExpandoObject)value]);
-
-                    ApplyShallowOneToOne(outEntity);
-
-                    _entityProperties = Entity.GetRealType().GetProperties();
-                }
-            }
-
-            if (entity is IEnumerable<Entity> outEntities)
-            {
-                var outEntitiesList = outEntities.ToList();
-
-                if (value != null && outEntitiesList.Count != 0)
-                {
-                    foreach (var unitEntity in outEntitiesList)
-                    {
-                        _patchEntitiesDictionary.Add(unitEntity, (List<ExpandoObject>)value);
-
-                        _entityPropertiesDictionary.Add(unitEntity, unitEntity.GetRealType().GetProperties());
-
-                        ApplyShallowOneToOne(unitEntity);
-                    }
-
-                    _entityProperties = Entity.GetRealType().GetProperties();
-                }
-            }
-        }
-    }
-
-    private void PatchShallowNavigationProperties(bool parentLoyalty)
+    private void PatchShallowNavigationProperties(bool? parentLoyalty = null)
     {
         if (!_navigationProperties.TryGetValue(Entity, out var navigationProperties)) return;
 

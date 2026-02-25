@@ -29,7 +29,7 @@ public sealed class DateTimeTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -61,7 +61,7 @@ public sealed class DateTimeTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -92,7 +92,7 @@ public sealed class DateTimeTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -123,7 +123,7 @@ public sealed class DateTimeTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -154,7 +154,7 @@ public sealed class DateTimeTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -189,7 +189,7 @@ public sealed class DateTimeTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -221,7 +221,7 @@ public sealed class DateTimeTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -252,7 +252,7 @@ public sealed class DateTimeTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -283,7 +283,7 @@ public sealed class DateTimeTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + invalidCount);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
@@ -314,7 +314,7 @@ public sealed class DateTimeTests
 
         var customers = PatchBuilder.CreateValidEntities(validCount + validCountNull);
 
-        patchDocument.ApplyOneToOneRelatively(customers);
+        patchDocument.ApplyRelatively(customers);
 
         await Task.CompletedTask;
 
