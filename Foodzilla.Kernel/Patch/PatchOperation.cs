@@ -56,58 +56,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     {
         foreach (var dbEntity in dbEntities)
         {
-            SetPatchEntity(dbEntity);
-
-            foreach (var (property, value) in _patchEntity)
-            {
-                var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
-
-                if (commonProperty != null)
-                {
-                    if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
-                    {
-                        AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
-                        continue;
-                    }
-
-                    try
-                    {
-                        StoreShallowOriginalValues(commonProperty);
-
-                        if (StoreNavigationProperties(commonProperty, value)) continue;
-
-                        object castedValue = CastCorrectValue(commonProperty, value);
-
-                        commonProperty.SetValue(Entity, castedValue);
-
-                    }
-                    catch (Exception exception)
-                    {
-                        AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
-
-                        Failed();
-                    }
-                }
-                else
-                {
-                    AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
-
-                    Failed();
-                }
-            }
-
-            if (OperationFailed() || !((TEntity)Entity).OnPatchCompleted())
-            {
-                RestoreOriginalValues();
-
-                PatchShallowNavigationProperties(parentLoyalty: false);
-            }
-            else
-            {
-                PatchShallowNavigationProperties(parentLoyalty: true);
-
-                OperationReStart();
-            }
+            ApplyShallowPatch(dbEntity);
         }
     }
 
@@ -122,58 +71,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     {
         foreach (var dbEntity in dbEntities)
         {
-            SetPatchEntity(dbEntity);
-
-            foreach (var (property, value) in _patchEntity)
-            {
-                var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
-
-                if (commonProperty != null)
-                {
-                    if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
-                    {
-                        AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
-                        continue;
-                    }
-
-                    try
-                    {
-                        StoreDeepOriginalValues(commonProperty);
-
-                        if (StoreNavigationProperties(commonProperty, value)) continue;
-
-                        object castedValue = CastCorrectValue(commonProperty, value);
-
-                        commonProperty.SetValue(Entity, castedValue);
-
-                    }
-                    catch (Exception exception)
-                    {
-                        AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
-
-                        Failed();
-                    }
-                }
-                else
-                {
-                    AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
-
-                    Failed();
-                }
-            }
-
-            if (OperationFailed() || !((TEntity)Entity).OnPatchCompleted())
-            {
-                RestoreOriginalValues();
-
-                PatchDeepNavigationProperties();
-            }
-            else
-            {
-                PatchDeepNavigationProperties();
-
-                OperationReStart();
-            }
+            ApplyDeepPatch(dbEntity);
         }
     }
 
@@ -192,6 +90,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
                     if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
                     {
                         AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+
                         continue;
                     }
 
@@ -234,7 +133,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         }
     }
 
-    private void ApplyShallowOneToOne(Entity dbEntity, bool? parentLoyalty = null)
+    private void ApplyShallowPatch(Entity dbEntity, bool? parentLoyalty = null)
     {
         SetPatchEntity(dbEntity);
 
@@ -247,6 +146,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
                 if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
                 {
                     AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+
                     continue;
                 }
 
@@ -310,7 +210,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         OperationReStart();
     }
 
-    private void ApplyDeepOneToOne(Entity dbEntity)
+    private void ApplyDeepPatch(Entity dbEntity)
     {
         SetPatchEntity(dbEntity);
 
@@ -323,6 +223,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
                 if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
                 {
                     AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+
                     continue;
                 }
 
@@ -790,7 +691,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                     _patchEntitiesDictionary.Add(outEntity, [(ExpandoObject)value]);
 
-                    ApplyDeepOneToOne(outEntity);
+                    ApplyDeepPatch(outEntity);
                 }
             }
 
@@ -808,7 +709,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                     _entityPropertiesDictionary.Add(unitEntity, unitEntity.GetRealType().GetProperties());
 
-                    ApplyDeepOneToOne(unitEntity);
+                    ApplyDeepPatch(unitEntity);
                 }
             }
         }
@@ -830,7 +731,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                     _patchEntitiesDictionary.Add(outEntity, [(ExpandoObject)value]);
 
-                    ApplyShallowOneToOne(outEntity, parentLoyalty);
+                    ApplyShallowPatch(outEntity, parentLoyalty);
                 }
             }
 
@@ -848,7 +749,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                     _entityPropertiesDictionary.Add(unitEntity, unitEntity.GetRealType().GetProperties());
 
-                    ApplyShallowOneToOne(unitEntity, parentLoyalty);
+                    ApplyShallowPatch(unitEntity, parentLoyalty);
                 }
             }
         }
