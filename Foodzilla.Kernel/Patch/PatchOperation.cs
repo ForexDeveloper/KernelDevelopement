@@ -261,7 +261,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         {
             if (patchValidator.OnPatchCompleted() && !OperationFailed())
             {
-                PatchNavigationProperties(false, parentLoyalty, true);
+                PatchNavigationProperties(false, true, true);
             }
             else
             {
