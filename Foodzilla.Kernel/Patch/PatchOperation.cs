@@ -59,6 +59,14 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         }
     }
 
+    public void ApplyDominantly(List<TEntity> dbEntities)
+    {
+        foreach (var dbEntity in dbEntities)
+        {
+            ApplyDominantly(dbEntity);
+        }
+    }
+
     /// <summary>
     /// This method uses single patchEntity to update single database entity
     /// Navigation properties are independent of their parent so if parent patch fails, the navigation will stills accept changes
@@ -71,14 +79,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         foreach (var dbEntity in dbEntities)
         {
             ApplyRelatively(dbEntity);
-        }
-    }
-
-    public void ApplyParentDominantly(List<TEntity> dbEntities)
-    {
-        foreach (var dbEntity in dbEntities)
-        {
-            ApplyParentDominantly(dbEntity);
         }
     }
 
@@ -130,6 +130,67 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
             PatchNavigationProperties(true);
 
             if (!patchValidator.OnPatchCompleted() || OperationFailed())
+            {
+                RestoreOriginalValues();
+            }
+        }
+        else
+        {
+            RestoreOriginalValues();
+        }
+
+        OperationReStart();
+    }
+
+    private void ApplyDominantly(Entity dbEntity)
+    {
+        SetPatchEntity(dbEntity);
+
+        foreach (var (property, value) in _patchEntity)
+        {
+            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
+
+            if (commonProperty != null)
+            {
+                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
+                {
+                    AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
+
+                    continue;
+                }
+
+                try
+                {
+                    StoreOriginalValues(commonProperty);
+
+                    if (StoreNavigationProperties(commonProperty, value)) continue;
+
+                    object castedValue = CastCorrectValue(commonProperty, value);
+
+                    commonProperty.SetValue(Entity, castedValue);
+                }
+                catch (Exception exception)
+                {
+                    AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
+
+                    Failed();
+                }
+            }
+            else
+            {
+                AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
+
+                Failed();
+            }
+        }
+
+        if (Entity is IPatchValidator patchValidator)
+        {
+            if (patchValidator.OnPatchCompleted() && !OperationFailed())
+            {
+                PatchNavigationProperties(false, true, true);
+            }
+            else
             {
                 RestoreOriginalValues();
             }
@@ -212,68 +273,9 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         OperationReStart();
     }
 
-    private void ApplyParentDominantly(Entity dbEntity, bool? parentLoyalty = null)
+    private void ApplyPatch()
     {
-        SetPatchEntity(dbEntity);
 
-        foreach (var (property, value) in _patchEntity)
-        {
-            var commonProperty = _entityProperties.SingleOrDefault(p => p.Name.EqualsIgnoreCase(property));
-
-            if (commonProperty != null)
-            {
-                if (_ignoreFields.Contains(commonProperty.Name.ToLower()))
-                {
-                    AddErrorResult(property, value?.ToString(), PatchError.PropertyIgnoredToUpdate);
-
-                    continue;
-                }
-
-                try
-                {
-                    if (parentLoyalty.GetValueOrDefault(true))
-                    {
-                        StoreOriginalValues(commonProperty);
-
-                        if (StoreNavigationProperties(commonProperty, value)) continue;
-
-                        object castedValue = CastCorrectValue(commonProperty, value);
-
-                        commonProperty.SetValue(Entity, castedValue);
-                    }
-                }
-                catch (Exception exception)
-                {
-                    AddErrorResult(commonProperty.Name, value?.ToString(), exception.Message);
-
-                    Failed();
-                }
-            }
-            else
-            {
-                AddErrorResult(property, value?.ToString(), PatchError.PropertyMatchingFailed);
-
-                Failed();
-            }
-        }
-
-        if (Entity is IPatchValidator patchValidator)
-        {
-            if (patchValidator.OnPatchCompleted() && !OperationFailed())
-            {
-                PatchNavigationProperties(false, true, true);
-            }
-            else
-            {
-                RestoreOriginalValues();
-            }
-        }
-        else
-        {
-            RestoreOriginalValues();
-        }
-
-        OperationReStart();
     }
 
     private void SetPatchEntity(Entity dbEntity)
@@ -649,7 +651,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                 if (parentDominance.HasValue)
                 {
-                    ApplyParentDominantly(outEntity, parentLoyalty);
+                    ApplyDominantly(outEntity);
                 }
                 else
                 {
@@ -680,7 +682,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
                     if (parentDominance.HasValue)
                     {
-                        ApplyParentDominantly(unitEntity, parentLoyalty);
+                        ApplyDominantly(unitEntity);
                     }
                     else
                     {

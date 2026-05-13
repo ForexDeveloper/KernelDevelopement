@@ -112,7 +112,7 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleApplyOneToOneParentDominance_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
+    public async Task HandleApplyOneToOneDominantly_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
         const int totalCount = 10;
 
@@ -120,7 +120,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyParentDominantly(Customers);
+        patchDocument.ApplyDominantly(Customers);
 
         await Task.CompletedTask;
 
@@ -145,7 +145,7 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleApplyOneToOneParentDominance_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAny()
+    public async Task HandleApplyOneToOneDominantly_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAny()
     {
         const int totalCount = 10;
 
@@ -153,7 +153,7 @@ public sealed class ScenarioTests
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyParentDominantly(Customers);
+        patchDocument.ApplyDominantly(Customers);
 
         await Task.CompletedTask;
 
@@ -180,13 +180,13 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleApplyOneToOneParentDominance_WhenMiddleOfPatchEntitiesAreInvalid_ShouldNotPatchAll()
+    public async Task HandleApplyOneToOneDominantly_WhenMiddleOfPatchEntitiesAreInvalid_ShouldNotPatchAll()
     {
         var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
 
-        patchDocument.ApplyParentDominantly(Customers);
+        patchDocument.ApplyDominantly(Customers);
 
         await Task.CompletedTask;
 
@@ -412,13 +412,13 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleSingleCoreApplyOneToOneParentDominance_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
+    public async Task HandleSingleCoreApplyOneToOneDominantly_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
         var patchEntities = CreateCompletePatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyParentDominantly(Customers);
+        patchOperation.ApplyDominantly(Customers);
 
         await Task.CompletedTask;
 
@@ -443,13 +443,13 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleSingleCoreApplyOneToOneParentDominance_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAny()
+    public async Task HandleSingleCoreApplyOneToOneDominantly_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAny()
     {
         var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyParentDominantly(Customers);
+        patchOperation.ApplyDominantly(Customers);
 
         await Task.CompletedTask;
 
@@ -476,13 +476,13 @@ public sealed class ScenarioTests
     }
 
     [Fact]
-    public async Task HandleSingleCoreApplyOneToOneParentDominance_WhenMiddleOfPatchEntitiesAreInvalid_ShouldNotPatchAll()
+    public async Task HandleSingleCoreApplyOneToOneDominantly_WhenMiddleOfPatchEntitiesAreInvalid_ShouldNotPatchAll()
     {
         var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
 
-        patchOperation.ApplyParentDominantly(Customers);
+        patchOperation.ApplyDominantly(Customers);
 
         await Task.CompletedTask;
 

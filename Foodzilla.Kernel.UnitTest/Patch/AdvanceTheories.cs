@@ -124,13 +124,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleSingleCoreParentDominance_WhenAllPatchOfficersAreValid_ShouldPatchAll()
+    public async Task HandleSingleCoreDominantly_WhenAllPatchOfficersAreValid_ShouldPatchAll()
     {
         PatchOfficers = PatchEngine.CreateValidPatchExecutiveOfficers(ChiefExecutiveOfficers);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchOperation.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -258,13 +258,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleSingleCoreParentDominance_WhenRootOfPatchOfficersAreInvalid_ShouldAvoidPatchPatchForAllOtherLevels()
+    public async Task HandleSingleCoreDominantly_WhenRootOfPatchOfficersAreInvalid_ShouldAvoidPatchPatchForAllOtherLevels()
     {
         PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchOperation.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -390,13 +390,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleSingleCoreParentDominance_WhenCLevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllOtherLevels()
+    public async Task HandleSingleCoreDominantly_WhenCLevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllOtherLevels()
     {
         PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchOperation.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -525,13 +525,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleSingleCoreParentDominance_WhenLeadsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Seniors_Midlevels_Juniors_Freshers()
+    public async Task HandleSingleCoreDominantly_WhenLeadsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Seniors_Midlevels_Juniors_Freshers()
     {
         PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchOperation.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -660,13 +660,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleSingleCoreParentDominance_WhenSeniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Midlevels_Juniors_Freshers()
+    public async Task HandleSingleCoreDominantly_WhenSeniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Midlevels_Juniors_Freshers()
     {
         PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchOperation.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -791,13 +791,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleSingleCoreParentDominance_WhenMidlevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Juniors_Freshers()
+    public async Task HandleSingleCoreDominantly_WhenMidlevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Juniors_Freshers()
     {
         PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchOperation.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -926,13 +926,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleSingleCoreParentDominance_WhenJuniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllFreshers()
+    public async Task HandleSingleCoreDominantly_WhenJuniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllFreshers()
     {
         PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchOperation = PatchOperation<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchOperation.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchOperation.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1064,13 +1064,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleParentDominance_WhenAllPatchOfficersAreValid_ShouldPatchAll()
+    public async Task HandleDominantly_WhenAllPatchOfficersAreValid_ShouldPatchAll()
     {
         PatchOfficers = PatchEngine.CreateValidPatchExecutiveOfficers(ChiefExecutiveOfficers);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchDocument.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1198,13 +1198,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleParentDominance_WhenRootOfPatchOfficersAreInvalid_ShouldAvoidPatchPatchForAllOtherLevels()
+    public async Task HandleDominantly_WhenRootOfPatchOfficersAreInvalid_ShouldAvoidPatchPatchForAllOtherLevels()
     {
         PatchOfficers = PatchEngine.CreateRootInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchDocument.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1333,13 +1333,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleParentDominance_WhenCLevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Leads_Seniors_Midlevels_Juniors_Freshers()
+    public async Task HandleDominantly_WhenCLevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Leads_Seniors_Midlevels_Juniors_Freshers()
     {
         PatchOfficers = PatchEngine.CreateCLevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchDocument.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1468,13 +1468,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleParentDominance_WhenLeadsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Seniors_Midlevels_Juniors_Freshers()
+    public async Task HandleDominantly_WhenLeadsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Seniors_Midlevels_Juniors_Freshers()
     {
         PatchOfficers = PatchEngine.CreateLeadInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchDocument.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1603,13 +1603,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleParentDominance_WhenSeniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Midlevels_Juniors_Freshers()
+    public async Task HandleDominantly_WhenSeniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Midlevels_Juniors_Freshers()
     {
         PatchOfficers = PatchEngine.CreateSeniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchDocument.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1734,13 +1734,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleParentDominance_WhenMidlevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Juniors_Freshers()
+    public async Task HandleDominantly_WhenMidlevelsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAll_Juniors_Freshers()
     {
         PatchOfficers = PatchEngine.CreateMidlevelInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchDocument.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 
@@ -1869,13 +1869,13 @@ public sealed class AdvanceTheories
     }
 
     [Fact]
-    public async Task HandleParentDominance_WhenJuniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllFreshers()
+    public async Task HandleDominantly_WhenJuniorsOfPatchOfficersAreInvalid_ShouldAvoidPatchForAllFreshers()
     {
         PatchOfficers = PatchEngine.CreateJuniorInvalidPatchExecutiveOfficers(ChiefExecutiveOfficers, _validCount);
 
         var patchDocument = PatchDocument<ChiefExecutiveOfficer>.Create(PatchOfficers);
 
-        patchDocument.ApplyParentDominantly(ChiefExecutiveOfficers);
+        patchDocument.ApplyDominantly(ChiefExecutiveOfficers);
 
         await Task.CompletedTask;
 

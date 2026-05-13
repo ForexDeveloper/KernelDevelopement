@@ -43,34 +43,6 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
     /// <summary>
     /// This method uses single patchEntity to update single database entity
-    /// Navigation properties are independent of their parent so if parent patch fails, the navigation will still accept changes
-    /// Apply patch while patchEntity contains id
-    /// Id is sent inside each patchEntity. peer to peer patching
-    /// Only one instant is applied to a single database entity
-    /// </summary>
-    public void ApplyRelatively(List<TEntity> dbEntities, bool? parentAllegiance = null)
-    {
-        foreach (var dbEntity in dbEntities)
-        {
-            ApplyPatch(dbEntity, parentAllegiance);
-
-            if (!OperationFailed() && Entity.OnPatchCompleted())
-            {
-                PatchNavigationProperties(nameof(ApplyRelatively), true);
-
-                OperationReStart();
-            }
-            else
-            {
-                RestoreOriginalValues();
-
-                PatchNavigationProperties(nameof(ApplyRelatively), false);
-            }
-        }
-    }
-
-    /// <summary>
-    /// This method uses single patchEntity to update single database entity
     /// Navigation properties are dependent of their parent so if parent patch fails, the navigation will not accept changes
     /// Apply patch while patchEntity contains id
     /// Id is sent inside each patchEntity. peer to peer patching
@@ -82,11 +54,11 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         {
             ApplyPatch(dbEntity);
 
-            if (!OperationFailed() && Entity.OnPatchCompleted())
+            if (Entity.OnPatchCompleted() && !OperationFailed())
             {
-                PatchNavigationProperties(nameof(ApplyAbsolutely));
-
                 OperationReStart();
+
+                PatchNavigationProperties(nameof(ApplyAbsolutely));
             }
             else
             {
@@ -97,21 +69,49 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         }
     }
 
-    public void ApplyParentDominantly(List<TEntity> dbEntities)
+    public void ApplyDominantly(List<TEntity> dbEntities)
     {
         foreach (var dbEntity in dbEntities)
         {
             ApplyPatch(dbEntity);
 
-            if (!OperationFailed() && Entity.OnPatchCompleted())
+            if (Entity.OnPatchCompleted() && !OperationFailed())
             {
-                PatchNavigationProperties(nameof(ApplyParentDominantly));
+                PatchNavigationProperties(nameof(ApplyDominantly));
 
                 OperationReStart();
             }
             else
             {
                 RestoreOriginalValues();
+            }
+        }
+    }
+
+    /// <summary>
+    /// This method uses single patchEntity to update single database entity
+    /// Navigation properties are independent of their parent so if parent patch fails, the navigation will still accept changes
+    /// Apply patch while patchEntity contains id
+    /// Id is sent inside each patchEntity. peer to peer patching
+    /// Only one instant is applied to a single database entity
+    /// </summary>
+    public void ApplyRelatively(List<TEntity> dbEntities, bool? parentAllegiance = null)
+    {
+        foreach (var dbEntity in dbEntities)
+        {
+            ApplyPatch(dbEntity, parentAllegiance);
+
+            if (Entity.OnPatchCompleted() && !OperationFailed())
+            {
+                OperationReStart();
+
+                PatchNavigationProperties(nameof(ApplyRelatively), true);
+            }
+            else
+            {
+                RestoreOriginalValues();
+
+                PatchNavigationProperties(nameof(ApplyRelatively), false);
             }
         }
     }
@@ -151,26 +151,19 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
                 try
                 {
-                    switch (parentAllegiance)
+                    if (parentAllegiance.GetValueOrDefault(true))
                     {
-                        case null:
-                        case true:
+                        StoreOriginalValues(commonProperty);
 
-                            StoreOriginalValues(commonProperty);
+                        if (StoreNavigationProperties(commonProperty, value)) continue;
 
-                            if (StoreNavigationProperties(commonProperty, value)) continue;
+                        object castedValue = CastCorrectValue(commonProperty, value);
 
-                            object castedValue = CastCorrectValue(commonProperty, value);
-
-                            commonProperty.SetValue(Entity, castedValue);
-
-                            break;
-
-                        case false:
-
-                            StoreNavigationProperties(commonProperty, value);
-
-                            break;
+                        commonProperty.SetValue(Entity, castedValue);
+                    }
+                    else
+                    {
+                        StoreNavigationProperties(commonProperty, value);
                     }
                 }
                 catch (Exception exception)
@@ -202,17 +195,14 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
             if (outEntity is IEnumerable<Entity> entities)
             {
-                CreatePatchDocument(entities.ToList(), value, applyMethodName, parentAllegiance);
+                CreatePatchDocument([.. entities], value, applyMethodName, parentAllegiance);
             }
         }
     }
 
     private static void CreatePatchDocument(Entity entity, object value, string applyMethodName, bool? parentAllegiance = null)
     {
-        if (value == null)
-        {
-            return;
-        }
+        if (value == null) return;
 
         List<ExpandoObject> patchEntities = [(ExpandoObject)value];
 
@@ -249,10 +239,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
     private static void CreatePatchDocument(List<Entity> entities, object value, string applyMethodName, bool? parentAllegiance = null)
     {
-        if (value == null || entities.Count == 0)
-        {
-            return;
-        }
+        if (value == null || entities.Count == 0) return;
 
         var patchEntities = (List<ExpandoObject>)value;
 
