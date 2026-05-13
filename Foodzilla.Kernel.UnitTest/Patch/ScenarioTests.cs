@@ -2,14 +2,12 @@
 
 namespace Foodzilla.Kernel.UnitTest.Patch;
 
-using Castle.Core.Resource;
-using Extension;
-using FluentAssertions;
-using FluentAssertions.Execution;
-using Foodzilla.Kernel.Patch;
-using Newtonsoft.Json;
-using System.Dynamic;
 using Xunit;
+using Extension;
+using System.Dynamic;
+using FluentAssertions;
+using Foodzilla.Kernel.Patch;
+using FluentAssertions.Execution;
 
 public sealed class ScenarioTests
 {
@@ -55,8 +53,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleApplyOneToOneRelatively_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAllEntities()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
@@ -88,8 +84,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleApplyOneToOneRelatively_WhenMiddleLayerOfPatchEntitiesAreInvalid_ShouldNotPatchAllEntities()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
@@ -188,8 +182,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleApplyOneToOneParentDominance_WhenMiddleOfPatchEntitiesAreInvalid_ShouldNotPatchAll()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
@@ -422,8 +414,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleSingleCoreApplyOneToOneParentDominance_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateCompletePatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
@@ -455,8 +445,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleSingleCoreApplyOneToOneParentDominance_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAny()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
@@ -490,8 +478,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleSingleCoreApplyOneToOneParentDominance_WhenMiddleOfPatchEntitiesAreInvalid_ShouldNotPatchAll()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
@@ -522,8 +508,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleSingleCoreApplyOneToOneAbsolutely_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateCompletePatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
