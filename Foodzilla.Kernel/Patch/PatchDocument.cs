@@ -534,23 +534,9 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         {
             var originalValue = originalValues[property];
 
-            if (originalValue is IEnumerable<Entity> entities)
-            {
-                var instance = (IList)Activator.CreateInstance(property.PropertyType);
+            property.SetValue(Entity, originalValue);
 
-                foreach (var value in entities)
-                {
-                    instance.Add(value);
-                }
-
-                property.SetValue(Entity, instance);
-            }
-            else
-            {
-                property.SetValue(Entity, originalValue);
-
-                originalValues.Remove(property);
-            }
+            originalValues.Remove(property);
         }
 
         _originalValuesCollection.Remove(Entity);
