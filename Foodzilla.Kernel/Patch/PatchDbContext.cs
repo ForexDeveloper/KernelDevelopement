@@ -125,7 +125,7 @@ public sealed class PatchDbContext<TDbContext, TEntity> where TDbContext : DbCon
                 }
             }
 
-            if (OperationFailed(dbEntity) || !dbEntity.OnPatchCompleted())
+            if (OperationFailed(dbEntity) || !dbEntity.PatchCompleted())
             {
                 PatchNavigationProperties(dbEntity, parentLoyalty: false);
             }
@@ -205,7 +205,7 @@ public sealed class PatchDbContext<TDbContext, TEntity> where TDbContext : DbCon
 
         if (dbEntity is IPatchValidator patchValidator)
         {
-            if (OperationFailed(dbEntity) || !patchValidator.OnPatchCompleted())
+            if (OperationFailed(dbEntity) || !patchValidator.PatchCompleted())
             {
                 PatchNavigationProperties(dbEntity, false);
             }

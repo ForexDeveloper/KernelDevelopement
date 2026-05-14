@@ -29,7 +29,7 @@ public sealed class SeniorProductManager : Identity<long>, IPatchValidator
         Midlevels.Add(midlevel);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
         return true;
     }

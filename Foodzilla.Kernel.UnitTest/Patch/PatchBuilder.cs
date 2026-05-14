@@ -476,7 +476,7 @@ public sealed class Customer : Entity, IPatchValidator
                NullableEnum == RankingEnum.Silver;
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
         return true;
     }
@@ -589,7 +589,7 @@ public sealed class Order : Entity, IPatchValidator
                NullableEnum == RankingEnum.Silver;
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
         return true;
     }

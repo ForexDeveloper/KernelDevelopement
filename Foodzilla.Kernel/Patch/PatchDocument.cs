@@ -14,6 +14,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
     internal Guid Guid;
     private bool _failed;
+    private bool _skipped;
     internal TEntity Entity;
     internal object EntityId;
     private ExpandoObject _patchEntity;
@@ -54,18 +55,16 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         {
             ApplyPatch(dbEntity);
 
-            if (Entity.OnPatchCompleted() && !OperationFailed())
+            if (Entity.PatchCompleted() && OperationCompleted())
             {
                 OperationReStart();
-
-                PatchNavigationProperties(nameof(ApplyAbsolutely));
             }
             else
             {
                 RestoreOriginalValues();
-
-                PatchNavigationProperties(nameof(ApplyAbsolutely));
             }
+
+            PatchNavigationProperties(nameof(ApplyAbsolutely));
         }
     }
 
@@ -82,11 +81,11 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         {
             ApplyPatch(dbEntity);
 
-            if (Entity.OnPatchCompleted() && !OperationFailed())
+            if (Entity.PatchCompleted() && OperationCompleted())
             {
-                PatchNavigationProperties(nameof(ApplyDominantly));
-
                 OperationReStart();
+
+                PatchNavigationProperties(nameof(ApplyDominantly));
             }
             else
             {
@@ -108,11 +107,29 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         {
             ApplyPatch(dbEntity, parentAllegiance);
 
-            if (Entity.OnPatchCompleted() && !OperationFailed())
+            if (OperationCompleted())
             {
-                OperationReStart();
+                if (Entity.PatchCompleted())
+                {
+                    OperationReStart();
 
-                PatchNavigationProperties(nameof(ApplyRelatively), true);
+                    PatchNavigationProperties(nameof(ApplyRelatively), true);
+                }
+                else
+                {
+                    if (OperationSkipped())
+                    {
+                        OperationReStart();
+
+                        PatchNavigationProperties(nameof(ApplyRelatively), true);
+                    }
+                    else
+                    {
+                        RestoreOriginalValues();
+
+                        PatchNavigationProperties(nameof(ApplyRelatively), false);
+                    }
+                }
             }
             else
             {
@@ -162,7 +179,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
                     {
                         StoreOriginalValues(commonProperty);
 
-                        if (StoreNavigationProperties(commonProperty, value)) continue;
+                        if (StoreNavigationProperty(commonProperty, value)) continue;
 
                         object castedValue = CastCorrectValue(commonProperty, value);
 
@@ -170,7 +187,9 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
                     }
                     else
                     {
-                        StoreNavigationProperties(commonProperty, value);
+                        Skipped();
+
+                        StoreNavigationProperty(commonProperty, value);
                     }
                 }
                 catch (Exception exception)
@@ -530,6 +549,8 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
     {
         _originalValuesCollection.TryGetValue(Entity, out var originalValues);
 
+        if (originalValues == null) return;
+
         foreach (var property in originalValues.Keys)
         {
             var originalValue = originalValues[property];
@@ -560,7 +581,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         }
     }
 
-    private bool StoreNavigationProperties(PropertyInfo commonProperty, object value)
+    private bool StoreNavigationProperty(PropertyInfo commonProperty, object value)
     {
         if (commonProperty.InquireOneToOneNavigability(Entity, out var outEntity))
         {
@@ -604,13 +625,23 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
         _failed = true;
     }
 
-    private bool OperationFailed()
+    private void Skipped()
     {
-        return _failed;
+        _skipped = true;
+    }
+
+    public bool OperationSkipped()
+    {
+        return _skipped;
     }
 
     private void OperationReStart()
     {
         _failed = false;
+    }
+
+    private bool OperationCompleted()
+    {
+        return !_failed;
     }
 }

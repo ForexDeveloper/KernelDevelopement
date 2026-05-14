@@ -26,7 +26,7 @@ public sealed class FresherMarketing : Identity<long>, IPatchValidator
         return new FresherMarketing(id, name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, juniorMarketingId);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
         return true;
     }

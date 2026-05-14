@@ -34,7 +34,7 @@ public sealed class ChiefProductOfficer : ChiefUnitIdentity, IPatchValidator
         ScrumMasterTeamLeads.Add(scrumMasterTeamLead);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
         return true;
     }

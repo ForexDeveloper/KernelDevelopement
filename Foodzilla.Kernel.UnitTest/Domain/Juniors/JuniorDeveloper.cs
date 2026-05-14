@@ -34,8 +34,8 @@ public sealed class JuniorDeveloper : Identity<long>, IPatchValidator
         Freshers.Add(fresher);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
-        return true;
+        return IsPatched();
     }
 }

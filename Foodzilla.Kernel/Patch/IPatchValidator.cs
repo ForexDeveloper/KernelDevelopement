@@ -2,5 +2,5 @@
 
 public interface IPatchValidator
 {
-    bool OnPatchCompleted();
+    bool PatchCompleted();
 }

@@ -31,8 +31,8 @@ public sealed class ChiefMarketingOfficer : ChiefUnitIdentity, IPatchValidator
         MarketingTeamLeads.Add(marketingTeamLead);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
-        return true;
+        return IsPatched();
     }
 }

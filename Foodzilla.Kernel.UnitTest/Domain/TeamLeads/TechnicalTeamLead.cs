@@ -34,8 +34,8 @@ public sealed class TechnicalTeamLead : Identity<int>, IPatchValidator
         Seniors.Add(senior);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
-        return true;
+        return IsPatched();
     }
 }

@@ -34,8 +34,8 @@ public sealed class SeniorDeveloper : Identity<long>, IPatchValidator
         Midlevels.Add(midlevel);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
-        return true;
+        return IsPatched();
     }
 }

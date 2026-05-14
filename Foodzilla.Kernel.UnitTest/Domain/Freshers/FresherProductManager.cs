@@ -26,7 +26,7 @@ public sealed class FresherProductManager : Identity<long>, IPatchValidator
         return new FresherProductManager(id, name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, juniorProductManagerId);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
         return true;
     }

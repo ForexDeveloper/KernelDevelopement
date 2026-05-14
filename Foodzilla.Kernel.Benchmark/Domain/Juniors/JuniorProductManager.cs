@@ -28,7 +28,7 @@ public sealed class JuniorProductManager : Identity<long>, IPatchValidator
         Freshers.Add(fresher);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
         return true;
     }

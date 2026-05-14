@@ -51,8 +51,8 @@ public sealed class ChiefExecutiveOfficer : ChiefUnitIdentity, IPatchValidator
         ChiefMarketingOfficerId = chiefMarketingOfficer.Id;
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
-        return true;
+        return IsPatched();
     }
 }

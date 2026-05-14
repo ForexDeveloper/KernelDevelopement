@@ -26,8 +26,8 @@ public sealed class SeniorScrumMaster : Identity<long>, IPatchValidator
         return new SeniorScrumMaster(id, name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, scrumMasterTeamLeadId);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
-        return true;
+        return IsPatched();
     }
 }

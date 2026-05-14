@@ -34,7 +34,7 @@ public sealed class ChiefTechnicalOfficer : ChiefUnitIdentity, IPatchValidator
         QaTestingTeamLeads.Add(qaTestingTeamLead);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
         return true;
     }

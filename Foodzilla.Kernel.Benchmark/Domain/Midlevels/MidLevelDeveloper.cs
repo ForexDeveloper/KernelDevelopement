@@ -29,7 +29,7 @@ public sealed class MidlevelDeveloper : Identity<long>, IPatchValidator
         Juniors.Add(junior);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
         return true;
     }

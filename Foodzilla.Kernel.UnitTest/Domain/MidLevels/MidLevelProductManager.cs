@@ -34,8 +34,8 @@ public sealed class MidlevelProductManager : Identity<long>, IPatchValidator
         Juniors.Add(junior);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
-        return true;
+        return IsPatched();
     }
 }

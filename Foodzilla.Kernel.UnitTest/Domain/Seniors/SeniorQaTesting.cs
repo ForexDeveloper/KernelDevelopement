@@ -26,8 +26,8 @@ public sealed class SeniorQaTesting : Identity<long>, IPatchValidator
         return new SeniorQaTesting(id, name, lastName, nationalCode, personalCode, address, age, daysOfVacation, height, weight, isFired, uniqueIdentifier, eyeColor, graduation, experience, modifiedDate, birthDate, contraDateEnd, contraDateStart, qaTestingTeamLeadId);
     }
 
-    public bool OnPatchCompleted()
+    public bool PatchCompleted()
     {
-        return true;
+        return IsPatched();
     }
 }

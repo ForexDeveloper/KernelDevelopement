@@ -18,7 +18,8 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     private PropertyInfo[] _entityProperties;
     private readonly IEnumerable<string> _ignoreFields;
     private readonly List<ExpandoObject> _patchEntities;
-    private readonly Dictionary<Entity, bool> _entitiesStatusCollection;
+    private readonly Dictionary<Entity, bool> _entitiesFailureStatusCollection;
+    private readonly Dictionary<Entity, bool> _entitiesSkippingStatusCollection;
     private readonly Dictionary<Entity, PropertyInfo[]> _entityPropertiesDictionary;
     private readonly Dictionary<Entity, List<ExpandoObject>> _patchEntitiesDictionary;
     private readonly Dictionary<Entity, Dictionary<object, object>> _navigationProperties;
@@ -34,8 +35,9 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         _navigationProperties = [];
         _patchEntitiesDictionary = [];
         _originalValuesCollection = [];
-        _entitiesStatusCollection = [];
         _entityPropertiesDictionary = [];
+        _entitiesFailureStatusCollection = [];
+        _entitiesSkippingStatusCollection = [];
         _entityProperties = typeof(TEntity).GetProperties();
     }
 
@@ -96,19 +98,21 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
         if (Entity is IPatchValidator patchValidator)
         {
-            PatchNavigationProperties(nameof(ApplyAbsolutely));
-
-            if (!patchValidator.OnPatchCompleted() || OperationFailed())
+            if (patchValidator.PatchCompleted() && OperationCompleted())
+            {
+                OperationReStart();
+            }
+            else
             {
                 RestoreOriginalValues();
             }
+
+            PatchNavigationProperties(nameof(ApplyAbsolutely));
         }
         else
         {
             RestoreOriginalValues();
         }
-
-        OperationReStart();
     }
 
     private void ApplyDominantly(Entity dbEntity)
@@ -117,8 +121,10 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
         if (Entity is IPatchValidator patchValidator)
         {
-            if (patchValidator.OnPatchCompleted() && !OperationFailed())
+            if (patchValidator.PatchCompleted() && OperationCompleted())
             {
+                OperationReStart();
+
                 PatchNavigationProperties(nameof(ApplyDominantly));
             }
             else
@@ -130,8 +136,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         {
             RestoreOriginalValues();
         }
-
-        OperationReStart();
     }
 
     private void ApplyRelatively(Entity dbEntity, bool? parentLoyalty = null)
@@ -140,9 +144,29 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
         if (Entity is IPatchValidator patchValidator)
         {
-            if (patchValidator.OnPatchCompleted() && !OperationFailed())
+            if (OperationCompleted())
             {
-                PatchNavigationProperties(nameof(ApplyRelatively), true);
+                if (patchValidator.PatchCompleted())
+                {
+                    OperationReStart();
+
+                    PatchNavigationProperties(nameof(ApplyRelatively), true);
+                }
+                else
+                {
+                    if (OperationSkipped())
+                    {
+                        OperationReStart();
+
+                        PatchNavigationProperties(nameof(ApplyRelatively), true);
+                    }
+                    else
+                    {
+                        RestoreOriginalValues();
+
+                        PatchNavigationProperties(nameof(ApplyRelatively), false);
+                    }
+                }
             }
             else
             {
@@ -155,8 +179,6 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         {
             RestoreOriginalValues();
         }
-
-        OperationReStart();
     }
 
     private void SetPatchEntity(Entity dbEntity)
@@ -215,7 +237,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
                     {
                         StoreOriginalValues(commonProperty);
 
-                        if (StoreNavigationProperties(commonProperty, value)) continue;
+                        if (StoreNavigationProperty(commonProperty, value)) continue;
 
                         object castedValue = CastCorrectValue(commonProperty, value);
 
@@ -223,7 +245,9 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
                     }
                     else
                     {
-                        StoreNavigationProperties(commonProperty, value);
+                        Skipped();
+
+                        StoreNavigationProperty(commonProperty, value);
                     }
                 }
                 catch (Exception exception)
@@ -491,6 +515,8 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
     {
         _originalValuesCollection.TryGetValue(Entity, out var originalValues);
 
+        if (originalValues == null) return;
+
         foreach (var property in originalValues.Keys)
         {
             var originalValue = originalValues[property];
@@ -531,7 +557,7 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         }
     }
 
-    private bool StoreNavigationProperties(PropertyInfo commonProperty, object value)
+    private bool StoreNavigationProperty(PropertyInfo commonProperty, object value)
     {
         if (commonProperty.InquireOneToOneNavigability(Entity, out var outEntity))
         {
@@ -637,16 +663,26 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
 
     private void Failed()
     {
-        _entitiesStatusCollection.TryAdd(Entity, true);
+        _entitiesFailureStatusCollection.TryAdd(Entity, true);
     }
 
-    private bool OperationFailed()
+    private void Skipped()
     {
-        return _entitiesStatusCollection.GetValueOrDefault(Entity);
+        _entitiesSkippingStatusCollection.TryAdd(Entity, true);
     }
 
     private void OperationReStart()
     {
-        _entitiesStatusCollection[Entity] = false;
+        _entitiesFailureStatusCollection[Entity] = false;
+    }
+
+    private bool OperationSkipped()
+    {
+        return _entitiesSkippingStatusCollection.GetValueOrDefault(Entity);
+    }
+
+    private bool OperationCompleted()
+    {
+        return !_entitiesFailureStatusCollection.GetValueOrDefault(Entity);
     }
 }
