@@ -256,10 +256,7 @@ public sealed class PatchDocument<TEntity> where TEntity : Entity, IPatchValidat
 
         var inputEntities = ((IList)Activator.CreateInstance(listProxyType))!;
 
-        foreach (var entity in entities)
-        {
-            inputEntities.Add(entity);
-        }
+        entities.ForEach(p => inputEntities.Add(p));
 
         var patchDocumentType = typeof(PatchDocument<>).MakeGenericType(proxyType!);
 
