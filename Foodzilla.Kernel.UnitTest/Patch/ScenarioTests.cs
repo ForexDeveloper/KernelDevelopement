@@ -1,6 +1,4 @@
-﻿using Foodzilla.Kernel.Extension;
-
-namespace Foodzilla.Kernel.UnitTest.Patch;
+﻿namespace Foodzilla.Kernel.UnitTest.Patch;
 
 using Xunit;
 using Extension;
@@ -20,8 +18,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleApplyOneToOneRelatively_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateCompletePatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
@@ -114,8 +110,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleApplyOneToOneDominantly_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateCompletePatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
@@ -147,8 +141,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleApplyOneToOneDominantly_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAny()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
@@ -212,8 +204,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleApplyOneToOneAbsolutely_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateCompletePatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
@@ -245,8 +235,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleApplyOneToOneAbsolutely_WhenRootOfPatchEntitiesAreInvalid_ShouldOnlyIgnorePatchForRoot()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
@@ -278,8 +266,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleApplyOneToOneAbsolutely_WhenMiddleLayerOfPatchEntitiesAreInvalid_ShouldOnlyIgnorePatchForMiddle()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchDocument = PatchDocument<Customer>.Create(patchEntities);
@@ -316,8 +302,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleSingleCoreApplyOneToOneRelatively_WhenAllPatchEntitiesAreValid_ShouldPatchAll()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateCompletePatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
@@ -349,8 +333,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleSingleCoreApplyOneToOneRelatively_WhenRootOfPatchEntitiesAreInvalid_ShouldNotPatchAllEntities()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
@@ -382,8 +364,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleSingleCoreApplyOneToOneRelatively_WhenMiddleLayerOfPatchEntitiesAreInvalid_ShouldNotPatchAllEntities()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
@@ -539,8 +519,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleSingleCoreApplyOneToOneAbsolutely_WhenRootOfPatchEntitiesAreInvalid_ShouldOnlyIgnorePatchForRoot()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateRootInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);
@@ -572,8 +550,6 @@ public sealed class ScenarioTests
     [Fact]
     public async Task HandleSingleCoreApplyOneToOneAbsolutely_WhenMiddleLayerOfPatchEntitiesAreInvalid_ShouldOnlyIgnorePatchForMiddle()
     {
-        const int totalCount = 10;
-
         var patchEntities = CreateMiddleInvalidPatchEntities();
 
         var patchOperation = PatchOperation<Customer>.Create(patchEntities);

@@ -59,6 +59,14 @@ public sealed class PatchOperation<TEntity> where TEntity : Entity, IPatchValida
         }
     }
 
+    /// <summary>
+    /// This method uses single patchEntity to update single database entity
+    /// Navigation properties are dependent on their parent so if parent patch fails, the navigation will not accept changes
+    /// Apply patch while patchEntity contains id
+    /// Id is sent inside each patchEntity. peer to peer patching
+    /// Only one instant is applied to a single database entity
+    /// </summary>
+
     public void ApplyDominantly(List<TEntity> dbEntities)
     {
         foreach (var dbEntity in dbEntities)
