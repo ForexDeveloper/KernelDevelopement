@@ -1,10 +1,10 @@
-﻿using Bogus;
+﻿namespace Foodzilla.Kernel.UnitTest.Patch;
+
+using Bogus;
 using System.Dynamic;
 using System.Text.Json;
 using Foodzilla.Kernel.Patch;
 using Foodzilla.Kernel.Domain;
-
-namespace Foodzilla.Kernel.UnitTest.Patch;
 
 public sealed class PatchBuilder(Faker faker)
 {
@@ -401,7 +401,11 @@ public sealed class Customer : Entity, IPatchValidator
 
     public List<Customer> NavigationListCustomer { get; private set; }
 
-    private Customer(int id, string name, string family, string nationalCode, string @string, string? nullableString, RankingEnum customerRank, RankingEnum? customerRankNullable, bool boolean, bool? nullableBoolean, int @int, int? nullableInt, double @double, double? nullableDouble, decimal @decimal, decimal? nullableDecimal, long @long, long? nullableLong, Guid guid, Guid? nullableGuid, DateTimeOffset dateTime, DateTimeOffset? nullableDateTime)
+    private Customer(int id, string name, string family, string nationalCode, string @string, string? nullableString,
+        RankingEnum customerRank, RankingEnum? customerRankNullable, bool boolean, bool? nullableBoolean, int @int,
+        int? nullableInt, double @double, double? nullableDouble, decimal @decimal, decimal? nullableDecimal,
+        long @long, long? nullableLong, Guid guid, Guid? nullableGuid, DateTimeOffset dateTime,
+        DateTimeOffset? nullableDateTime)
     {
         Id = id;
         Name = name;
@@ -429,7 +433,11 @@ public sealed class Customer : Entity, IPatchValidator
         NavigationListOrder = new List<Order>();
     }
 
-    public static Customer Create(int id, string name, string family, string nationalCode, string @string, string? nullableString, RankingEnum customerRank, RankingEnum? customerRankNullable, bool boolean, bool? nullableBoolean, int @int, int? nullableInt, double @double, double? nullableDouble, decimal @decimal, decimal? nullableDecimal, long @long, long? nullableLong, Guid guid, Guid? nullableGuid, DateTimeOffset dateTime, DateTimeOffset? nullableDateTime)
+    public static Customer Create(int id, string name, string family, string nationalCode, string @string,
+        string? nullableString, RankingEnum customerRank, RankingEnum? customerRankNullable, bool boolean,
+        bool? nullableBoolean, int @int, int? nullableInt, double @double, double? nullableDouble, decimal @decimal,
+        decimal? nullableDecimal, long @long, long? nullableLong, Guid guid, Guid? nullableGuid,
+        DateTimeOffset dateTime, DateTimeOffset? nullableDateTime)
     {
         return new Customer(id, name, family, nationalCode, @string, nullableString, customerRank, customerRankNullable, boolean, nullableBoolean, @int, nullableInt, @double, nullableDouble, @decimal, nullableDecimal, @long, nullableLong, guid, nullableGuid, dateTime, nullableDateTime);
     }
@@ -456,15 +464,15 @@ public sealed class Customer : Entity, IPatchValidator
 
     public bool IsPatched()
     {
-        return Name == "Patched !" &&
-               Family == "Patched !" &&
-               NationalCode == "4120583732" &&
+        return Int == 999999 &&
                Long == 999999 &&
-               Int == 999999 &&
+               Name == "Patched !" &&
+               Family == "Patched !" &&
                NullableInt == 999999 &&
                Decimal == 999999.123M &&
-               NullableDecimal == 999999.123M &&
                Enum == RankingEnum.Silver &&
+               NationalCode == "4120583732" &&
+               NullableDecimal == 999999.123M &&
                NullableEnum == RankingEnum.Silver;
     }
 
@@ -522,7 +530,11 @@ public sealed class Order : Entity, IPatchValidator
 
     public List<Order> NavigationListOrder { get; private set; }
 
-    private Order(int id, string name, string family, string nationalCode, string @string, string? nullableString, RankingEnum customerRank, RankingEnum? customerRankNullable, bool boolean, bool? nullableBoolean, int @int, int? nullableInt, double @double, double? nullableDouble, decimal @decimal, decimal? nullableDecimal, long @long, long? nullableLong, Guid guid, Guid? nullableGuid, DateTimeOffset dateTime, DateTimeOffset? nullableDateTime)
+    private Order(int id, string name, string family, string nationalCode, string @string, string? nullableString,
+        RankingEnum customerRank, RankingEnum? customerRankNullable, bool boolean, bool? nullableBoolean, int @int,
+        int? nullableInt, double @double, double? nullableDouble, decimal @decimal, decimal? nullableDecimal,
+        long @long, long? nullableLong, Guid guid, Guid? nullableGuid, DateTimeOffset dateTime,
+        DateTimeOffset? nullableDateTime)
     {
         Id = id;
         Name = name;
@@ -549,7 +561,11 @@ public sealed class Order : Entity, IPatchValidator
         NavigationListOrder = new List<Order>();
     }
 
-    public static Order Create(int id, string name, string family, string nationalCode, string @string, string? nullableString, RankingEnum customerRank, RankingEnum? customerRankNullable, bool boolean, bool? nullableBoolean, int @int, int? nullableInt, double @double, double? nullableDouble, decimal @decimal, decimal? nullableDecimal, long @long, long? nullableLong, Guid guid, Guid? nullableGuid, DateTimeOffset dateTime, DateTimeOffset? nullableDateTime)
+    public static Order Create(int id, string name, string family, string nationalCode, string @string,
+        string? nullableString, RankingEnum customerRank, RankingEnum? customerRankNullable, bool boolean,
+        bool? nullableBoolean, int @int, int? nullableInt, double @double, double? nullableDouble, decimal @decimal,
+        decimal? nullableDecimal, long @long, long? nullableLong, Guid guid, Guid? nullableGuid,
+        DateTimeOffset dateTime, DateTimeOffset? nullableDateTime)
     {
         return new Order(id, name, family, nationalCode, @string, nullableString, customerRank, customerRankNullable, boolean, nullableBoolean, @int, nullableInt, @double, nullableDouble, @decimal, nullableDecimal, @long, nullableLong, guid, nullableGuid, dateTime, nullableDateTime);
     }
@@ -577,40 +593,6 @@ public sealed class Order : Entity, IPatchValidator
     {
         return true;
     }
-}
-
-public sealed class OrderItem
-{
-
-}
-
-public sealed class OrderItemHistory
-{
-
-}
-public sealed class OrderItemHistoryOption
-{
-
-}
-
-public sealed class CustomerIdentity
-{
-
-}
-
-public sealed class ShoppingCart
-{
-
-}
-
-public sealed class ShoppingCartItem
-{
-
-}
-
-public sealed class ShoppingCartItemHistory
-{
-
 }
 
 public enum RankingEnum

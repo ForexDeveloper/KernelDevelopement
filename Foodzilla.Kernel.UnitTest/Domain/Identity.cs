@@ -75,15 +75,15 @@ public abstract class Identity<TKey> : Entity<TKey> where TKey : struct
 
     public virtual bool IsPatched()
     {
-        return Name == "Patched !" &&
+        return Weight == 85 &&
+               Height == 188 &&
+               Name == "Patched !" &&
+               Address == "Patched !" &&
                LastName == "Patched !" &&
                NationalCode == "99999999" &&
                PersonalCode == "Patched !" &&
-               Address == "Patched !" &&
-               Height == 188 &&
-               Weight == 85 &&
-               Experience == Experience.Elementary &&
-               Graduation == Graduation.Diploma;
+               Graduation == Graduation.Diploma &&
+               Experience == Experience.Elementary;
     }
 }
 
